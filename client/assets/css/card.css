@@ -1,0 +1,115 @@
+.grid-helper{
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.card{
+  background: white;
+  padding-top: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.top-row{
+  display: flex;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.creator{
+  border-radius: 20px;
+}
+
+.rank-badge{
+  display: inline-flex;
+  position: relative;
+  right: 17px;
+  top: 19px;
+}
+
+.dropdown-button{
+  font-family: serif;
+  border-radius: 20px;
+  font-weight: 700;
+  padding: 5px 13px 10px;
+}
+
+.card-img{
+  padding: 20px;
+  border-radius: 23px;
+}
+
+.card-body{
+  text-align: left;
+}
+
+.card-text{
+  color: #888;
+}
+
+.price-sold{
+  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.price-offered{
+  background: -webkit-radial-gradient(circle, rgba(58,240,190,1) 0%, rgba(38,240,124,1) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.not-for-sale-text{
+  font-style: italic;
+  font-size: .8rem;
+}
+
+.heart{
+  padding-top: 15px;
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+.fas{
+  color: #f50057;
+}
+
+.heart:hover{
+  color: #f50057;
+  transition: ease-in-out .2s;
+}
+
+.like-counter{
+  font-size: .9rem;
+}
+
+.fa-concierge-bell{
+  padding-left: 10px;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #aaa;
+  transition: ease-in-out .2s
+}
+
+.fa-concierge-bell:hover{
+  transform: scale(1.1);
+}
+
+.fa-concierge-bell:active{
+  transform: scale(.9);
+}
+
+.view-btn, .buy-btn{
+  float: right;
+}
+
+.view-btn{
+  font-weight: 700;
+  border: 1px solid #999;
+}
+
+.buy-btn{
+  font-weight: 700;
+}
