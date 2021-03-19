@@ -1,0 +1,255 @@
+html{
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body{
+  font-family: 'Rubik', sans-serif;
+  background: white;
+  color: black;
+  margin: 0;
+  padding: 60px 0 0 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.container{
+  display: flex;
+  justify-content: center;
+}
+
+header{
+  margin-top: 50px;
+  font-size: 40px;
+}
+
+.upload-form{
+  margin-top: 10px;
+}
+
+.file-upload{
+ text-align: center;
+ border: 1px solid #ddd;
+ padding: 20px;
+ border-radius: 5px;
+ margin-top: 10px;
+ margin-bottom: 10px;
+}
+
+label{
+  color: #aaa;
+}
+
+.label-info{
+  font-weight: 300;
+  font-size: .8rem;
+}
+
+#uploadImage{
+  margin-top: 10px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background: #ddd;
+  color: black;
+  transition: ease-in-out .15s;
+  font-weight: 700;
+}
+
+#uploadImage:hover{
+  background: #007bff;
+  color: white;
+}
+
+#uploadImage:active{
+  transform: scale(.95);
+}
+
+#clearFile{
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  display: none;
+}
+
+#closeIcon1{
+  color: #007bff;
+}
+
+#closeIcon2{
+  color: #007bff;
+}
+
+#closeIcon3{
+  color: #007bff;
+}
+
+video{
+  display: none;
+}
+
+audio{
+  display: none;
+}
+
+#formToUploadCover{
+  display: none;
+}
+
+#clearCover{
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  display: none;
+}
+
+#uploadCover{
+  margin-top: 10px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background: #ddd;
+  color: black;
+  transition: ease-in-out .15s;
+  font-weight: 700;
+}
+
+#uploadCover:hover{
+  background: #007bff;
+  color: white;
+}
+
+#uploadCover:active{
+  transform: scale(.95);
+}
+
+.switch{
+  text-align: right;
+  position: relative;
+  margin-top: 15px;
+}
+
+.switch-title{
+  position: absolute;
+  left: 0;
+}
+
+.switch-subtitle{
+  position: absolute;
+  left: 0;
+  top: 20px;
+  font-size: .8rem;
+  color: #aaa;
+}
+
+#priceInputGroup{
+  margin-top: 20px;
+}
+
+.input-styling{
+  padding-left: 0;
+  padding-right: 0;
+  border: none;
+  border-bottom: 1px solid #eee;
+  border-radius: 0;
+ -webkit-box-shadow: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.input-styling:focus{
+ -webkit-box-shadow: none;
+  box-shadow: none;
+  border-bottom: 1px solid #aaa;
+  background: transparent;
+}
+
+.price-info{
+  font-size: .8rem;
+  color: #aaa;
+}
+
+#saleProfit{
+  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#unlockableContentInputGroup{
+  display: none;
+}
+
+#unlockableContentFile{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.unlockable-file-label{
+  background: -webkit-radial-gradient(circle, rgba(242, 222, 0,1) 0%, rgba(242, 137, 0,1) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;  font-size: .8rem;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+#clearHighResFile{
+  display: none;
+}
+
+#unlockableContentText{
+  margin-top: 5px;
+}
+
+.input-title{
+  position: absolute;
+  left: 0;
+}
+
+#namingInputGroup{
+  padding-top: 30px;
+}
+
+.naming-styling{
+  margin-top: 15px;
+}
+
+#description{
+  margin-top: 20px;
+}
+
+#additionalInfo{
+  margin-top: 20px;
+}
+
+#royaltyAmount{
+  margin-left: 5px;
+  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#royalties{
+  margin-top: 30px;
+  margin-bottom: 0;
+}
+
+.slider-title{
+  color: black;
+}
+
+.create-button{
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+#createButton{
+  border-radius: 25px;
+  padding: 10px 15px;
+  font-weight: 700;
+}
