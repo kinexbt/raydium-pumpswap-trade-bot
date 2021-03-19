@@ -1,0 +1,39 @@
+.navbar{
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-weight: 500;
+}
+
+.nav-item{
+  line-height: 30px;
+}
+
+#mint{
+  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#create{
+  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+ @media (max-width: 992px) { /*keeps gradient behind text on collapse*/
+  #create{
+    width: 75px;
+  }
+}
+
+#forDarkMode{
+  display: block;
+}
+
+#forLightMode{
+  display: none;
+}
+
+.theme{
+  border-radius: 40px;
+}
