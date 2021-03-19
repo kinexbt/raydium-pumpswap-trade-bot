@@ -1,0 +1,95 @@
+html{
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body{
+  font-family: 'Rubik', sans-serif;
+  background: white;
+  color: black;
+  margin: 0;
+  padding: 60px 0 0 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.container{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
+
+.profile-picture{
+  margin-top: 50px;
+}
+
+#profilePhoto{
+  border-radius: 60px;
+  position: relative;
+  top: 15px;
+}
+
+.seller-badge{
+  position: relative;
+  bottom: 13px;
+  left: 42px;
+}
+
+#accountName{
+  font-size: 1.5rem;
+}
+
+#bio{
+  margin-top: 15px;
+  font-weight: 400;
+  color: #666;
+  line-height: 25px;
+}
+
+.social-media-tags{
+  margin-top: 20px;
+}
+
+.social-tag{
+  margin-right: 10px;
+  color: black;
+}
+
+.tip{
+  margin-top: 15px;
+}
+
+#tipButton{
+  font-weight: 500;
+  border-radius: 20px;
+}
+
+.follow-share{
+  margin-top: 15px;
+}
+
+#dropdownMenuTitle{
+  padding-left: 10px;
+}
+
+.button-outline{
+  font-weight: 700;
+  border: 1px solid #999;
+}
+
+.profile-bottom-half{
+  margin-top: 30px;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+.sorting-row{
+  padding-left: 5px;
+}
+
+.tab{
+  color: #666;
+  padding-left: 0;
+  padding-bottom: 0;
+}
