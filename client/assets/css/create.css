@@ -1,0 +1,78 @@
+html, body{
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+
+body{
+  font-family: 'Rubik', sans-serif;
+  background: white;
+  color: black;
+  margin: 0;
+  padding: 60px 0 0 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 180px;
+}
+
+header{
+  margin-top: 50px;
+  font-size: 40px;
+}
+
+.subheader{
+  color: #666;
+}
+
+.button-wrapper{
+ text-align: center;
+ border: 1px solid #ddd;
+ padding-top: 15px;
+ padding-bottom: 15px;
+ border-radius: 5px;
+}
+
+#singleButton{
+  display: inline-block;
+  margin-right: 25px;
+}
+
+#multipleButton{
+  display: inline-block;
+  margin-left: 25px;
+}
+
+@media (max-width: 400px) {
+  #singleButton{
+       margin: 0;
+  }
+  #multipleButton{
+    margin: 0;
+  }
+}
+
+button{
+  background: none;
+}
+
+img{
+  max-height: 220px;
+}
+
+@media (max-width: 370px) { /*for sm mobile */
+  img{
+    max-height: 180px;
+  }
+}
+
+.description{
+  padding-top: 15px;
+  font-weight: 500;
+}
