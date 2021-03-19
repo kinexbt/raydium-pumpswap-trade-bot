@@ -1,0 +1,61 @@
+html{
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body{
+  font-family: 'Rubik', sans-serif;
+  background: white;
+  color: black;
+  margin: 0;
+  padding: 60px 0 0 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+::-webkit-scrollbar {
+  height: 5px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.recently-sold{
+  margin-top: 50px;
+}
+
+.header{
+  font-size: 2rem;
+  font-weight: 700;
+  padding-left: 5px;
+}
+
+.scroll-wrapper{
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+.sorting-button{
+  border-radius: 20px;
+  border: 1px solid #666;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.sorting-button:hover{
+  background: #343a40;
+  color: white;
+}
+
+
+.recently-minted{
+  margin-top: 50px;
+}
