@@ -9,18 +9,21 @@
     <link rel="stylesheet" href="assets/css/nav.css">
     <link rel="stylesheet" href="assets/css/footer.css">
     <link rel="stylesheet" href="assets/css/create.css">
-    <link rel="icon" type="image/png" href="assets/images-icons/iconWithMacronShortLetters.png">
+    <link rel="stylesheet" href="assets/css/basics.css">
+    <link rel="icon" type="image/png" href="assets/images-icons/openMintLogo.png">
     <script type="text/javascript" src="assets/js/jquery-3.4.1.js"></script>
     <script src="assets/bootstrap/js/popper.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
     <script src="https://kit.fontawesome.com/99c803f139.js" crossorigin="anonymous"></script>
     <title>OpenMint - Create, buy, and sell digital artwork backed by blockchain technology</title>
   </head>
   <body>
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="index.html">
-        <img src="assets/images-icons/iconWithMacronShortLetters.png" width="30" height="30" class="d-inline-block align-top" alt="OpenMint logo">
-        <span class="ml-1">Open<span id="mint">Mint</span></span>
+        <img src="assets/images-icons/openMintLogo.png" width="30" height="30" class="d-inline-block align-top" alt="OpenMint logo">
+        <span id="open" class="ml-1">Open<span id="mint">Mint</span></span>
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -36,8 +39,24 @@
           <li class="nav-item">
             <a class="nav-link" id="create" href="create.html">CREATE<span class="sr-only">(current)</span></a>
           </li>
-          <li class="nav-item mr-5">
-            <a class="nav-link" href="profile.html">Profile</a>
+          <li class="nav-item mr-1" id="connectWalletTag">
+            <button type="button" class="btn btn-primary button-styling shadow-sm" id="connectWalletBtn">Connect Wallet</button>
+          </li>
+          <li class="nav-item dropdown mr-2" id="profileTag" style="display: none;">
+            <a class="nav-link dropdown-toggle shadow-sm" href="#" id="profile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span id="userAddress"></span>
+              <span id="spinnerBorderInNav" class="spinner-border text-primary" style="margin: 0 5px; width: 1.25rem; height: 1.25rem;" role="status">
+                <span class="sr-only">Loading...</span>
+              </span>
+              <img src="" class="shadow-sm" id="profilePhotoInNav" width="30px">
+              <img id="rankInNav" src="" width="12px" alt="seller badge">
+            </a>
+            <div class="dropdown-menu" aria-labelledby="profile">
+              <a id="myProfile" class='dropdown-item' href="">My Profile</a>
+              <a class='dropdown-item' href="edit-profile.html">Edit Profile</a>
+              <hr>
+              <a class="dropdown-item" id="disconnectWalletBtn">Disconnect Wallet</a>
+            </div>
           </li>
           <li class="nav-item">
             <button type="button" class="btn btn-light theme" id="forDarkMode">
@@ -53,30 +72,48 @@
 
     <div class="container">
       <div class="make-nft">
+
+        <div id="ifWalletNotConnectedModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header center-content">
+                <h5 class="modal-title">Must Connect Wallet To Continue</h5>
+              </div>
+              <div class="modal-body center-content">
+                <button type="button" class="btn btn-secondary button-styling mr-2" id="goBackBtn">Go Back</button>
+                <button type="button" class="btn btn-primary button-styling" id="connectWalletModalBtn">Connect Wallet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <header>
           Create with Open<span id="mint">Mint</span>
         </header>
-        <p class="subheader">To begin, choose whether you want to make a single or multiple NFTs.
-          <br>
-          Unsure? Check out our <a href="learn.html">learn</a> section to help you decide.
-        </p>
-        <div class='button-wrapper'>
 
+        <div id="chooseStandard">
+          <p class="subheader">To begin, choose whether you want to make a single or multiple NFTs.
+            <br>
+            Unsure? Check out our <a href="learn.html">learn</a> section to help you decide.
+          </p>
+          <div class='button-wrapper'>
             <button class="btn btn-light" id="singleButton">
               <img src="assets/images-icons/oneOfOneTag.png" alt="a pink and blue gradient dog tag that says 1 of 1">
-              <div class="single-text description">
+              <div class="single-text type">
                 Single
               </div>
             </button>
 
-            <button class="btn btn-light" id="multipleButton">
+            <button disabled class="btn btn-light" id="multipleButton">
+              <div id='comingSoon' class="shadow">👨‍💻<br>Coming Soon</div>
               <img src="assets/images-icons/multTag.png" alt="three rainbow pastel gradient dog tags that say mult.">
-              <div class="multiple-text description">
+              <div class="multiple-text type">
                 Multiple
               </div>
             </button>
-
+          </div>
         </div>
+
       </div>
     </div>
 
@@ -102,7 +139,7 @@
     </footer>
   </body>
   <script src="assets/js/theme.js"></script>
-  <script type="module" src="assets/js/js.cookie.js"></script>
-  <script nomodule defer src="assets/js/js.cookie.js"></script>
+  <script src="assets/js/js.cookie.js"></script>
   <script src="assets/js/create.js"></script>
+  <script src="assets/js/connectWallet.js"></script>
 </html>

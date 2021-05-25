@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="assets/css/fonts.css">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/nav.css">
-    <link rel="stylesheet" href="assets/css/index.css">
     <link rel="stylesheet" href="assets/css/card.css">
-    <link rel="stylesheet" href="assets/css/footer.css">
     <link rel="stylesheet" href="assets/css/basics.css">
+    <link rel="stylesheet" href="assets/css/token.css">
     <link rel="icon" type="image/png" href="assets/images-icons/openMintLogo.png">
     <script type="text/javascript" src="assets/js/jquery-3.4.1.js"></script>
     <script src="assets/bootstrap/js/popper.js"></script>
@@ -18,6 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
     <script src="https://kit.fontawesome.com/99c803f139.js" crossorigin="anonymous"></script>
+    <script src="assets/js/clipboard.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
     <title>OpenMint - Create, buy, and sell digital artwork backed by blockchain technology</title>
   </head>
@@ -32,11 +32,11 @@
       </button>
       <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="index.html">Discover <span class="sr-only">(current)</span></a>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Discover</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="learn.html">Learn</a>
+            <a class="nav-link" href="learn.html">Learn<span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" id="create" href="create.html">CREATE</a>
@@ -54,7 +54,7 @@
               <img id="rankInNav" src="" width="12px" alt="seller badge">
             </a>
             <div class="dropdown-menu" aria-labelledby="profile">
-              <a id="myProfile" class='dropdown-item'>My Profile</a>
+              <a id="myProfile" class='dropdown-item' href="">My Profile</a>
               <a class='dropdown-item' href="edit-profile.html">Edit Profile</a>
               <hr>
               <a class="dropdown-item" id="disconnectWalletBtn">Disconnect Wallet</a>
@@ -72,85 +72,79 @@
       </div>
     </nav>
 
-    <div class="container col-11">
-      <div class="modals"></div>
-
-      <section class="recently-sold container-fluid">
-      <header class="header">Recently Sold 🎉</header>
-        <div class="scroll-wrapper">
-          <div class="card-row row flex-nowrap recentlySold">
-            <div id='soldCardLoader' class="spinner-border mt-5 text-primary" style="width: 3rem; height: 3rem;" role="status">
-              <span class="sr-only">Loading...</span>
-            </div>
-          </div> <!-- card-row-->
-        </div> <!-- scroll-wrapper -->
-      </section> <!-- recently-sold -->
-
-      <section class="recently-minted container-fluid">
-      <header class="header">Recently Minted 🐣</header>
-
-        <div class="sorting-row">
-          <ul class="nav nav-pills" role="tablist">
-            <li class="nav-item" role="presentation">
-              <a class="nav-link sorting-button active disabled" data-toggle="pill" id="viewAll">All</a>
-            </li>
-            <li class="nav-item" role="presentation">
-              <a class="nav-link sorting-button" data-toggle="pill" id="forSale">For Sale</a>
-            </li>
-            <li class="nav-item" role="presentation">
-              <a class="nav-link sorting-button" data-toggle="pill" id="notForSale">Not For Sale</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="minted-wrapper cardDivs row">
-          <div id='loader' class="spinner-border mt-5 text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-      </section>
+    <div class="container-fluid">
 
       <div id="ifWalletNotConnectedModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header center-content">
-              <h5 class="modal-title">Connect Wallet To Like Artwork</h5>
+              <h5 class="modal-title">Must Connect Wallet To Continue</h5>
             </div>
             <div class="modal-body center-content">
-              <button type="button" class="btn btn-secondary button-styling mr-2" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary button-styling mr-2" id="goBackBtn">Go Back</button>
               <button type="button" class="btn btn-primary button-styling" id="connectWalletModalBtn">Connect Wallet</button>
             </div>
           </div>
         </div>
       </div>
 
-    </div><!-- end of page container -->
-
-    <!-- page will load more items on scroll so footer might not be neccessary -->
-    <footer>
-      <div class="footer-content">
-        <div class="social-media-icons">
-          <a class="icon" href="#"><i class="fab fa-twitter"></i></a>
-          <a class="icon" href="#"><i class="fab fa-instagram"></i></a>
-          <a class="icon" href="#"><i class="fab fa-youtube"></i></a>
-          <a class="icon" href="#"><i class="fab fa-discord"></i></a>
-        </div>
-
-        <div class="links">
-          <a href="#">Terms</a>
-          <a href="#">Privacy</a>
-          <a href="learn.html">FAQs</a>
-        </div>
-
-        <div class="company-name">
-          <span>© OpenMint, Inc. All rights reserved.</span>
+      <div id="additionalInfoModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Additional Info</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="addtionalInfoModalBody">
+               <p id="additionalInfoText"></p>
+               <textarea id="additionalInfoInput" type="text" class="form-control input-styling" aria-label="additional info"></textarea>
+             </div>
+             <div class="modal-footer">
+               <span id="status"></span>
+               <button type="button" class="btn btn-secondary button-styling" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary button-styling" id="editAdditionalInfo">Edit</button>
+               <button type="button" class="btn btn-primary button-styling" id="saveAdditionalInfo">Save</button>
+             </div>
+          </div>
         </div>
       </div>
-    </footer>
+
+      <div id="unlockableContentModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id='contentUnlockedTitle'>Content Unlocked</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" id="unlockableContentModalBody">
+              <p id="unlockableContentText"></p>
+            </div>
+            <div class="modal-footer" id='unlockableFooter'>
+               <span id="copyStatus"></span>
+               <button type="button" class="btn btn-secondary button-styling" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modals"></div>
+
+      <div class="cardDiv row">
+        <div id='loader' class="spinner-border mt-5 text-primary" style="width: 3rem; height: 3rem;" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      </div>
+    </div>
+
   </body>
-  <script src="assets/js/discover.js"></script>
-  <script src="assets/js/connectWallet.js"></script>
-  <script src="assets/js/abi.js"></script>
   <script src="assets/js/theme.js"></script>
   <script src="assets/js/js.cookie.js"></script>
+  <script src="assets/js/connectWallet.js"></script>
+  <script src="assets/js/token.js"></script>
+  <script src="assets/js/abi.js"></script>
 </html>

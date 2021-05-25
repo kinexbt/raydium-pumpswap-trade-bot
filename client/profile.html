@@ -2,26 +2,31 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <link rel="stylesheet" href="assets/css/fonts.css">
-      <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-      <link rel="stylesheet" href="assets/css/nav.css">
-      <link rel="stylesheet" href="assets/css/footer.css">
-      <link rel="stylesheet" href="assets/css/profile.css">
-      <link rel="stylesheet" href="assets/css/card.css">
-      <link rel="icon" type="image/png" href="assets/images-icons/iconWithMacronShortLetters.png">
-      <script type="text/javascript" src="assets/js/jquery-3.4.1.js"></script>
-      <script src="assets/bootstrap/js/popper.js"></script>
-      <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-      <script src="https://kit.fontawesome.com/99c803f139.js" crossorigin="anonymous"></script>
-      <title>OpenMint - Create, buy, and sell digital artwork backed by blockchain technology</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assets/css/fonts.css">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/nav.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <link rel="stylesheet" href="assets/css/card.css">
+    <link rel="stylesheet" href="assets/css/basics.css">
+    <link rel="icon" type="image/png" href="assets/images-icons/openMintLogo.png">
+    <script type="text/javascript" src="assets/js/jquery-3.4.1.js"></script>
+    <script src="assets/bootstrap/js/popper.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
+    <script src="https://kit.fontawesome.com/99c803f139.js" crossorigin="anonymous"></script>
+    <script src="assets/js/clipboard.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <title>OpenMint - Create, buy, and sell digital artwork backed by blockchain technology</title>
   </head>
   <body>
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="index.html">
-        <img src="assets/images-icons/iconWithMacronShortLetters.png" width="30" height="30" class="d-inline-block align-top" alt="OpenMint logo">
-        <span class="ml-1">Open<span id="mint">Mint</span></span>
+        <img src="assets/images-icons/openMintLogo.png" width="30" height="30" class="d-inline-block align-top" alt="OpenMint logo">
+        <span id="open" class="ml-1">Open<span id="mint">Mint</span></span>
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -37,8 +42,24 @@
           <li class="nav-item">
             <a class="nav-link" id="create" href="create.html">CREATE<span class="sr-only">(current)</span></a>
           </li>
-          <li class="nav-item mr-5">
-            <a class="nav-link" href="profile.html">Profile</a>
+          <li class="nav-item mr-1" id="connectWalletTag">
+            <button type="button" class="btn btn-primary button-styling shadow-sm" id="connectWalletBtn">Connect Wallet</button>
+          </li>
+          <li class="nav-item dropdown mr-3" id="profileTag" style="display: none;">
+            <a class="nav-link dropdown-toggle shadow-sm" href="#" id="profile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span id="userAddress"></span>
+              <span id="spinnerBorderInNav" class="spinner-border text-primary" style="margin: 0 5px; width: 1.25rem; height: 1.25rem;" role="status">
+                <span class="sr-only">Loading...</span>
+              </span>
+              <img src="" class="shadow-sm" id="profilePhotoInNav" width="30px">
+              <img id="rankInNav" src="" width="12px" alt="seller badge">
+            </a>
+            <div class="dropdown-menu" aria-labelledby="profile">
+              <a id="myProfile" class='dropdown-item' href="">My Profile</a>
+              <a class='dropdown-item' href="edit-profile.html">Edit Profile</a>
+              <hr>
+              <a class="dropdown-item" id="disconnectWalletBtn">Disconnect Wallet</a>
+            </div>
           </li>
           <li class="nav-item">
             <button type="button" class="btn btn-light theme" id="forDarkMode">
@@ -52,443 +73,169 @@
       </div>
     </nav>
 
-    <div class="container col-12">
-      <div class="profile">
+    <div class="container-fluid col-11">
+      <div class="profile profileGenerated">
+        <div class="modals"></div>
 
-        <div class="profile-picture">
-          <img id="profilePhoto" src="assets/images-icons/goldBanana.png" width="120" alt="profile photo">
-          <div class="seller-badge">
-            <img id="sellerRank" src="assets/images-icons/fiftySales.png" width="32" alt="badge based on how many sales from account">
-          </div>
-        </div>
-
-        <div class="name">
-          <span id="accountName">NF-Ty</span> <!--this will not be hardcoded like it is now-->
-        </div>
-
-        <div class="eth-address">
-          <span id="ethAdress">0x4vfd234350f70...baf0 <!--figure out how to make this look the way it does now -->
-            <!-- <span>
-              <button type="button" name="button"></button>     make a button to copy to clipboard
-            </span>  -->
-          </span> <!--this will not be hardcoded like it is now-->
-        </div>
-
-        <div id="bio">
-          Here is a bio describing a few things about my NFTs. <!-- look up how to allow linebreaks from user input -->
-          <br>
-          This text, like thet text above will not be hard coded like it is now.
-          <br>
-          A settings page will need to be made for profile updates.
-        </div>
-
-        <div class="social-media-tags"> <!-- if added in settings -->
-          <a id="twitter" class="social-tag" href="#"><img src="assets/images-icons/twitterIcon.png" width="15"> twitterhandle</a>
-          <a id="instagram" class="social-tag" href="#"><img src="assets/images-icons/instagramIcon.png" width="15"> instahandle</a>
-        </div>
-
-        <div class="follow-share d-inline-flex">
-          <button type="button" class="btn btn-light button-outline mr-2" id="followButton">Follow</button>
-
-          <div class="dropdown">
-            <button type="button" class="btn btn-light button-outline" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Share
-            </button>
-            <div class="dropdown-menu">
-              <p id="dropdownMenuTitle">Share this page</p>
-              <a class="dropdown-item" href="#">Twitter</a>
-              <a class="dropdown-item" href="#">Facebook</a>
-              <a class="dropdown-item" href="#">Email</a>
+        <div class="profile-top-half">
+          <div class="profile-picture">
+            <span id="spinnerGrowProfilePhoto" class="spinner-grow text-light" style="width: 120px; height: 120px;" role="status">
+              <span class="sr-only">Loading...</span>
+            </span>
+            <img class="profile-photo shadow-sm" id="profilePhoto" src="" width="120" alt="profile photo">
+            <div class="seller-badge">
+              <img id="sellerRank" src="" width="32" alt="seller rank badge">
             </div>
           </div>
-        </div>
 
-        <div class="tip">
-          <button type="button" class="btn btn-primary" id="tipButton">Send Tip</button>
+          <div class="name">
+            <span id="username"></span>
+          </div>
+
+          <div class="eth-address">
+            <span id="truncatedEthAddress"></span>
+            <span id="copySpan"></span>
+          </div>
+
+          <div id="bio"></div>
+
+          <div class="social-media-tags"> <!-- if added in settings -->
+            <a id="twitter" class="social-tag" target="_blank" href=""><img src="assets/images-icons/twitterIcon.png" width="15"> <span id='twitterHandle'></span></a>
+            <a id="instagram" class="social-tag" target="_blank" href=""><img src="assets/images-icons/instagramIcon.png" width="15"> <span id='instagramHandle'></span></a>
+          </div>
+
+          <div class="follow-share d-inline-flex">
+            <button type="button" class="btn btn-light shadow-sm button-styling mr-2" id="followButton">Follow</button>
+            <button type="button" class="btn btn-success mr-2 shadow-sm button-styling" id="withdraw">Withdraw<span id="amountToWithdraw"></span></button>
+
+            <div class="dropdown">
+              <button type="button" class="btn btn-light shadow-sm button-styling" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Share
+              </button>
+              <div class="dropdown-menu">
+                <p id="dropdownMenuTitle">Share this page</p>
+                <a target="_blank" class="dropdown-item">Tweet</a>
+                <a class="dropdown-item" href="#">Facebook</a>
+                <a class="dropdown-item" href="#">Email</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="tip">
+            <button type="button" class="btn btn-primary shadow-sm button-styling" id="tipButton">Send Tip</button>
+          </div>
+
         </div>
 
         <div class="profile-bottom-half">
-          <div class="sorting-row">
-            <ul class="nav">
-              <li class="nav-item">
-                <a class="nav-link tab active" href="#">For Sale</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link tab" href="#">Owns</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link tab" href="#">Minted</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link tab" href="#">Liked</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link tab" href="#">Encouraged</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link tab" href="#">Following</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link tab" href="#">Followers</a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="wrapper row">
-            <!--if user owns, buy/view buttons will not be sign, ID will be used to track-->
-            <!--clicking one heart lights them all up, this will be changed once ID is used instead of class-->
-
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-              <div class="card minted-item not-for-sale">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/darkV0119.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text not-for-sale-text">Not for sale<i class="mint-this fas fa-concierge-bell"></i></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item minted but not for sale on marketplace -->
-                    <a href="#"><button class="btn btn-light view-btn">View</button></a>
-                  </div>
-                </div>
-              </div>
+            <div class="sorting-row row">
+              <ul class="nav nav-pills" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link tab" data-toggle="pill" id="forSale">For Sale <span class="count-text" id='forSaleCount'></span></a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link tab active" data-toggle="pill" id="owns">Owns <span class="count-text" id='ownsCount'></span></a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link tab" data-toggle="pill" id="minted">Minted <span class="count-text" id='mintedCount'></span></a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link tab" data-toggle="pill" id="liked">Liked <span class="count-text" id='likedCount'></span></a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link tab" data-toggle="pill" id="encouraged">Encouraged <span class="count-text" id='encouragedCount'></span></a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link tab" data-toggle="pill" id="following">Following <span class="count-text" id='followingCount'></span></a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link tab" data-toggle="pill" id="followers">Followers <span class="count-text" id='followerCount'></span></a>
+                </li>
+              </ul>
             </div>
 
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-              <div class="card minted-item">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/suspendedObject.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text"><span class="price-offered">0.051 ETH</span></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item for sale add this button -->
-                    <a href="#"><button class="btn btn-primary buy-btn">Buy</button></a>
-                  </div>
-                </div>
-              </div>
+          <div class="wrapper cardDivs row">
+            <div id='loader' class="spinner-border mt-5 text-primary" style="width: 3rem; height: 3rem;" role="status">
+              <span class="sr-only">Loading...</span>
             </div>
-
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-              <div class="card minted-item">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/flyingFish.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text"><span class="price-offered">0.051 ETH</span></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item for sale add this button -->
-                    <a href="#"><button class="btn btn-primary buy-btn">Buy</button></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-              <div class="card minted-item not-for-sale" href="#">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/primaryFur.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text not-for-sale-text">Not for sale<i class="mint-this fas fa-concierge-bell"></i></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item minted but not for sale on marketplace -->
-                    <a href="#"><button class="btn btn-light view-btn">View</button></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-              <div class="card minted-item">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/furball_v1.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text"><span class="price-offered">0.051 ETH</span></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item for sale add this button -->
-                    <a href="#"><button class="btn btn-primary buy-btn">Buy</button></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-             <div class="card minted-item">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/lightBox.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text"><span class="price-offered">0.051 ETH</span></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item for sale add this button -->
-                    <a href="#"><button class="btn btn-primary buy-btn">Buy</button></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-              <div class="card minted-item not-for-sale" href="#">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/lightOceanSoup.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text not-for-sale-text">Not for sale<i class="mint-this fas fa-concierge-bell"></i></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item for sale add this button -->
-                    <a href="#"><button class="btn btn-primary buy-btn">Buy</button></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-              <div class="card minted-item">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/purpleFur.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text"><span class="price-offered">0.051 ETH</span></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item minted but not for sale on marketplace -->
-                    <a href="#"><button class="btn btn-light view-btn">View</button></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-              <div class="card minted-item">
-                <div class="top-row">
-                  <div class="creator-photo">
-                    <img class="creator" id="creatorPhoto" src="assets/images-icons/goldBanana.png" width="40" alt="profile photo">
-                    <div class="rank-badge">
-                      <img id="rank" src="assets/images-icons/fiftySales.png" width="15" alt="badge based on how many sales from account">
-                    </div>
-                  </div>
-                  <!--NOT owner AND it's NOT on market these will be the options-->
-                  <div class="dropleft">
-                    <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      ...
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Change price</a>
-                      <a class="dropdown-item" href="#">Transfer token</a>
-                      <a class="dropdown-item" href="#">Remove from sale</a>
-                      <a class="dropdown-item" href="#">Burn token</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>
-                </div>
-                <img src="assets/images-icons/purpleFur.png" class="card-img" alt="...">
-                <div class="card-body">
-                  <p class="card-title">Title of Artwork</p>
-                  <p class="card-text"><span class="price-offered">0.051 ETH</span></p>
-                  <div class="button-row">
-                      <!-- will need to assign IDs to keep track of this -->
-                    <i class="like-button far fa-heart heart"></i>
-                    <span class="like-counter">130</span>
-                  <!-- if item for sale add this button -->
-                    <a href="#"><button class="btn btn-primary buy-btn">Buy</button></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
 
         </div>
 
+        <div id="withdrawModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id='withdrawTitle'>Withdraw Profits</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" id="withdrawModalBody">
+                <p id="withdrawText"></p>
+              </div>
+              <div class="modal-footer" id='withdrawFooter'>
+                 <span id="withdrawStatus"></span>
+                 <button type="button" class="btn btn-secondary button-styling" data-dismiss="modal">Close</button>
+                 <button type="button" class="btn btn-primary button-styling" id='confirmBtn'>Confirm</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tipModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id='tipTitle'>Send Tip</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" id="tipModalBody">
+                <form>
+                  <div class="helper">
+                    <div class="input-group" id="tipInputGroup">
+                      <span class="input-title">Tip Amount</span>
+                      <input id="tipInput" required name="Amount to send" title="Tip cannot have more than 18 digits before or 15 digits after the decimal" type="text" class="form-control input-styling" placeholder="e.g. 1.69" aria-label="ether amount">
+                    </div>
+                    <span class='sub-text'>Enter amount in ETH that you want to send</span><br>
+                  </div>
+                  <div class="price-calculator price-info">
+                    <span>Tipping
+                      <span id="tipAmountInEth" class="sale-profit">0 ETH</span>
+                      <span id="tipAmountInUsd">($0.00)</span>
+                      <span id="tipToAddress"></span>
+                    </span>
+                  </div>
+                  <span class='sub-text' id="tipRegexMessage"></span>
+                </form>
+              </div>
+              <div class="modal-footer" id='tipFooter'>
+                 <span id="tipStatus"></span>
+                 <button type="button" class="btn btn-secondary button-styling" data-dismiss="modal">Close</button>
+                 <button type="button" class="btn btn-primary button-styling" disabled id='confirmTipBtn'>Send Tip</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="ifWalletNotConnectedModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header center-content">
+                <h5 class="modal-title">Connect Wallet To Like/Encourage Artwork</h5>
+              </div>
+              <div class="modal-body center-content">
+                <button type="button" class="btn btn-secondary button-styling mr-2" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary button-styling" id="connectWalletModalBtn">Connect Wallet</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>
-
-
 
     <footer>
       <div class="footer-content">
@@ -511,8 +258,9 @@
       </div>
     </footer>
   </body>
+  <script src="assets/js/js.cookie.js"></script>
+  <script src="assets/js/profile.js"></script>
+  <script src="assets/js/abi.js"></script>
+  <script src="assets/js/connectWallet.js"></script>
   <script src="assets/js/theme.js"></script>
-  <script type="module" src="assets/js/js.cookie.js"></script>
-  <script nomodule defer src="assets/js/js.cookie.js"></script>
-  <script src="assets/js/card.js"></script>
 </html>

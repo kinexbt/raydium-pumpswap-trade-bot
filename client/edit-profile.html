@@ -7,9 +7,8 @@
     <link rel="stylesheet" href="assets/css/fonts.css">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/nav.css">
-    <link rel="stylesheet" href="assets/css/index.css">
-    <link rel="stylesheet" href="assets/css/card.css">
     <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/edit-profile.css">
     <link rel="stylesheet" href="assets/css/basics.css">
     <link rel="icon" type="image/png" href="assets/images-icons/openMintLogo.png">
     <script type="text/javascript" src="assets/js/jquery-3.4.1.js"></script>
@@ -18,7 +17,6 @@
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
     <script src="https://kit.fontawesome.com/99c803f139.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
     <title>OpenMint - Create, buy, and sell digital artwork backed by blockchain technology</title>
   </head>
   <body>
@@ -32,14 +30,14 @@
       </button>
       <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="index.html">Discover <span class="sr-only">(current)</span></a>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Discover</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="learn.html">Learn</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="create" href="create.html">CREATE</a>
+            <a class="nav-link" id="create" href="create.html">CREATE<span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item mr-1" id="connectWalletTag">
             <button type="button" class="btn btn-primary button-styling shadow-sm" id="connectWalletBtn">Connect Wallet</button>
@@ -54,7 +52,7 @@
               <img id="rankInNav" src="" width="12px" alt="seller badge">
             </a>
             <div class="dropdown-menu" aria-labelledby="profile">
-              <a id="myProfile" class='dropdown-item'>My Profile</a>
+              <a id="myProfile" class='dropdown-item' href="">My Profile</a>
               <a class='dropdown-item' href="edit-profile.html">Edit Profile</a>
               <hr>
               <a class="dropdown-item" id="disconnectWalletBtn">Disconnect Wallet</a>
@@ -72,61 +70,86 @@
       </div>
     </nav>
 
-    <div class="container col-11">
-      <div class="modals"></div>
+    <div class="container">
+      <div class="edit-profile">
+        <header>
+          Edit Profile
+        </header>
+        <p class="subheader">Set your custom username, bio, and other personal settings.</p>
 
-      <section class="recently-sold container-fluid">
-      <header class="header">Recently Sold 🎉</header>
-        <div class="scroll-wrapper">
-          <div class="card-row row flex-nowrap recentlySold">
-            <div id='soldCardLoader' class="spinner-border mt-5 text-primary" style="width: 3rem; height: 3rem;" role="status">
-              <span class="sr-only">Loading...</span>
-            </div>
-          </div> <!-- card-row-->
-        </div> <!-- scroll-wrapper -->
-      </section> <!-- recently-sold -->
-
-      <section class="recently-minted container-fluid">
-      <header class="header">Recently Minted 🐣</header>
-
-        <div class="sorting-row">
-          <ul class="nav nav-pills" role="tablist">
-            <li class="nav-item" role="presentation">
-              <a class="nav-link sorting-button active disabled" data-toggle="pill" id="viewAll">All</a>
-            </li>
-            <li class="nav-item" role="presentation">
-              <a class="nav-link sorting-button" data-toggle="pill" id="forSale">For Sale</a>
-            </li>
-            <li class="nav-item" role="presentation">
-              <a class="nav-link sorting-button" data-toggle="pill" id="notForSale">Not For Sale</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="minted-wrapper cardDivs row">
-          <div id='loader' class="spinner-border mt-5 text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-      </section>
-
-      <div id="ifWalletNotConnectedModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header center-content">
-              <h5 class="modal-title">Connect Wallet To Like Artwork</h5>
-            </div>
-            <div class="modal-body center-content">
-              <button type="button" class="btn btn-secondary button-styling mr-2" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary button-styling" id="connectWalletModalBtn">Connect Wallet</button>
+        <div class="modal fade" id="fileSizeModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">File Size Too Large</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body text-danger">
+                File size cannot exceed 3 MB.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary button-styling" data-dismiss="modal">Close</button>
+              </div>
             </div>
           </div>
         </div>
+
+        <form>
+          <div class="form-group">
+            <label for="profilePhoto">Profile Photo</label>
+            <div class="photo-helper">
+              <img src="" class="center-cropped" id="profilePhoto">
+            </div>
+            <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" class="form-control-file" id="profilePhotoInput">
+          </div>
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" maxlength="50" class="form-control" id="username" aria-describedby="usernameHelp">
+            <span class="sub-text pt-1" id="usernameExistsCheck"></span>
+            <span class="username-char-count"><span id='usernameCharsRemaining'>50&nbsp</span>characters remaining</span>
+          </div>
+
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea maxlength="280" class="form-control" id="bio" rows="3"></textarea>
+            <span class="sub-text">Line-breaks preserved
+              <span class="sub-text char-count"><span id='charsRemaining'>280 &nbsp</span> characters remaining</span>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="instagram">Instagram</label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">@</span>
+              </div>
+              <input type="text" class="form-control" maxlength="30" id="instagram" placeholder="Instagram" aria-label="Instagram Username" aria-describedby="basic-addon1">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="twitter">Twitter</label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">@</span>
+              </div>
+              <input type="text" class="form-control" maxlength="15" id="twitter" placeholder="Twitter" aria-label="Twitter Username" aria-describedby="basic-addon1">
+            </div>
+          </div>
+
+          <div class="saveBtn">
+            <span class="mr-3 mt-2" id="saveMessage"></span>
+            <button type="button" class="btn btn-primary button-styling" id="saveProfileInfoBtn">Save</button>
+          </div>
+
+
+        </form>
       </div>
+    </div>
 
-    </div><!-- end of page container -->
-
-    <!-- page will load more items on scroll so footer might not be neccessary -->
     <footer>
       <div class="footer-content">
         <div class="social-media-icons">
@@ -148,9 +171,8 @@
       </div>
     </footer>
   </body>
-  <script src="assets/js/discover.js"></script>
-  <script src="assets/js/connectWallet.js"></script>
-  <script src="assets/js/abi.js"></script>
   <script src="assets/js/theme.js"></script>
   <script src="assets/js/js.cookie.js"></script>
-</html>
+  <script src="assets/js/editProfile.js"></script>
+  <script src="assets/js/connectWallet.js"></script>
+  </html>
