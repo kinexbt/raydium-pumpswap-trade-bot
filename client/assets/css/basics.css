@@ -1,0 +1,15 @@
+html, body{
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body{
+  font-family: 'Rubik', sans-serif;
+  background: white;
+  color: black;
+  margin: 0;
+  padding: 60px 0 0 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+}

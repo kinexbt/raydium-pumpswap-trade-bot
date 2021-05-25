@@ -1,0 +1,60 @@
+.container{
+  display: flex;
+  justify-content: center;
+}
+
+header{
+  margin-top: 50px;
+  font-size: 45px;
+  font-weight: 700;
+}
+
+.subheader{
+  color: #777
+}
+
+form{
+  margin-top: 10px;
+}
+
+label{
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.form-control, .form-control:focus{
+  background-color: transparent;
+}
+
+.photo-helper{
+  margin-bottom: 15px;
+}
+
+.center-cropped{
+  width: 120px;
+  height: 120px;
+  object-fit: scale-down; /* Do not scale the image */
+  object-position: center; /* Center the image within the element */
+}
+
+#profilePhoto{
+  border-radius: 60px;
+  width: 120px;
+}
+
+.sub-text{
+  color: #888;
+  font-size: .8rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.username-char-count{
+  color: #888;
+  font-size: .8rem;
+}
+
+.saveBtn{
+  display: flex;
+  justify-content: flex-end;
+}

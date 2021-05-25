@@ -6,23 +6,64 @@
 
 .nav-item{
   line-height: 30px;
+  font-weight: 600;
+}
+
+#open{
+  font-weight: 600;
 }
 
 #mint{
-  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  background: -webkit-linear-gradient(260deg, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-weight: 600;
 }
 
 #create{
-  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  background: -webkit-linear-gradient(260deg, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-right: 10px;
+}
+
+#profile{
+  padding-left: 10px;
+  border-radius: 40px;
+  font-weight: 600;
+  background: #e3e6ea;
+}
+
+#profilePhotoInNav{
+  border-radius: 30px;
+  margin-left: 5px;
+  width: 30px;
+  height: 30px;
+  object-fit: scale-down; /* Do not scale the image */
+  object-position: center; /* Center the image within the element */
+}
+
+#rankInNav{
+  display: inline-flex;
+  position: relative;
+  right: 15px;
+  top: 11px;
+}
+
+.dropdown-menu{
+  cursor: pointer;
+}
+
+.dropdown-item{
+  font-weight: 500;
 }
 
  @media (max-width: 992px) { /*keeps gradient behind text on collapse*/
   #create{
     width: 75px;
+  }
+  #profile{
+    width: 190px;
   }
 }
 
@@ -36,4 +77,10 @@
 
 .theme{
   border-radius: 40px;
+}
+
+.button-styling{
+  border-radius: 25px;
+  padding: 10px 15px;
+  font-weight: 700;
 }

@@ -1,19 +1,3 @@
-html{
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-body{
-  font-family: 'Rubik', sans-serif;
-  background: white;
-  color: black;
-  margin: 0;
-  padding: 60px 0 0 0;
-  font-size: 1rem;
-  line-height: 1.4;
-  font-weight: 500;
-}
-
 .container{
   display: flex;
   justify-content: center;
@@ -21,7 +5,8 @@ body{
 
 header{
   margin-top: 50px;
-  font-size: 40px;
+  font-size: 45px;
+  font-weight: 700;
 }
 
 .upload-form{
@@ -44,6 +29,11 @@ label{
 .label-info{
   font-weight: 300;
   font-size: .8rem;
+}
+
+.upload-title{
+  font-weight: 700;
+  font-size: 1.4rem;
 }
 
 #uploadImage{
@@ -80,10 +70,6 @@ label{
 }
 
 #closeIcon2{
-  color: #007bff;
-}
-
-#closeIcon3{
   color: #007bff;
 }
 
@@ -128,6 +114,14 @@ audio{
   transform: scale(.95);
 }
 
+.form-control{
+  color: black;
+}
+
+.helper{
+  margin-top: 10px;
+}
+
 .switch{
   text-align: right;
   position: relative;
@@ -137,18 +131,25 @@ audio{
 .switch-title{
   position: absolute;
   left: 0;
+  font-weight: 700;
+  font-size: 1.4rem;
 }
 
 .switch-subtitle{
   position: absolute;
   left: 0;
-  top: 20px;
+  top: 25px;
   font-size: .8rem;
   color: #aaa;
 }
 
 #priceInputGroup{
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+#salePriceInput{
+  margin-top: 5px;
 }
 
 .input-styling{
@@ -160,6 +161,7 @@ audio{
  -webkit-box-shadow: none;
   box-shadow: none;
   background: transparent;
+  font-weight: 500;
 }
 
 .input-styling:focus{
@@ -169,13 +171,43 @@ audio{
   background: transparent;
 }
 
+.input-styling:disabled {
+  background: transparent;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  font-size: .9rem;
+  font-weight: 500;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  font-size: .9rem;
+  font-weight: 500;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  font-size: .9rem;
+  font-weight: 500;
+}
+:-moz-placeholder { /* Firefox 18- */
+  font-size: .9rem;
+  font-weight: 500;
+}
+
+.input-group>.form-control{
+  width: 100%!important;
+}
+
 .price-info{
   font-size: .8rem;
   color: #aaa;
 }
 
+.sub-text{
+  font-size: .8rem;
+  color: #aaa;
+}
+
 #saleProfit{
-  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  background: -webkit-linear-gradient(260deg, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -184,53 +216,22 @@ audio{
   display: none;
 }
 
-#unlockableContentFile{
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-.unlockable-file-label{
-  background: -webkit-radial-gradient(circle, rgba(242, 222, 0,1) 0%, rgba(242, 137, 0,1) 80%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;  font-size: .8rem;
-  margin-top: 10px;
-  margin-bottom: 5px;
-}
-
-#clearHighResFile{
-  display: none;
-}
-
 #unlockableContentText{
   margin-top: 5px;
 }
 
 .input-title{
-  position: absolute;
-  left: 0;
-}
-
-#namingInputGroup{
-  padding-top: 30px;
-}
-
-.naming-styling{
-  margin-top: 15px;
-}
-
-#description{
-  margin-top: 20px;
-}
-
-#additionalInfo{
-  margin-top: 20px;
+  font-weight: 700;
+  font-size: 1.4rem;
 }
 
 #royaltyAmount{
   margin-left: 5px;
-  background: -webkit-radial-gradient(circle, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  background: -webkit-linear-gradient(260deg, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 #royalties{
@@ -240,16 +241,30 @@ audio{
 
 .slider-title{
   color: black;
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.4rem;
 }
 
 .create-button{
   display: flex;
   justify-content: flex-end;
-  margin-top: 15px;
+  margin-top: 25px;
 }
 
-#createButton{
+.button-styling{
   border-radius: 25px;
   padding: 10px 15px;
   font-weight: 700;
+}
+
+#successfulText{
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.center-content{
+  display: flex;
+  justify-content: center;
 }

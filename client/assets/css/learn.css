@@ -1,20 +1,3 @@
-html, body{
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-
-body{
-  font-family: 'Rubik', sans-serif;
-  background: white;
-  color: black;
-  margin: 0;
-  padding: 60px 0 0 0;
-  font-size: 1rem;
-  line-height: 1.4;
-  font-weight: 500;
-}
-
 .container{
   display: flex;
   align-items: center;
@@ -39,10 +22,18 @@ li{
   list-style: none;
 }
 
-.question{
-  margin-top: 10px;
+.card-body{
+  line-height: 2.2;
+  font-weight: 500;
 }
 
-.answer{
-  font-weight: 300;
+.btn-link{
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+#createInQ2{
+  background: -webkit-linear-gradient(260deg, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
