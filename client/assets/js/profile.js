@@ -1,24 +1,105 @@
 Moralis.initialize(""); // Application id from moralis.io
 Moralis.serverURL = ''; //Server url from moralis.io
-const user = Moralis.User.current();
-console.log(user);
+
 const BASE_URL = "https://api.coingecko.com/api/v3";
 const ETH_USD_PRICE_URL = "/simple/price?ids=ethereum&vs_currencies=usd";
 const openMintTokenAddress = "";
 const openMintMarketplaceAddress = "";
+const paymentGatewayAddress = "";
 let openMintTokenInstance;
 let openMintMarketplaceInstance;
+let paymentGatewayInstance;
 let web3;
-let ethPrice;
+const user = Moralis.User.current();
+const url_string = (window.location.href).toLowerCase();
+let url = new URL(url_string);
+let address = url.searchParams.get('address');
 
 $(document).ready(async function(){
   web3 = await Moralis.Web3.enable();
   openMintTokenInstance = new web3.eth.Contract(abi.OpenMintToken, openMintTokenAddress);
   openMintMarketplaceInstance = new web3.eth.Contract(abi.OpenMintMarketplace, openMintMarketplaceAddress);
+  paymentGatewayInstance = new web3.eth.Contract(abi.PaymentGateway, paymentGatewayAddress);
   ethPrice = await getEthPrice();
-  recentlySold();
-  viewAll();
+  getActiveOwnedArt();
+  getInactiveOwnedArt();
+  getProfileDetails();
+  followBtn();
+  sendTip();
+  getMyBalance();
+  withdrawBtn();
+  getForSaleCount();
+  getOwnsCount();
+  getMintedCount();
+  getLikedCount();
+  getEncouragedCount();
+  getFollowingCount();
+  getFollowerCount();
 });
+
+async function getForSaleCount(){
+  let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+  let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
+  const count = ifOfferDetailsDuplicatesRemoved.filter(item => item.owner.toLowerCase() == address.toLowerCase() && !item.isSold && item.active).length;
+  $('#forSaleCount').html(count);
+  return count;
+};
+
+async function getOwnsCount(){
+  let artwork = await Moralis.Cloud.run('getArtwork');
+  const count = artwork.filter(item => item.currentOwner.toLowerCase() == address.toLowerCase()).length;
+  $('#ownsCount').html(count);
+  if(count == 0){
+    $('.cardDivs').html(`<div class="list-group"><span class="sub-text mt-5">No artwork currently owned</span></div>`);
+  }
+  return count;
+};
+
+async function getMintedCount(){
+  let artwork = await Moralis.Cloud.run('getArtwork');
+  const count = artwork.filter(item => item.creator.toLowerCase() == address.toLowerCase()).length;
+  $('#mintedCount').html(count);
+  return count;
+
+};
+
+async function getLikedCount(){
+  let artwork = await Moralis.Cloud.run('getArtwork');
+  const count = artwork.filter(item => item.likers && item.likers.includes(address)).length;
+  $('#likedCount').html(count);
+  return count;
+
+};
+
+async function getEncouragedCount(){
+  let artwork = await Moralis.Cloud.run('getArtwork');
+  const count = artwork.filter(item => item.encouragers && item.encouragers.includes(address)).length;
+  $('#encouragedCount').html(count);
+  return count;
+
+};
+
+async function getFollowingCount(){
+  const params = {ethAddress: address}
+  let following = await Moralis.Cloud.run('getFollowing', params);
+  if(following == undefined){
+    $('#followingCount').html(0);
+  } else{
+    let followingCount = following.length;
+    $('#followingCount').html(followingCount);
+  }
+};
+
+async function getFollowerCount(){
+  const params = {ethAddress: address}
+  let followers = await Moralis.Cloud.run('getFollowers', params);
+  if(followers == undefined){
+    $('#followerCount').html(0);
+  } else{
+    let followerCount = followers.length;
+    $('#followerCount').html(followerCount);
+  }
+};
 
 //button in connect modal
 $('#connectWalletModalBtn').click(async () =>{
@@ -48,9 +129,302 @@ async function getEthPrice(){
   const response = await fetch(ethPrice);
   const data = await response.json();
   let usdEthPrice = data.ethereum.usd;
-  console.log(usdEthPrice)
   return Number(usdEthPrice);
 };
+
+function displayProfilePhotoAndBadge(profilePhoto, amountSold){
+  if(profilePhoto){
+    addSellerBadgeProfile(amountSold);
+  $('#profilePhoto').attr('src', profilePhoto._url);
+    dismissLoadingPulseOnProfilePhoto(profilePhoto._url);
+    console.log('user inputted new profile photo')
+  } else {
+    addSellerBadgeProfile(amountSold);
+    $('#profilePhoto').attr('src', './assets/images-icons/default.png');
+    let profilePhoto = './assets/images-icons/default.png';
+    dismissLoadingPulseOnProfilePhoto(profilePhoto);
+    console.log('default photo')
+  }
+};
+
+function dismissLoadingPulseOnProfilePhoto(profilePhoto){
+  let img = new Image;
+  img.src = profilePhoto;
+  img.onload = function(){
+    $('#profilePhoto').css('display', 'inline');
+    $('#sellerRank').css('display', 'inline');
+    $('#spinnerGrowProfilePhoto').css('display', 'none');
+    console.log('profilePhoto succesfully loaded!')
+  };
+  img.onerror = function(){
+    console.log('No network connection or profilephoto is not available.')
+  };
+};
+
+function addSellerBadgeProfile(amountSold){
+  if (amountSold == undefined){
+    $('#sellerRank').attr('src', './assets/images-icons/noSales.png');
+  } else if(amountSold >= 1 && amountSold <= 4){
+    $('#sellerRank').attr('src', './assets/images-icons/oneSale.png');
+  } else if(amountSold >= 5 && amountSold <= 9){
+    $('#sellerRank').attr('src', './assets/images-icons/fiveSales.png');
+  } else if(amountSold >= 10 && amountSold <= 19){
+    $('#sellerRank').attr('src', './assets/images-icons/tenSales.png');
+  } else if(amountSold >= 20 && amountSold <= 34){
+    $('#sellerRank').attr('src', './assets/images-icons/twentySales.png');
+  } else if(amountSold >= 35 && amountSold <= 49){
+    $('#sellerRank').attr('src', './assets/images-icons/thirtyfiveSales.png');
+  } else if(amountSold >= 50 && amountSold <= 74){
+    $('#sellerRank').attr('src', './assets/images-icons/fiftySales.png');
+  } else if(amountSold >= 75 && amountSold <= 99){
+    $('#sellerRank').attr('src', './assets/images-icons/seventyfiveSales.png');
+  } else if(amountSold >= 100){
+    $('#sellerRank').attr('src', './assets/images-icons/hundredPlusSales.png');
+  }
+};
+
+function displayUsername(username){
+  $('#username').html(username);
+};
+
+function displayEthAddress(ethAddress){
+  let abbreivatedAddress = truncateString(ethAddress);
+  $('#truncatedEthAddress').html(abbreivatedAddress);
+
+  $('#copySpan').html(`<button class="btn" type="button" id="copyAddressBtn" data-clipboard-text="`+ethAddress+`">
+                          <img class='icon' src="./assets/images-icons/clipboard.png">
+                        </button>`)
+  clipboardButton();
+};
+
+function truncateString(str) {
+  let lastChar = str.length;
+  return str.slice(0, 9) + '...' + str.slice((lastChar - 5), lastChar);
+};
+
+function clipboardButton(){
+  let clipboard = new ClipboardJS('#copyAddressBtn');
+
+  clipboard.on('success', function (e) {
+      $('#copyAddressBtn').html('✅');
+      setTimeout("backToClipboardIcon()", 1500);
+      console.log(e);
+    });
+
+    clipboard.on('error', function (e) {
+      console.log(e);
+    });
+};
+
+function backToClipboardIcon(){
+  $('#copyAddressBtn').html(`<img class='icon' src="./assets/images-icons/clipboard.png">`);
+};
+
+function displayBio(bio){
+  if(bio){
+    $('#bio').html(bio);
+  } else{
+    $('#bio').css('display', 'none');
+  }
+};
+
+function displayTwitter(twitter){
+  if(twitter){
+    $('.social-media-tags').css('display', 'block');
+    $('#twitter').css('display', 'inline');
+    $('#twitter').attr('href', 'https://twitter.com/'+twitter);
+    $('#twitterHandle').html(twitter);
+  } else {
+    $('#twitter').css('display', 'none');
+  }
+};
+
+function displayInstagram(instagram){
+  if(instagram){
+    $('.social-media-tags').css('display', 'block');
+    $('#instagram').css('display', 'inline');
+    $('#instagram').attr('href', 'https://www.instagram.com/' +instagram);
+    $('#instagramHandle').html(instagram);
+  } else {
+    $('#instagram').css('display', 'none');
+  }
+};
+
+function followBtn(){
+  if(user && user.attributes.ethAddress !== address){
+    $('#followButton').css('display', 'block');
+    doesUserFollow();
+  } else {
+    $('#followButton').css('display', 'none');
+  }
+};
+
+async function doesUserFollow(){
+  const params = {ethAddress: address};
+  let doesFollow = await Moralis.Cloud.run('doesUserFollow', params);
+  console.log(doesFollow);
+  if(doesFollow){
+    $('#followButton').html("Unfollow");
+  } else{
+    $('#followButton').html("Follow");
+  }
+};
+
+$("#followButton").click(async() =>{
+  const params = {
+    followThisAddress: address
+    };
+  let follow = await Moralis.Cloud.run('follow', params);
+  let followers = await Moralis.Cloud.run('followers', params);
+  doesUserFollow();
+  console.log(follow);
+  console.log(followers);
+});
+
+function sendTip(){
+  $('#tipButton').click(()=>{
+    if(!user){
+      $('#tipModalBody').html("Please connect wallet to send tip");
+      $('#confirmTipBtn').css('display', 'none');
+      $('#tipModal').modal('show');
+    } else if(user.attributes.ethAddress.toLowerCase() == address.toLowerCase()){
+      $('#tipModalBody').html("Cannot send a tip to yourself");
+      $('#confirmTipBtn').css('display', 'none');
+      $('#tipModal').modal('show');
+    } else if(user.attributes.ethAddress.toLowerCase() !== address.toLowerCase()){
+      $('#tipModal').modal('show');
+      $('#tipToAddress').html(`to: ${address}`);
+    }
+  });
+};
+
+$('#tipInput').keyup(async() =>{
+  let reg = /^\d{0,18}(\.\d{1,15})?$/;
+  let tip = $('#tipInput').val();
+  tip = tip.replace(/^0+/, '').replace(/\.?0+$/, '');
+  let tipInUsd = tip * ethPrice;
+
+  $('#tipAmountInEth').html(`${tip} ETH`);
+  $('#tipAmountInUsd').html(`($${tipInUsd})`);
+
+  if(tip !== '' && reg.test(tip)){
+    $('#confirmTipBtn').prop('disabled', false);
+    $('#tipRegexMessage').removeClass('text-danger');
+    $('#tipRegexMessage').addClass('text-success');
+    $('#tipRegexMessage').html('Valid tip');
+  } else{
+    $('#confirmTipBtn').prop('disabled', true);
+    $('#tipRegexMessage').removeClass('text-success');
+    $('#tipRegexMessage').addClass('text-danger');
+    $('#tipRegexMessage').html('Invalid tip format');
+  }
+});
+
+
+$('#tipModal').on('hidden.bs.modal', function (e) {
+  $('#tipInput').val('');
+  $('#tipRegexMessage').html('');
+  $('#tipAmountInEth').html('0 ETH');
+  $('#tipAmountInUsd').html('$(0.00)');
+
+  $('#confirmTipBtn').prop('disabled', true);
+
+  $('#tipStatus').html('');
+});
+
+$('#confirmTipBtn').click(()=>{
+  let toAddress = address;
+  let price = $('#tipInput').val();
+  price = price.replace(/^0+|\.?0+$/, '');
+  let tipInWei = web3.utils.toWei(price, 'ether');
+
+  $('#tipStatus').html('');
+  sendTipToContract(toAddress, tipInWei);
+});
+
+async function sendTipToContract(toAddress, tipInWei){
+  $('#confirmTipBtn').prop('disabled', true);
+  $('#confirmTipBtn').html(`Sending <div class="spinner-border spinner-border-sm text-light" role="status">
+                                      <span class="sr-only">Loading...</span>
+                                    </div>`)
+  try {
+    await paymentGatewayInstance.methods.sendPayment(toAddress).send({from: ethereum.selectedAddress, value: tipInWei});
+    $('#tipStatus').removeClass('text-danger');
+    $('#tipStatus').addClass('text-success');
+    $('#tipStatus').html('Succesfully sent tip');
+    $('#confirmTipBtn').html('Send Tip');
+    $('#confirmTipBtn').prop('disabled', true);
+  } catch (err){
+    alert(err.message);
+    $('#confirmTipBtn').prop('disabled', false);
+    $('#tipStatus').removeClass('text-success');
+    $('#tipStatus').addClass('text-danger');
+    $('#tipStatus').html('Something went wrong');
+    $('#confirmTipBtn').html('Send Tip');
+  }
+};
+
+async function getMyBalance(){
+  let myBalance = await paymentGatewayInstance.methods.balance().call({from: ethereum.selectedAddress});
+  let priceInEth = web3.utils.fromWei(myBalance, 'ether');
+  return priceInEth;
+};
+
+async function withdrawBtn(){
+  if(!user || user.attributes.ethAddress.toLowerCase() !== address.toLowerCase()){
+    $('#withdraw').css('display', 'none');
+  } else{
+    let profit = await getMyBalance();
+    if(profit > 0){
+      $('#withdraw').css('display', 'block');
+      $('#amountToWithdraw').html(` ${profit} ETH`);
+    } else{
+      $('#withdraw').prop('disabled', true);
+    }
+  }
+};
+
+$("#withdraw").click(async function(){
+  $('#withdrawModal').modal('show');
+  let profit = await getMyBalance();
+  $('#withdrawText').html(`Confirm to withdraw your profits of <span class="sale-profit">${profit} ETH</span>`);
+});
+
+$('#confirmBtn').click(async ()=>{
+  let profit = await getMyBalance();
+  if(user.attributes.ethAddress.toLowerCase() == address.toLowerCase() && profit > 0){
+    $('#withdrawStatus').html('');
+    withdrawProfits();
+  }
+});
+
+async function withdrawProfits(){
+  $('#confirmBtn').prop('disabled', true);
+  $('#confirmBtn').html(`Confirming <div class="spinner-border spinner-border-sm text-light" role="status">
+                                      <span class="sr-only">Loading...</span>
+                                    </div>`)
+  try {
+    await paymentGatewayInstance.methods.withdraw().send({from: ethereum.selectedAddress});
+    $('#withdrawStatus').removeClass('text-danger');
+    $('#withdrawStatus').addClass('text-success');
+    $('#withdrawStatus').html('Succesfully withdrawn');
+    $('#confirmBtn').html('Confirm');
+    $('#withdrawText').html(`Confirm to withdraw your profits of <span class="sale-profit">0 ETH</span>`);
+    $('#withdraw').html('Withdraw');
+    $('#withdraw').prop('disabled', true);
+  } catch (err){
+    alert(err.message);
+    $('#confirmBtn').prop('disabled', false);
+    $('#withdrawStatus').removeClass('text-success');
+    $('#withdrawStatus').addClass('text-danger');
+    $('#withdrawStatus').html('Something went wrong withdrawing');
+    $('#confirmBtn').html('Confirm');
+  }
+};
+
+$('#withdrawModal').on('hidden.bs.modal', function (e) {
+  $('#withdrawStatus').html('');
+});
 
 function loader(){
   $('.cardDivs').html(`<div id='loader' class="spinner-border mt-5 text-primary" style="width: 3rem; height: 3rem;" role="status">
@@ -58,51 +432,219 @@ function loader(){
                       </div>`);
 };
 
-$('#forSale').click(()=>{
-  $('#forSale').addClass('disabled');
-  $('#forSale').addClass('active');
-
-  $('#notForSale').removeClass('disabled');
-  $('#viewAll').removeClass('disabled');
-  $('#notForSale').removeClass('active');
-  $('#viewAll').removeClass('active');
-
+$('#forSale').click(async()=>{
   $('.cardDivs').empty();
   loader();
-  recentlyPutForSale();
+  let count = await getForSaleCount();
+  if(count == 0){
+    $('.cardDivs').html(`<div class="list-group"><span class="sub-text mt-5">No artwork for sale currently</span></div>`);
+  } else {
+    getActiveOwnedArt();
+  }
 });
 
-$('#notForSale').click(()=>{
-  $('#notForSale').addClass('disabled');
-  $('#notForSale').addClass('active');
-
-  $('#forSale').removeClass('disabled');
-  $('#viewAll').removeClass('disabled');
-  $('#forSale').removeClass('active');
-  $('#viewAll').removeClass('active');
-
+$('#owns').click(async()=>{
   $('.cardDivs').empty();
   loader();
-  recentlyMintedAndNotOnSale();
+  let count = await getOwnsCount();
+  if(count == 0){
+    $('.cardDivs').html(`<div class="list-group"><span class="sub-text mt-5">No artwork currently owned</span></div>`);
+  } else {
+    getActiveOwnedArt();
+    getInactiveOwnedArt();
+  }
 });
 
-$('#viewAll').click(()=>{
-  $('#viewAll').addClass('disabled');
-  $('#viewAll').addClass('active');
-
-  $('#notForSale').removeClass('disabled');
-  $('#forSale').removeClass('disabled');
-  $('#notForSale').removeClass('active');
-  $('#forSale').removeClass('active');
-
+$('#minted').click(async ()=>{
   $('.cardDivs').empty();
   loader();
-  viewAll();
+  let count = await getMintedCount();
+  if(count == 0){
+    $('.cardDivs').html(`<div class="list-group"><span class="sub-text mt-5">No artwork minted yet</span></div>`);
+  } else {
+    getInactiveMintedArt();
+    getActiveMintedArt();
+  }
 });
 
-function viewAll(){
-  recentlyMintedAndNotOnSale();
-  recentlyPutForSale();
+$('#liked').click(async ()=>{
+  $('.cardDivs').empty();
+  loader();
+  let count = await getLikedCount();
+  if(count == 0){
+    $('.cardDivs').html(`<div class="list-group"><span class="sub-text mt-5">No artwork liked yet</span></div>`);
+  } else {
+    getActiveLikedArt();
+    getInactiveLikedArt();
+  }
+});
+
+$('#encouraged').click(async ()=>{
+  $('.cardDivs').empty();
+  loader();
+  let count = await getEncouragedCount();
+  if(count == 0){
+    $('.cardDivs').html(`<div class="list-group"><span class="sub-text mt-5">No artwork encouraged currently</span></div>`);
+  } else {
+    getEncouragedArt();
+  }
+});
+
+$('#following').click(()=>{
+  $('.cardDivs').empty();
+  loader();
+  $('.cardDivs').append(`<div class="list-group"></div>`);
+  getFollowing();
+})
+
+$('#followers').click(()=>{
+  $('.cardDivs').empty();
+  loader();
+  $('.cardDivs').append(`<div class="list-group"></div>`);
+  getFollowers();
+});
+
+async function getFollowers(){
+  const params = {ethAddress: address};
+  let followers = await Moralis.Cloud.run('getFollowers', params);
+  console.log(followers);
+  if(followers == undefined || followers.length == 0){
+    $('#loader').css('display', 'none');
+    $('.list-group').html(`<span class="sub-text mt-5">No followers currently</span>`);
+  } else {
+    for (i = 0; i < followers.length; i++) {
+      let follower = followers[i];
+      const params = {ethAddress: follower};
+      let userInfo = await Moralis.Cloud.run('getUser', params);
+      let username = userInfo.username;
+      let ethAddress = userInfo.ethAddress;
+      let userProfilePhoto;
+      if(userInfo.profilePhoto){
+        userProfilePhoto = userInfo.profilePhoto._url;
+      } else {
+        userProfilePhoto = './assets/images-icons/default.png';
+      }
+      let amountOfFollowers = userInfo.amountOfFollowers;
+      let amountSold = userInfo.amountSold;
+
+      $('#loader').css('display', 'none');
+      userCard(ethAddress);
+      $('#userPhoto' + ethAddress).attr('src', userProfilePhoto);
+      $('#userPhoto' + ethAddress).css('display', 'none');
+      $('#userRank' + ethAddress).css('display', 'none');
+      addSellerBadgeUserCard(amountSold, ethAddress);
+      dismissLoadingPulseUserCard(ethAddress, userProfilePhoto);
+      $('#username' + ethAddress).html(username);
+      $('#amountOfFollowers' + ethAddress).html(amountOfFollowers);
+      dynamicFollowButton(ethAddress);
+      doesUserFollowInCard(ethAddress);
+      followButtonInCard(ethAddress);
+    };
+  }
+};
+
+async function getFollowing(){
+  const params = {ethAddress: address};
+  let following = await Moralis.Cloud.run('getFollowing', params);
+  console.log(following);
+  if(following == undefined || following.length == 0){
+    $('#loader').css('display', 'none');
+    $('.list-group').html(`<span class="sub-text mt-5">Not following anyone currently</span>`);
+  }else{
+    for (i = 0; i < following.length; i++) {
+      let followingUser = following[i];
+      const params = {ethAddress: followingUser};
+      let userInfo = await Moralis.Cloud.run('getUser', params);
+
+      let username = userInfo.username;
+      let ethAddress = userInfo.ethAddress;
+      let userProfilePhoto;
+      if(userInfo.profilePhoto){
+        userProfilePhoto = userInfo.profilePhoto._url;
+      } else {
+        userProfilePhoto = './assets/images-icons/default.png';
+      }
+      let amountOfFollowers = userInfo.amountOfFollowers;
+      let amountSold = userInfo.amountSold;
+
+      $('#loader').css('display', 'none');
+      userCard(ethAddress);
+      $('#userPhoto' + ethAddress).attr('src', userProfilePhoto);
+      $('#userPhoto' + ethAddress).css('display', 'none');
+      $('#userRank' + ethAddress).css('display', 'none');
+      addSellerBadgeUserCard(amountSold, ethAddress);
+      dismissLoadingPulseUserCard(ethAddress, userProfilePhoto);
+      $('#username' + ethAddress).html(username);
+      $('#amountOfFollowers' + ethAddress).html(amountOfFollowers);
+      dynamicFollowButton(ethAddress);
+      doesUserFollowInCard(ethAddress);
+      followButtonInCard(ethAddress);
+    };
+  }
+};
+
+async function doesUserFollowInCard(ethAddress){
+  if(user){
+    const params = {ethAddress: ethAddress};
+    let doesFollow = await Moralis.Cloud.run('doesUserFollow', params);
+    if(doesFollow){
+      $('#followButton' + ethAddress).html("Unfollow");
+    } else{
+      $('#followButton' + ethAddress).html("Follow");
+    }
+  }
+};
+
+function followButtonInCard(ethAddress){
+  $("#followButton" + ethAddress).click(async() =>{
+    const params = {
+      followThisAddress: ethAddress
+      };
+    let follow = await Moralis.Cloud.run('follow', params);
+    let followers = await Moralis.Cloud.run('followers', params);
+    doesUserFollowInCard(ethAddress);
+  });
+};
+
+async function dynamicFollowButton(ethAddress){
+  if(user && user.attributes.ethAddress !== ethAddress){
+    $('#followUser' + ethAddress).html(`<button type="button" class="btn btn-light shadow-sm button-styling" id="followButton${ethAddress}">Follow</button>`)
+  }
+};
+
+function dismissLoadingPulseUserCard(ethAddress, userProfilePhoto){
+  let img = new Image;
+  img.src = userProfilePhoto;
+  img.onload = function(){
+    $('#userPhoto' + ethAddress).css('display', 'inline');
+    $('#userRank' + ethAddress).css('display', 'block');
+    $('#userSpinner' + ethAddress).css('display', 'none');
+  };
+  img.onerror = function(){
+    alert('No network connection or pp is not available.')
+  };
+};
+
+function addSellerBadgeUserCard(amountSold, ethAddress){
+  if (amountSold == undefined){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/noSales.png');
+  } else if(amountSold >= 1 && amountSold <= 4){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/oneSale.png');
+  } else if(amountSold >= 5 && amountSold <= 9){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/fiveSales.png');
+  } else if(amountSold >= 10 && amountSold <= 19){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/tenSales.png');
+  } else if(amountSold >= 20 && amountSold <= 34){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/twentySales.png');
+  } else if(amountSold >= 35 && amountSold <= 49){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/thirtyfiveSales.png');
+  } else if(amountSold >= 50 && amountSold <= 74){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/fiftySales.png');
+  } else if(amountSold >= 75 && amountSold <= 99){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/seventyfiveSales.png');
+  } else if(amountSold >= 100){
+    $('#userRank' + ethAddress).attr('src', './assets/images-icons/hundredPlusSales.png');
+  }
 };
 
 function removeDuplicates(data, key){
@@ -113,217 +655,14 @@ function removeDuplicates(data, key){
   ]
 };
 
-async function recentlySold(){
-  try {
-    let soldDetails = await Moralis.Cloud.run("getSoldDetails");
-    let soldDetailsDuplicatesRemoved = removeDuplicates(soldDetails, it => it.tokenId);
-    if(soldDetails.length > 0){
-      $(".recently-sold").css('display', 'block');
-    }
-    let restrictedToRecentEightSalesArray = soldDetailsDuplicatesRemoved.slice(Math.max(soldDetailsDuplicatesRemoved.length - 8, 0));
-
-    for (i = 0; i < restrictedToRecentEightSalesArray.length; i++) {
-      let cover = restrictedToRecentEightSalesArray[i].cover._url;
-      let name = restrictedToRecentEightSalesArray[i].name;
-      let fileType = restrictedToRecentEightSalesArray[i].fileType;
-      let likes = restrictedToRecentEightSalesArray[i].likes;
-      let active = restrictedToRecentEightSalesArray[i].active;
-      let tokenAddress = restrictedToRecentEightSalesArray[i].tokenAddress;
-      let id = restrictedToRecentEightSalesArray[i].tokenId;
-      let owner = restrictedToRecentEightSalesArray[i].owner;
-      let price = restrictedToRecentEightSalesArray[i].price;
-      let unlockableContent = restrictedToRecentEightSalesArray[i].unlockableContent;
-
-      $('#soldCardLoader').css('display', 'none');
-      soldCardDiv(tokenAddress, id, owner);
-      getSoldCardOwnerPhoto(tokenAddress, id, owner);
-      soldCardFileIcon(tokenAddress, id, fileType);
-      soldCardLikeButton(tokenAddress, id, likes);
-      soldCardShowHeartsFilled(tokenAddress, id);
-      recentlySoldQuickAction(tokenAddress, id, owner);
-
-      if(unlockableContent){
-        $('#soldCard'  + tokenAddress + id).addClass('unlockable-content-shadow');
-      }
-
-      let priceInEth = web3.utils.fromWei(price, 'ether');
-
-      $('#soldCardCover' + tokenAddress + id).attr('src', cover);
-      $('#soldCardCover' + tokenAddress + id).css('display', 'none');
-      dismissLoadingPulseOnSoldCover(tokenAddress, id, cover);
-
-      if(name.length > 35){
-        let truncatedName = name.slice(0, 35) + '...';
-        $('#soldCardName' + tokenAddress + id).html(truncatedName);
-      } else{
-        $('#soldCardName' + tokenAddress + id).html(name);
-      }
-
-      $('#soldCardNotForSale' + tokenAddress + id).html(`Sold For: <br><span class="for-sale-text">${priceInEth} ETH</span>`);
-      $('#soldCardButton' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-light view-btn">View</button></a>`);
-
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-function dismissLoadingPulseOnSoldCover(tokenAddress, id, cover){
-  let img = new Image;
-  img.src = cover;
-  img.onload = function(){
-    $('#soldCardCover' + tokenAddress + id).css('display', 'block');
-    $('#soldCardSpinnerGrow' + tokenAddress + id).css('display', 'none');
-  };
-  img.onerror = function(){
-    alert('No network connection or NFT is not available.')
-  };
-};
-
-async function getSoldCardOwnerPhoto(tokenAddress, id, owner){
-  $('#soldCardOwnerPhoto' + tokenAddress + id).css('display', 'none');
-  $('#soldCardOwnerRank' + tokenAddress + id).css('display', 'none');
-  try{
-    let users = await Moralis.Cloud.run('getAllUsers');
-    for (i = 0; i < users.length; i++) {
-      let profilePhoto = users[i].profilePhoto;
-      let username = users[i].username;
-      let ethAddress = users[i].ethAddress;
-      let amountSold = users[i].amountSold;
-
-      if(ethAddress == owner && profilePhoto){
-        addSoldCardSellerBadge(tokenAddress, id, amountSold);
-        $('#soldCardOwnerPhoto' + tokenAddress + id).attr('src', profilePhoto._url);
-        dismissLoadingPulseOnSoldCardOwnerPhoto(tokenAddress, id, profilePhoto._url)
-      } else if (ethAddress == owner && !profilePhoto){
-        addSoldCardSellerBadge(tokenAddress, id, amountSold);
-        $('#soldCardOwnerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/default.png');
-        let defaultProfilePhoto = "./assets/images-icons/default.png"
-        dismissLoadingPulseOnSoldCardOwnerPhoto(tokenAddress, id, defaultProfilePhoto)
-      }
-    }
-  } catch(err){
-    console.log(err);
-  }
-};
-
-function addSoldCardSellerBadge(tokenAddress, id, amountSold){
-  if (amountSold == undefined){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/noSales.png');
-  } else if(amountSold >= 1 && amountSold <= 4){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/oneSale.png');
-  } else if(amountSold >= 5 && amountSold <= 9){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/fiveSales.png');
-  } else if(amountSold >= 10 && amountSold <= 19){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/tenSales.png');
-  } else if(amountSold >= 20 && amountSold <= 34){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/twentySales.png');
-  } else if(amountSold >= 35 && amountSold <= 49){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/thirtyfiveSales.png');
-  } else if(amountSold >= 50 && amountSold <= 74){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/fiftySales.png');
-  } else if(amountSold >= 75 && amountSold <= 99){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/seventyfiveSales.png');
-  } else if(amountSold >= 100){
-    $('#soldCardOwnerRank' + tokenAddress + id).attr('src', './assets/images-icons/hundredPlusSales.png');
-  }
-};
-
-function dismissLoadingPulseOnSoldCardOwnerPhoto(tokenAddress, id, profilePhoto){
-  let img = new Image;
-  img.src = profilePhoto;
-  img.onload = function(){
-    $('#soldCardOwnerPhoto' + tokenAddress + id).css('display', 'inline');
-    $('#soldCardOwnerRank' + tokenAddress + id).css('display', 'block');
-    $('#soldcardSpinner' + tokenAddress + id).css('display', 'none');
-  };
-  img.onerror = function(){
-    console.log('No network connection or profilephoto is not available.')
-  };
-};
-
-async function soldCardShowHeartsFilled(tokenAddress, id){
-  if(user){
-    const params = {
-      tokenAddress: tokenAddress,
-      tokenId: id
-      };
-    let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
-    if(likeQuery){
-      $('#soldCardLike' + tokenAddress + id).removeClass('far');
-      $('#soldCardLike' + tokenAddress + id).addClass('fas');
-    } else{
-      $('#soldCardLike' + tokenAddress + id).removeClass('fas');
-      $('#soldCardLike' + tokenAddress + id).addClass('far');
-    }
-  }
-};
-
-function soldCardLikeButton(tokenAddress, id, likes){
-  if(likes > 0){
-    $('#soldCardLikeCounter' + tokenAddress + id).html(likes);
-  }
-  $('#soldCardLike' + tokenAddress + id).click(async ()=>{
-    if(user){
-      const params = {
-        tokenAddress: tokenAddress,
-        tokenId: id
-        };
-      let like = await Moralis.Cloud.run('like', params);
-      console.log(like);
-      if(like == 0){
-        $('#likeCounter' + tokenAddress + id).css('display', 'none');
-        $('#soldCardLikeCounter' + tokenAddress + id).css('display', 'none');
-      }else{
-        $('#likeCounter' + tokenAddress + id).css('display', 'inline');
-        $('#likeCounter' + tokenAddress + id).html(like);
-        $('#soldCardLikeCounter' + tokenAddress + id).css('display', 'inline');
-        $('#soldCardLikeCounter' + tokenAddress + id).html(like);
-      }
-      let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
-      if(likeQuery){
-        $('#like' + tokenAddress + id).removeClass('far');
-        $('#like' + tokenAddress + id).addClass('fas');
-        $('#soldCardLike' + tokenAddress + id).removeClass('far');
-        $('#soldCardLike' + tokenAddress + id).addClass('fas');
-      } else{
-        $('#like' + tokenAddress + id).removeClass('fas');
-        $('#like' + tokenAddress + id).addClass('far');
-        $('#soldCardLike' + tokenAddress + id).removeClass('fas');
-        $('#soldCardLike' + tokenAddress + id).addClass('far');
-      }
-    } else{
-      $('#ifWalletNotConnectedModal').modal('show');
-    }
-  });
-};
-
-function soldCardFileIcon(tokenAddress, id, fileType){
-  if(fileType == 'image/png' || fileType == 'image/jpeg' || fileType == 'image/gif' || fileType == 'image/webp'){
-    $('#soldCardFileIcon' + tokenAddress + id).attr('src', '');
-  } else if (fileType == "video/mp4" || fileType == "video/webm") {
-    $('#soldCardFileIcon' + tokenAddress + id).attr('src', 'assets/images-icons/videoIcon.png');
-  } else if (fileType == "audio/mp3" || fileType == "audio/webm" || fileType == "audio/mpeg"){
-    $('#soldCardFileIcon' + tokenAddress + id).attr('src', 'assets/images-icons/audioIcon.png');
-  }
-};
-
-function recentlySoldQuickAction(tokenAddress, id, owner){
-  $('#soldCardQuickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" href="#">Share</a>`);
-};
-
-async function recentlyPutForSale(){
+async function getActiveOwnedArt(){
   try{
     let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
-    let ifOfferDetailsLength = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
-    let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, art => art.tokenId);
-    if(ifOfferDetailsLength == 0){
-      $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork for sale, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
-      //change the tag so when called it doesn't disrupt the rest of the cards
-    }
+    let ifOfferDetailsLength = removeDuplicates(ifOfferDetails, it => it.tokenId).length;
+    let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
 
     for (i = 0; i < ifOfferDetailsLength; i++) {
-      if(ifOfferDetailsDuplicatesRemoved[i].active == true && ifOfferDetailsDuplicatesRemoved[i].isSold == false){
+      if(ifOfferDetailsDuplicatesRemoved[i].owner.toLowerCase() == address.toLowerCase() && ifOfferDetailsDuplicatesRemoved[i].active == true && ifOfferDetailsDuplicatesRemoved[i].isSold == false){
         let cover = ifOfferDetailsDuplicatesRemoved[i].cover._url;
         let name = ifOfferDetailsDuplicatesRemoved[i].name;
         let fileType = ifOfferDetailsDuplicatesRemoved[i].fileType;
@@ -365,24 +704,279 @@ async function recentlyPutForSale(){
   }
 };
 
-async function recentlyMintedAndNotOnSale(){
+async function getInactiveOwnedArt(){
   try{
-    let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
+    let artwork = await Moralis.Cloud.run('getArtwork');
+    for (i = 0; i < artwork.length; i++) {
+      if(artwork[i].currentOwner.toLowerCase() == address.toLowerCase() && artwork[i].active == false){
+        let cover = artwork[i].cover._url;
+        let tokenAddress = artwork[i].tokenAddress;
+        let id = artwork[i].tokenId;
+        let name = artwork[i].name;
+        let fileType = artwork[i].fileType;
+        let active = artwork[i].active;
+        let owner = artwork[i].currentOwner;
+        let creator = artwork[i].creator;
+        let royalty = artwork[i].royalty;
+        let unlockableContent = artwork[i].unlockableContent;
+        let likes = artwork[i].likes;
+        let encouragements = artwork[i].encouragements;
 
-    for (i = 0; i < inactiveArtwork.length; i++) {
-      if(inactiveArtwork[i].active == false){
-        let cover = inactiveArtwork[i].cover._url;
-        let tokenAddress = inactiveArtwork[i].tokenAddress;
-        let id = inactiveArtwork[i].tokenId;
-        let name = inactiveArtwork[i].name;
-        let fileType = inactiveArtwork[i].fileType;
-        let active = inactiveArtwork[i].active;
-        let likes = inactiveArtwork[i].likes;
-        let owner = inactiveArtwork[i].currentOwner;
-        let royalty = inactiveArtwork[i].royalty;
-        let creator = inactiveArtwork[i].creator;
-        let unlockableContent = inactiveArtwork[i].unlockableContent;
-        let encouragements = inactiveArtwork[i].encouragements;
+        $('#loader').css('display', 'none');
+        cardDiv(tokenAddress, id, owner);
+        getOwnerPhoto(tokenAddress, id, owner);
+        fileIcon(tokenAddress, id, fileType);
+        likeButton(tokenAddress, id, likes);
+        showHeartsFilled(tokenAddress, id);
+        quickActions(tokenAddress, id, owner, active, royalty, creator);
+
+        if(unlockableContent){
+          $('#card'  + tokenAddress + id).addClass('unlockable-content-shadow');
+        }
+
+        $('#cover' + tokenAddress + id).attr('src', cover);
+        $('#cover' + tokenAddress + id).css('display', 'none');
+        dismissLoadingPulseOnCover(tokenAddress, id, cover);
+
+        $('#name' + tokenAddress + id).html(name);
+        $('#notForSale' + tokenAddress + id).html(`<i id="encourageBell`+tokenAddress+id+`" class="fas fa-concierge-bell"></i><span id="encourageCounter`+tokenAddress+id+`"></span>`);
+        $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-light view-btn">View</button></a>`);
+        encourageButton(tokenAddress, id);
+        showBellsFilled(tokenAddress, id);
+        if(encouragements < 1 || encouragements == undefined){
+          $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
+        } else{
+          $('#encourageCounter' + tokenAddress + id).html(` ${encouragements}`);
+        }
+      }
+    }
+  } catch (error){
+    console.log(error)
+  }
+};
+
+async function getInactiveMintedArt(){
+  try{
+    let artwork = await Moralis.Cloud.run('getArtwork');
+    console.log(artwork);
+    for (i = 0; i < artwork.length; i++) {
+      if(artwork[i].creator.toLowerCase() == address.toLowerCase() && artwork[i].active == false){
+        let cover = artwork[i].cover._url;
+        let tokenAddress = artwork[i].tokenAddress;
+        let id = artwork[i].tokenId;
+        let name = artwork[i].name;
+        let fileType = artwork[i].fileType;
+        let owner = artwork[i].currentOwner;
+        let active = artwork[i].active;
+        let creator = artwork[i].creator;
+        let royalty = artwork[i].royalty;
+        let unlockableContent = artwork[i].unlockableContent;
+        let likes = artwork[i].likes;
+        let encouragements = artwork[i].encouragements;
+
+        $('#loader').css('display', 'none');
+        cardDiv(tokenAddress, id, owner);
+        getOwnerPhoto(tokenAddress, id, owner);
+        fileIcon(tokenAddress, id, fileType);
+        likeButton(tokenAddress, id, likes);
+        showHeartsFilled(tokenAddress, id);
+        quickActions(tokenAddress, id, owner, active, royalty, creator);
+
+        if(unlockableContent){
+          $('#card'  + tokenAddress + id).addClass('unlockable-content-shadow');
+        }
+
+        $('#cover' + tokenAddress + id).attr('src', cover);
+        $('#cover' + tokenAddress + id).css('display', 'none');
+        dismissLoadingPulseOnCover(tokenAddress, id, cover);
+
+        $('#name' + tokenAddress + id).html(name);
+        $('#notForSale' + tokenAddress + id).html(`<i id="encourageBell`+tokenAddress+id+`" class="fas fa-concierge-bell"></i><span id="encourageCounter`+tokenAddress+id+`"></span>`);
+        $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-light view-btn">View</button></a>`);
+        encourageButton(tokenAddress, id);
+        showBellsFilled(tokenAddress, id);
+        if(encouragements < 1 || encouragements == undefined){
+          $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
+        } else{
+          $('#encourageCounter' + tokenAddress + id).html(` ${encouragements}`);
+        }
+      }
+    }
+  } catch (error){
+    console.log(error)
+  }
+};
+
+
+async function getActiveMintedArt(){
+  try{
+    let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+    let ifOfferDetailsLength = removeDuplicates(ifOfferDetails, it => it.tokenId).length;
+    let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
+    for (i = 0; i < ifOfferDetailsLength; i++) {
+      if(ifOfferDetailsDuplicatesRemoved[i].creator.toLowerCase() == address.toLowerCase() && ifOfferDetailsDuplicatesRemoved[i].active == true && ifOfferDetailsDuplicatesRemoved[i].isSold == false){
+        let cover = ifOfferDetailsDuplicatesRemoved[i].cover._url;
+        let name = ifOfferDetailsDuplicatesRemoved[i].name;
+        let fileType = ifOfferDetailsDuplicatesRemoved[i].fileType;
+        let likes = ifOfferDetailsDuplicatesRemoved[i].likes;
+        let active = ifOfferDetailsDuplicatesRemoved[i].active;
+        let tokenAddress = ifOfferDetailsDuplicatesRemoved[i].tokenAddress;
+        let id = ifOfferDetailsDuplicatesRemoved[i].tokenId;
+        let owner = ifOfferDetailsDuplicatesRemoved[i].owner;
+        let price = ifOfferDetailsDuplicatesRemoved[i].price;
+        let creator = ifOfferDetailsDuplicatesRemoved[i].creator;
+        let royalty = ifOfferDetailsDuplicatesRemoved[i].royalty;
+        let unlockableContent = ifOfferDetailsDuplicatesRemoved[i].unlockableContent;
+
+        $('#loader').css('display', 'none');
+        cardDiv(tokenAddress, id, owner);
+        getOwnerPhoto(tokenAddress, id, owner);
+        fileIcon(tokenAddress, id, fileType);
+        likeButton(tokenAddress, id, likes);
+        showHeartsFilled(tokenAddress, id);
+        quickActions(tokenAddress, id, owner, active, royalty, creator);
+
+        if(unlockableContent){
+          $('#card'  + tokenAddress + id).addClass('unlockable-content-shadow');
+        }
+
+        $('#cover' + tokenAddress + id).attr('src', cover);
+        $('#cover' + tokenAddress + id).css('display', 'none');
+        dismissLoadingPulseOnCover(tokenAddress, id, cover);
+
+        $('#name' + tokenAddress + id).html(name);
+
+        let priceInEth = web3.utils.fromWei(price, 'ether');
+        $('#forSale' + tokenAddress + id).html(`<span class="for-sale-text">${priceInEth} ETH</span>`);
+        $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-primary buy-btn">Buy</button></a>`);
+      }
+
+    }
+  } catch (error){
+    console.log(error)
+  }
+};
+
+async function getActiveLikedArt(){
+  try{
+    let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+    console.log(ifOfferDetails);
+    let ifOfferDetailsLength = removeDuplicates(ifOfferDetails, it => it.tokenId).length;
+    let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
+    for (i = 0; i < ifOfferDetailsLength; i++) {
+      if(ifOfferDetailsDuplicatesRemoved[i].likers && ifOfferDetailsDuplicatesRemoved[i].likers.includes(address) && ifOfferDetailsDuplicatesRemoved[i].active == true && ifOfferDetailsDuplicatesRemoved[i].isSold == false){
+        let cover = ifOfferDetailsDuplicatesRemoved[i].cover._url;
+        let name = ifOfferDetailsDuplicatesRemoved[i].name;
+        let fileType = ifOfferDetailsDuplicatesRemoved[i].fileType;
+        let likes = ifOfferDetailsDuplicatesRemoved[i].likes;
+        let active = ifOfferDetailsDuplicatesRemoved[i].active;
+        let tokenAddress = ifOfferDetailsDuplicatesRemoved[i].tokenAddress;
+        let id = ifOfferDetailsDuplicatesRemoved[i].tokenId;
+        let owner = ifOfferDetailsDuplicatesRemoved[i].owner;
+        let price = ifOfferDetailsDuplicatesRemoved[i].price;
+        let creator = ifOfferDetailsDuplicatesRemoved[i].creator;
+        let royalty = ifOfferDetailsDuplicatesRemoved[i].royalty;
+        let unlockableContent = ifOfferDetailsDuplicatesRemoved[i].unlockableContent;
+
+        $('#loader').css('display', 'none');
+        cardDiv(tokenAddress, id, owner);
+        getOwnerPhoto(tokenAddress, id, owner);
+        fileIcon(tokenAddress, id, fileType);
+        likeButton(tokenAddress, id, likes);
+        showHeartsFilled(tokenAddress, id);
+        quickActions(tokenAddress, id, owner, active, royalty, creator);
+
+        if(unlockableContent){
+          $('#card'  + tokenAddress + id).addClass('unlockable-content-shadow');
+        }
+
+        $('#cover' + tokenAddress + id).attr('src', cover);
+        $('#cover' + tokenAddress + id).css('display', 'none');
+        dismissLoadingPulseOnCover(tokenAddress, id, cover);
+
+        $('#name' + tokenAddress + id).html(name);
+
+        let priceInEth = web3.utils.fromWei(price, 'ether');
+        $('#forSale' + tokenAddress + id).html(`<span class="for-sale-text">${priceInEth} ETH</span>`);
+        $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-primary buy-btn">Buy</button></a>`);
+      }
+
+    }
+  } catch (error){
+    console.log(error)
+  }
+};
+
+async function getInactiveLikedArt(){
+  try{
+    let artwork = await Moralis.Cloud.run('getArtwork');
+    console.log(artwork);
+    for (i = 0; i < artwork.length; i++) {
+      if(artwork[i].likers && artwork[i].likers.includes(address) && artwork[i].active == false){
+        let cover = artwork[i].cover._url;
+        let tokenAddress = artwork[i].tokenAddress;
+        let id = artwork[i].tokenId;
+        let name = artwork[i].name;
+        let fileType = artwork[i].fileType;
+        let owner = artwork[i].currentOwner;
+        let active = artwork[i].active;
+        let creator = artwork[i].creator;
+        let royalty = artwork[i].royalty;
+        let unlockableContent = artwork[i].unlockableContent;
+        let likes = artwork[i].likes;
+        let encouragements = artwork[i].encouragements;
+
+        $('#loader').css('display', 'none');
+        cardDiv(tokenAddress, id, owner);
+        getOwnerPhoto(tokenAddress, id, owner);
+        fileIcon(tokenAddress, id, fileType);
+        likeButton(tokenAddress, id, likes);
+        showHeartsFilled(tokenAddress, id);
+        quickActions(tokenAddress, id, owner, active, royalty, creator);
+
+        if(unlockableContent){
+          $('#card'  + tokenAddress + id).addClass('unlockable-content-shadow');
+        }
+
+        $('#cover' + tokenAddress + id).attr('src', cover);
+        $('#cover' + tokenAddress + id).css('display', 'none');
+        dismissLoadingPulseOnCover(tokenAddress, id, cover);
+
+        $('#name' + tokenAddress + id).html(name);
+        $('#notForSale' + tokenAddress + id).html(`<i id="encourageBell`+tokenAddress+id+`" class="fas fa-concierge-bell"></i><span id="encourageCounter`+tokenAddress+id+`"></span>`);
+        $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-light view-btn">View</button></a>`);
+        encourageButton(tokenAddress, id);
+        showBellsFilled(tokenAddress, id);
+        if(encouragements < 1 || encouragements == undefined){
+          $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
+        } else{
+          $('#encourageCounter' + tokenAddress + id).html(` ${encouragements}`);
+        }
+      }
+    }
+  } catch (error){
+    console.log(error)
+  }
+};
+
+async function getEncouragedArt(){
+  try{
+    let artwork = await Moralis.Cloud.run('getArtwork');
+    console.log(artwork);
+    for (i = 0; i < artwork.length; i++) {
+      if(artwork[i].encouragers && artwork[i].encouragers.includes(address)){
+        let cover = artwork[i].cover._url;
+        let tokenAddress = artwork[i].tokenAddress;
+        let id = artwork[i].tokenId;
+        let name = artwork[i].name;
+        let fileType = artwork[i].fileType;
+        let owner = artwork[i].currentOwner;
+        let active = artwork[i].active;
+        let creator = artwork[i].creator;
+        let royalty = artwork[i].royalty;
+        let unlockableContent = artwork[i].unlockableContent;
+        let likes = artwork[i].likes;
+        let encouragements = artwork[i].encouragements;
 
         $('#loader').css('display', 'none');
         cardDiv(tokenAddress, id, owner);
@@ -458,12 +1052,62 @@ function encourageButton(tokenAddress, id){
   });
 };
 
+function likeButton(tokenAddress, id, likes){
+  if(likes > 0){
+    $('#likeCounter' + tokenAddress + id).html(likes);
+  }
+  $('#like' + tokenAddress + id).click(async ()=>{
+    if(user){
+      const params = {
+        tokenAddress: tokenAddress,
+        tokenId: id
+        };
+      let like = await Moralis.Cloud.run('like', params);
+      console.log(like);
+      if(like == 0){
+        $('#likeCounter' + tokenAddress + id).css('display', 'none');
+      }else{
+        $('#likeCounter' + tokenAddress + id).css('display', 'inline');
+        $('#likeCounter' + tokenAddress + id).html(like);
+      }
+      let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
+      if(likeQuery){
+        $('#like' + tokenAddress + id).removeClass('far');
+        $('#like' + tokenAddress + id).addClass('fas');
+      } else{
+        $('#like' + tokenAddress + id).removeClass('fas');
+        $('#like' + tokenAddress + id).addClass('far');
+      }
+    } else{
+      $('#ifWalletNotConnectedModal').modal('show');
+    }
+  });
+};
+
+async function showHeartsFilled(tokenAddress, id){
+  if(user){
+    const params = {
+      tokenAddress: tokenAddress,
+      tokenId: id
+      };
+    let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
+    if(likeQuery){
+      $('#like' + tokenAddress + id).removeClass('far');
+      $('#like' + tokenAddress + id).addClass('fas');
+    } else{
+      $('#like' + tokenAddress + id).removeClass('fas');
+      $('#like' + tokenAddress + id).addClass('far');
+    }
+  }
+};
+
 function dismissLoadingPulseOnCover(tokenAddress, id, cover){
   let img = new Image;
   img.src = cover;
   img.onload = function(){
     $('#cover' + tokenAddress + id).css('display', 'block');
-    $('#spinnerGrow' + tokenAddress + id).css('display', 'none');
+    $('#coverSpinner' + tokenAddress + id).css('display', 'none');
+    console.log('cover succesfully loaded!')
   };
   img.onerror = function(){
     alert('No network connection or NFT is not available.')
@@ -480,6 +1124,7 @@ async function getOwnerPhoto(tokenAddress, id, owner){
       let username = users[i].username;
       let ethAddress = users[i].ethAddress;
       let amountSold = users[i].amountSold;
+
       if(ethAddress == owner && profilePhoto){
         addSellerBadge(tokenAddress, id, amountSold);
         $('#ownerPhoto' + tokenAddress + id).attr('src', profilePhoto._url);
@@ -494,6 +1139,20 @@ async function getOwnerPhoto(tokenAddress, id, owner){
   } catch(err){
     console.log(err);
   }
+};
+
+function dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, profilePhoto){
+  let img = new Image;
+  img.src = profilePhoto;
+  img.onload = function(){
+    $('#ownerPhoto' + tokenAddress + id).css('display', 'inline');
+    $('#ownerRank' + tokenAddress + id).css('display', 'block');
+    $('#cardOwnerPhotoSpinner' + tokenAddress + id).css('display', 'none');
+    console.log('profilePhoto succesfully loaded!')
+  };
+  img.onerror = function(){
+    console.log('No network connection or profilephoto is not available.')
+  };
 };
 
 function addSellerBadge(tokenAddress, id, amountSold){
@@ -518,73 +1177,30 @@ function addSellerBadge(tokenAddress, id, amountSold){
   }
 };
 
-function dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, profilePhoto){
-  let img = new Image;
-  img.src = profilePhoto;
-  img.onload = function(){
-    $('#ownerPhoto' + tokenAddress + id).css('display', 'inline');
-    $('#ownerRank' + tokenAddress + id).css('display', 'block');
-    $('#cardSpinner' + tokenAddress + id).css('display', 'none');
-  };
-  img.onerror = function(){
-    console.log('No network connection or profilephoto is not available.')
-  };
-};
-
-async function showHeartsFilled(tokenAddress, id){
-  if(user){
-    const params = {
-      tokenAddress: tokenAddress,
-      tokenId: id
-      };
-    let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
-    if(likeQuery){
-      $('#like' + tokenAddress + id).removeClass('far');
-      $('#like' + tokenAddress + id).addClass('fas');
-    } else{
-      $('#like' + tokenAddress + id).removeClass('fas');
-      $('#like' + tokenAddress + id).addClass('far');
-    }
-  }
-};
-
-function likeButton(tokenAddress, id, likes){
-  if(likes > 0){
-    $('#likeCounter' + tokenAddress + id).html(likes);
-  }
-  $('#like' + tokenAddress + id).click(async ()=>{
-    if(user){
-      const params = {
-        tokenAddress: tokenAddress,
-        tokenId: id
-        };
-      let like = await Moralis.Cloud.run('like', params);
-      console.log(like);
-      if(like == 0){
-        $('#likeCounter' + tokenAddress + id).css('display', 'none');
-        $('#soldCardLikeCounter' + tokenAddress + id).css('display', 'none');
-      }else{
-        $('#likeCounter' + tokenAddress + id).css('display', 'inline');
-        $('#likeCounter' + tokenAddress + id).html(like);
-        $('#soldCardLikeCounter' + tokenAddress + id).css('display', 'inline');
-        $('#soldCardLikeCounter' + tokenAddress + id).html(like);
+async function getProfileDetails(){
+  try{
+    let userDetails = await Moralis.Cloud.run('getAllUsers');
+    for (i = 0; i < userDetails.length; i++) {
+      if(userDetails[i].ethAddress.toLowerCase() == address.toLowerCase()){
+        let profilePhoto = userDetails[i].profilePhoto;
+        let username = userDetails[i].username;
+        let ethAddress = userDetails[i].ethAddress;
+        let bio = userDetails[i].bio;
+        let twitter = userDetails[i].twitter;
+        let instagram = userDetails[i].instagram;
+        let amountSold = userDetails[i].amountSold;
+        console.log(amountSold);
+        displayProfilePhotoAndBadge(profilePhoto, amountSold);//TypeError if variable and function name are the same
+        displayUsername(username);
+        displayEthAddress(ethAddress);
+        displayBio(bio);
+        displayTwitter(twitter);
+        displayInstagram(instagram);
       }
-      let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
-      if(likeQuery){
-        $('#like' + tokenAddress + id).removeClass('far');
-        $('#like' + tokenAddress + id).addClass('fas');
-        $('#soldCardLike' + tokenAddress + id).removeClass('far');
-        $('#soldCardLike' + tokenAddress + id).addClass('fas');
-      } else{
-        $('#like' + tokenAddress + id).removeClass('fas');
-        $('#like' + tokenAddress + id).addClass('far');
-        $('#soldCardLike' + tokenAddress + id).removeClass('fas');
-        $('#soldCardLike' + tokenAddress + id).addClass('far');
-      }
-    } else{
-      $('#ifWalletNotConnectedModal').modal('show');
     }
-  });
+  } catch(err){
+    console.log(err);
+  }
 };
 
 function fileIcon(tokenAddress, id, fileType){
@@ -593,7 +1209,7 @@ function fileIcon(tokenAddress, id, fileType){
   } else if (fileType == "video/mp4" || fileType == "video/webm") {
     $('#fileIcon' + tokenAddress + id).attr('src', 'assets/images-icons/videoIcon.png');
   } else if (fileType == "audio/mp3" || fileType == "audio/webm" || fileType == "audio/mpeg"){
-    $('#fileIcon' + tokenAddress + id).attr('src', 'assets/images-icons/audioIcon.png');
+    $('#fileIcon' + tokenAddress  + id).attr('src', 'assets/images-icons/audioIcon.png');
   }
 };
 
@@ -612,9 +1228,9 @@ function quickActions(tokenAddress, id, owner, active, royalty, creator){
                                                 );
   }
   putForSaleQuickActionButton(tokenAddress, id, royalty, creator);
-  transferTokenQuickActionButton(tokenAddress, id);
   removeFromSaleQuickActionButton(tokenAddress, id, royalty, creator);
   changePriceQuickActionButton(tokenAddress, id, royalty, creator);
+  transferTokenQuickActionButton(tokenAddress, id);
   darkmodeForDynamicContent();
 };
 
@@ -682,7 +1298,6 @@ function transferTokenQuickActionButton(tokenAddress, id){
 function onModalClose(tokenAddress, id){
   $('.modal').on('hidden.bs.modal', function (e) {
     $('.modals').empty();
-    console.log('closed');
     $('#changePriceInput' + tokenAddress + id).val('');
     $('#changePriceBtn' + tokenAddress + id).prop('disabled', true);
     $('#changePriceSaleProfit' + tokenAddress + id).html('0 ETH');
@@ -749,9 +1364,9 @@ function putOnSale(tokenAddress, id, royalty, creator){
     const amountInWei = web3.utils.toWei(price, 'ether');
 
     $('#putOnSaleBtn' + tokenAddress + id).prop('disabled', true);
-    $('#putOnSaleBtn' + tokenAddress + id).html(`Put On Sale <div class="spinner-border spinner-border-sm text-light" role="status">
-                                                  <span class="sr-only">Loading...</span>
-                                                </div>`);
+    $('#putOnSaleBtn' + tokenAddress + id).html(`Put For Sale <div class="spinner-border spinner-border-sm  text-light" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                  </div>`);
     try{
       await openMintMarketplaceInstance.methods.setOffer(amountInWei, id, tokenAddress).send({from: user.attributes.ethAddress});
       $('#putOnSaleBtn' + tokenAddress + id).html('Successfully Put On Sale');
@@ -775,8 +1390,8 @@ function putOnSale(tokenAddress, id, royalty, creator){
                                                     <a class="dropdown-item quick-action" id="removeFromSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#removeFromSaleModal`+tokenAddress+id+`">Remove from sale</a>
                                                     <a class="dropdown-item quick-action" href="#">Share</a>`
                                                   );
-      removeFromSaleQuickActionButton(tokenAddress, id, royalty, creator);
       changePriceQuickActionButton(tokenAddress, id, royalty, creator);
+      removeFromSaleQuickActionButton(tokenAddress, id, royalty, creator);
     } catch(err){
       alert(err.message);
       $('#putOnSaleBtn' + tokenAddress + id).prop('disabled', false);
@@ -820,7 +1435,7 @@ function removeFromSale(tokenAddress, id, royalty, creator){
 
   $('#removeFromSaleBtn' + tokenAddress + id).click(async()=>{
     $('#removeFromSaleBtn' + tokenAddress + id).prop('disabled', true);
-    $('#removeFromSaleBtn' + tokenAddress + id).html(`Remove From Sale<div class="spinner-border spinner-border-sm text-light" role="status">
+    $('#removeFromSaleBtn' + tokenAddress + id).html(`Remove From Sale <div class="spinner-border spinner-border-sm  text-light" role="status">
                                                         <span class="sr-only">Loading...</span>
                                                       </div>`);
     try{
@@ -854,8 +1469,9 @@ function removeFromSale(tokenAddress, id, royalty, creator){
 
 function changePriceFrontEnd(tokenAddress, id, royalty, creator){
   $('#changePriceBtn' + tokenAddress + id).click(async()=>{
+    console.log(id);
     let price = $('#changePriceInput' + tokenAddress + id).val();
-    price = price.replace(/^0+/, '').replace(/\.?0+$/, ''); //figure out how to combine these
+    price = price.replace(/^0+/, '').replace(/\.?0+$/, '');
     const amountInWei = web3.utils.toWei(price, 'ether');
 
     $('#changePriceBtn' + tokenAddress + id).prop('disabled', true);
@@ -880,8 +1496,8 @@ function changePriceFrontEnd(tokenAddress, id, royalty, creator){
                                                     <a class="dropdown-item quick-action" id="removeFromSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#removeFromSaleModal`+tokenAddress+id+`">Remove from sale</a>
                                                     <a class="dropdown-item quick-action" href="#">Share</a>`
                                                   );
-      removeFromSaleQuickActionButton(tokenAddress, id, royalty, creator);
       changePriceQuickActionButton(tokenAddress, id, royalty, creator);
+      removeFromSaleQuickActionButton(tokenAddress, id, royalty, creator);
     } catch(err){
       alert(err.message);
       $('#changePriceBtn' + tokenAddress + id).prop('disabled', false);
@@ -924,7 +1540,7 @@ function transferToken(tokenAddress, id){
 
 
     $('#transferTokenBtn' + tokenAddress + id).prop('disabled', true);
-    $('#transferTokenBtn' + tokenAddress + id).html(`Transfer Token <div class="spinner-border spinner-border-sm text-light" role="status">
+    $('#transferTokenBtn' + tokenAddress + id).html(`Transfer Token <div class="spinner-border spinner-border-sm  text-light" role="status">
                                                         <span class="sr-only">Loading...</span>
                                                       </div>`);
     try{
@@ -933,10 +1549,8 @@ function transferToken(tokenAddress, id){
       $('#transferTokenBtn' + tokenAddress + id).removeClass('btn-primary');
       $('#transferTokenBtn' + tokenAddress + id).addClass('btn-success');
 
-
       $('#owner' + tokenAddress + id).attr('href', "http://localhost:8000/profile.html?address=" + toAddress);
-      $('#cardSpinner' + tokenAddress + id).css('display', 'block');
-
+      $('#cardOwnerPhotoSpinner' + tokenAddress + id).css('display', 'block');
       newOwnerPhotoQuery(tokenAddress, id, toAddress);
 
       $('#toAddressInput').prop('disabled', true);
@@ -1002,70 +1616,17 @@ async function newOwnerPhotoQuery(tokenAddress, id, toAddress){
   }
 };
 
-//recently Sold
-function soldCardDiv(tokenAddress, id, owner){
-  let nftSoldCard = `<div class="grid-helper col-10 col-sm-6 col-md-4 col-lg-3 col-xl-2">
-                      <div id="soldCard`+tokenAddress+id+`" class="card sold-item shadow-sm">
-                        <div class="top-row">
-                          <div class="creator-photo">
-                            <a href="http://localhost:8000/profile.html?address=`+owner+`"><img loading="lazy" class="owner shadow-sm" id="soldCardOwnerPhoto`+tokenAddress+id+`" src="" width="40" alt="owner photo">
-                              <span id="soldcardSpinner`+tokenAddress+id+`" class="spinner-grow text-light" style="width: 40px; height: 40px; margin: 0; padding: 0;" role="status">
-                                <span class="sr-only">Loading...</span>
-                              </span>
-                              <div class="rank-badge">
-                                <img id="soldCardOwnerRank`+tokenAddress+id+`" src="" width="15" alt="badge based on how many sales from account">
-                              </div>
-                            </a>
-                          </div>
-                          <!--NOT owner AND it's NOT on market these will be the options-->
-                          <div class="dropleft">
-                            <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              ...
-                            </button>
-                            <div class="dropdown-menu" id="soldCardQuickActions`+tokenAddress+id+`" aria-labelledby="dropdownMenuButton">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="embed-responsive embed-responsive-1by1">
-                          <a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`">
-                            <span id='soldCardSpinnerGrow`+tokenAddress+id+`' class="spinner-grow text-light embed-responsive-item" role="status">
-                              <span class="sr-only">Loading...</span>
-                            </span>
-                            <img loading="lazy" id='soldCardCover`+tokenAddress+id+`' src="" class="card-img embed-responsive-item" alt="">
-                            <span class="file-indicator"><img id="soldCardFileIcon`+tokenAddress+id+`" src="" width="20"></span>
-                          </a>
-                        </div>
-                        <div class="card-body">
-                          <a class="anchor" href="http://localhost:8000/token.html?token=`+tokenAddress+id+`">
-                            <p id="soldCardName`+tokenAddress+id+`" class="card-title"></p>
-                          </a>
-                          <p class="card-text sold-card-text" id="soldCardNotForSale`+tokenAddress+id+`"></p>
-                          <div class="button-row">
-                            <i class="like-button far fa-heart heart" id="soldCardLike`+tokenAddress+id+`"></i>
-                            <span class="like-counter" id="soldCardLikeCounter`+tokenAddress+id+`"></span>
-                            <span id="soldCardButton`+tokenAddress+id+`"></span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>`
-  $('.recentlySold').prepend(nftSoldCard);
-  darkmodeForDynamicContent(); //is this the best place?
-};
-
-
-
-//recently Minted
 function cardDiv(tokenAddress, id, owner){
-  let nftCard = `<div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-                    <div id="card`+tokenAddress+id+`" class="card minted-item shadow-sm">
+  let nftCard = `<div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+                    <div id="card`+tokenAddress+id+`" class="card shadow-sm">
                       <div class="top-row">
                         <div class="creator-photo">
-                          <a id='owner`+tokenAddress+id+`' href="http://localhost:8000/profile.html?address=`+owner+`"><img loading="lazy" class="owner shadow-sm" id="ownerPhoto`+tokenAddress+id+`" src="" width="40" alt="owner photo">
-                            <span id="cardSpinner`+tokenAddress+id+`" class="spinner-grow text-light" style="width: 40px; height: 40px; margin: 0; padding: 0;" role="status">
+                          <a id='owner`+tokenAddress+id+`' href="http://localhost:8000/profile.html?address=`+owner+`"><img class="owner shadow-sm" id="ownerPhoto`+tokenAddress+id+`" src="" width="40" alt="owner photo">
+                            <span id="cardOwnerPhotoSpinner`+tokenAddress+id+`" class="spinner-grow text-light" style="width: 40px; height: 40px; margin: 0; padding: 0;" role="status">
                               <span class="sr-only">Loading...</span>
                             </span>
                             <div class="rank-badge">
-                              <img id="ownerRank`+tokenAddress+id+`" src="" width="15" height="15" alt="seller badge">
+                              <img id="ownerRank`+tokenAddress+id+`" src="" width="15" alt="badge based on how many sales from account">
                             </div>
                           </a>
                         </div>
@@ -1081,16 +1642,16 @@ function cardDiv(tokenAddress, id, owner){
                       </div>
                       <div class="embed-responsive embed-responsive-1by1">
                         <a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`">
-                          <span id='spinnerGrow`+tokenAddress+id+`' class="spinner-grow text-light embed-responsive-item" role="status">
+                          <span id='coverSpinner`+tokenAddress+id+`' class="spinner-grow text-light embed-responsive-item" role="status">
                             <span class="sr-only">Loading...</span>
                           </span>
-                          <img loading="lazy" id='cover`+tokenAddress+id+`' src="" class="card-img embed-responsive-item" alt="">
-                          <span class="file-indicator"><img id="fileIcon`+tokenAddress+id+`" src="" width="20"></span>
+                          <img id='cover`+tokenAddress+id+`' loading="lazy" src="" class="card-img embed-responsive-item" alt="...">
+                          <span class="file-indicator"><img id="fileIcon`+tokenAddress+':'+id+`" src="" width="20"></span>
                         </a>
                       </div>
                       <div class="card-body">
                         <a class="anchor" href="http://localhost:8000/token.html?token=`+tokenAddress+id+`">
-                          <p id="name`+tokenAddress+id+`" class="card-title"></p>
+                          <p id='name`+tokenAddress+id+`' class="card-title"></p>
                         </a>
                         <p class="card-text" id="forSale`+tokenAddress+id+`"></p>
                         <p class="card-text not-for-sale-text" id="notForSale`+tokenAddress+id+`"></p>
@@ -1103,8 +1664,33 @@ function cardDiv(tokenAddress, id, owner){
                     </div>
                   </div>`
   $('.cardDivs').prepend(nftCard);
-  darkmodeForDynamicContent(); //is this the best place?
+  darkmodeForDynamicContent();
 };
+
+function userCard(ethAddress){
+  let userCard = `<li id="userItem`+ethAddress+`" class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="http://localhost:8000/profile.html?address=`+ethAddress+`">
+                      <div class="owner-div row">
+                        <div class="owner-photo">
+                          <img loading="lazy" class="owner shadow-sm" id="userPhoto`+ethAddress+`" src="" width="40" alt="creator photo">
+                          <span id="userSpinner`+ethAddress+`" class="spinner-grow text-light" style="width: 40px; height: 40px;" role="status">
+                            <span class="sr-only">Loading...</span>
+                          </span>
+                          <div class="rank-badge">
+                            <img id="userRank`+ethAddress+`" src="./assets/images-icons/oneSale.png" width="15" alt="badge based on how many sales from account">
+                          </div>
+                        </div>
+                        <div>
+                          <div class="username" id="username`+ethAddress+`"></div>
+                          <div class="amount-of-followers sub-text" id="amountOfFollowers`+ethAddress+`"></div>
+                        </div>
+                      </div>
+                    </a>
+                    <div class="follow-btn-card" id="followUser`+ethAddress+`"></div>
+                  </li>`
+$('.list-group').append(userCard);
+darkmodeForDynamicContent();
+}
 
 function changePriceModalHTML(tokenAddress, id){
   let changePriceModal = `<div class="modal fade" id="changePriceModal`+tokenAddress+id+`" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
@@ -1140,6 +1726,7 @@ function changePriceModalHTML(tokenAddress, id){
                   </div>
                 </div>
               </div>`
+
   $('.modals').append(changePriceModal);
 };
 
