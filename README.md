@@ -1,2 +1,2 @@
 # OpenMint
-OpenMint is a dapp where you can buy, sell, and create digital artwork with provable ownership on Ethereum's blockchain.
+OpenMint is a dapp where you can create, buy, and sell digital artwork on Ethereum and BSC.
