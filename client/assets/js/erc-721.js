@@ -76,52 +76,61 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
+
 async function readURL(input) {
   if (input.files && input.files[0]) {
     let reader = new FileReader();
 
     let fileType = input.files[0].type;
     let fileSize = input.files[0].size;
+
     if(fileSize > 64000000){
       $('#fileSizeModalBody').html('File size cannot exceed 64 MB.');
       $('#fileSizeModal').modal('show');
-    }else{
-      reader.onload = function (file) {
-        if(fileType == 'image/png' || fileType == 'image/jpeg' || fileType == 'image/gif' || fileType == 'image/webp'){
-          $('#nftImgEx').attr('src', file.target.result);
+      $('#createButton').prop('disabled', true);
+      $('#nftSizeExceededText').html('File too large, please utilize unlockable content');
+      nft = '';
+    }
+
+    reader.onload = function (file) {
+      if(fileType == 'image/png' || fileType == 'image/jpeg' || fileType == 'image/gif' || fileType == 'image/webp'){
+        $('#nftImgEx').attr('src', file.target.result);
+        if(input.files[0].size <= 3000000){
           $('#formToUploadCover').css('display', 'none');
           cover = new Moralis.File(input.files[0].name, input.files[0]);
-          console.log('no cover input needed');
-        } else if (fileType == "video/mp4" || fileType == "video/webm") {
-          $('#nftImgEx').css('display', 'none');
-          $('#nftVidEx').css('display', 'inline-block');
-          $('#nftVidEx').attr('src', file.target.result);
-          $('#nftCoverEx').prop('required');
-        } else if (fileType == "audio/mp3" || fileType == "audio/webm" || fileType == "audio/mpeg"){
-          $('#nftImgEx').css('display', 'none');
-          $('#nftAudEx').css('display', 'inline-block');
-          $('#nftAudEx').attr('src', file.target.result);
+        } else{
           $('#nftCoverEx').prop('required');
         }
-      };
+      } else if (fileType == "video/mp4" || fileType == "video/webm") {
+        $('#nftImgEx').css('display', 'none');
+        $('#nftVidEx').css('display', 'inline-block');
+        $('#nftVidEx').attr('src', file.target.result);
+        $('#nftCoverEx').prop('required');
+      } else if (fileType == "audio/mp3" || fileType == "audio/webm" || fileType == "audio/mpeg"){
+        $('#nftImgEx').css('display', 'none');
+        $('#nftAudEx').css('display', 'inline-block');
+        $('#nftAudEx').attr('src', file.target.result);
+        $('#nftCoverEx').prop('required');
+      }
+    };
 
-      reader.readAsDataURL(input.files[0]);
+    reader.readAsDataURL(input.files[0]);
 
-      const file = input.files[0];
+    const file = input.files[0];
 
-      const fileName = input.files[0].name;
+    const fileName = input.files[0].name;
 
-      let extension = fileName.split('.').pop();
+    let extension = fileName.split('.').pop();
 
-      const cleanedFileName = 'nft.' + extension;
+    const cleanedFileName = 'nft.' + extension;
 
-      console.log(cleanedFileName);
+    console.log(cleanedFileName);
 
-      nft = new Moralis.File(cleanedFileName, file);
-      console.log('NFT To MINT: ', nft);
-    }
+    nft = new Moralis.File(cleanedFileName, file);
+    console.log('NFT To MINT: ', nft);
   }
 };
+
 
 $("#nftImgFile").change(function(){
   readURL(this);
@@ -142,39 +151,39 @@ $('#closeIcon2').click(()=>{
 });
 
 function coverURL(input) {
-  if (input.files && input.files[0]) {
+  if(input.files && input.files[0]) {
     let reader = new FileReader();
 
     let fileType = input.files[0].type;
     let fileSize = input.files[0].size;
 
-    if(fileSize > 5000000){
-      $('#fileSizeModalBody').html('File size cannot exceed 5 MB.');
-      $('#fileSizeModal').modal('show');
-    } else{
-      reader.onload = function (file) {
-        if(fileType == 'image/png' || fileType == 'image/jpeg' || fileType == 'image/gif' || fileType == 'image/webp'){
-          $('#nftCoverEx').attr('src', file.target.result);
-        } else{
-          $('#nftCoverEx').html('Incorrect File Format');
+    reader.onload = function (file) {
+      if(fileType == 'image/png' || fileType == 'image/jpeg' || fileType == 'image/gif' || fileType == 'image/webp'){
+        $('#nftCoverEx').attr('src', file.target.result);
+        if(fileSize > 3000000){
+          $('#fileSizeModalBody').html('File size cannot exceed 3 MB.');
+          $('#fileSizeModal').modal('show');
+          $('#createButton').prop('disabled', true);
+          $('#fileSizeExceededText').html('File too large, please use smaller file');
+          cover = '';
         }
-      };
+      } else{
+        $('#nftCoverEx').html('Incorrect File Format');
+      }
+    };
 
-      reader.readAsDataURL(input.files[0]);
+    reader.readAsDataURL(input.files[0]);
 
-      const coverFile = input.files[0];
+    const coverFile = input.files[0];
 
-      const coverfileName = input.files[0].name;
+    const coverfileName = input.files[0].name;
 
-      let coverExtension = coverfileName.split('.').pop();
+    let coverExtension = coverfileName.split('.').pop();
 
-      const cleanedCoverFileName = 'cover.' + coverExtension;
+    const cleanedCoverFileName = 'cover.' + coverExtension;
 
-      console.log(cleanedCoverFileName);
-
-      cover = new Moralis.File(cleanedCoverFileName, coverFile);
-      console.log(cover);
-    }
+    cover = new Moralis.File(cleanedCoverFileName, coverFile);
+    console.log(cover);
   }
 };
 
@@ -284,7 +293,7 @@ async function checkIfApproved(){
 
 $('#setApprovalBtn').click(async() =>{
   $('#setApprovalBtn').prop('disabled', true);
-  $('#setApprovalBtn').html(`Setting Approval To Sell<div class="spinner-border spinner-border-sm text-light" role="status">
+  $('#setApprovalBtn').html(`Setting Approval To Sell <div class="spinner-border spinner-border-sm text-light" role="status">
                               <span class="sr-only">Loading...</span>
                             </div>`);
   await openMintTokenInstance.methods.setApprovalForAll(openMintMarketplaceAddress, true).send({from: user.attributes.ethAddress}, (err, txHash) => {
