@@ -317,23 +317,23 @@ $('#saveToIPFSBtn').click(async ()=>{
   $('#saveToIPFSBtn').html(`Uploading art to IPFS <div class="spinner-border spinner-border-sm text-light" role="status">
                               <span class="sr-only">Loading...</span>
                             </div>`);
-  try {
-    uploadArtToIPFS();
-  } catch (err) {
+  uploadArtToIPFS();
+});
+
+async function uploadArtToIPFS(){
+  try{
+    await nft.saveIPFS();
+    console.log(nft);
+
+    let nftPath = nft.ipfs();
+    console.log(nftPath);
+    uploadMetaDataToIPFS(nftPath);
+} catch (err) {
     console.log(err);
     alert("Error saving art to ipfs");
     $('#saveToIPFSBtn').prop('disabled', false);
     $('#saveToIPFSBtn').html("Upload and Mint");
-  }
-});
-
-async function uploadArtToIPFS(){
-  await nft.saveIPFS();
-  console.log(nft);
-
-  let nftPath = nft.ipfs();
-  console.log(nftPath);
-  uploadMetaDataToIPFS(nftPath);
+}
 };
 
 async function uploadMetaDataToIPFS(nftPath){
