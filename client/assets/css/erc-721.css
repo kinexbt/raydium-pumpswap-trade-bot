@@ -114,6 +114,14 @@ audio{
   transform: scale(.95);
 }
 
+#fileSizeExceededText{
+  display: block;
+}
+
+#nftSizeExceededText{
+  display: block;
+}
+
 .form-control{
   color: black;
 }
