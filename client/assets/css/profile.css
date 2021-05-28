@@ -4,6 +4,20 @@
   justify-content: center;
 }
 
+#notYetConnectedText{
+  margin-top: 200px;
+  margin-bottom: 450px;
+  padding: 20px;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.gradient-text{
+  background: -webkit-linear-gradient(260deg, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .profile{
   width: 100%;
 }
