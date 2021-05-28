@@ -20,6 +20,7 @@ $(document).ready(async function(){
   openMintTokenInstance = new web3.eth.Contract(abi.OpenMintToken, openMintTokenAddress);
   openMintMarketplaceInstance = new web3.eth.Contract(abi.OpenMintMarketplace, openMintMarketplaceAddress);
   paymentGatewayInstance = new web3.eth.Contract(abi.PaymentGateway, paymentGatewayAddress);
+  ifAddressNotInDatabase(address);
   ethPrice = await getEthPrice();
   getActiveOwnedArt();
   getInactiveOwnedArt();
@@ -36,6 +37,14 @@ $(document).ready(async function(){
   getFollowingCount();
   getFollowerCount();
 });
+
+async function ifAddressNotInDatabase(address){
+  const params = { ethAddress: address };
+  let isAddressIn = await Moralis.Cloud.run('isAddressInDatabase', params);
+  if(!isAddressIn){
+    $('.profileGenerated').html(`<p id="notYetConnectedText">This address has not yet connected their wallet to Open<span class="gradient-text">Mint<span></>`);
+  }
+};
 
 async function getForSaleCount(){
   let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
@@ -1117,6 +1126,7 @@ function dismissLoadingPulseOnCover(tokenAddress, id, cover){
 async function getOwnerPhoto(tokenAddress, id, owner){
   $('#ownerPhoto' + tokenAddress + id).css('display', 'none');
   $('#ownerRank' + tokenAddress + id).css('display', 'none');
+  ifOwnerNotInDatabase(tokenAddress, id, owner);
   try{
     let users = await Moralis.Cloud.run('getAllUsers');
     for (i = 0; i < users.length; i++) {
@@ -1128,12 +1138,12 @@ async function getOwnerPhoto(tokenAddress, id, owner){
       if(ethAddress == owner && profilePhoto){
         addSellerBadge(tokenAddress, id, amountSold);
         $('#ownerPhoto' + tokenAddress + id).attr('src', profilePhoto._url);
-        dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, profilePhoto._url)
+        dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, profilePhoto._url);
       } else if (ethAddress == owner && !profilePhoto){
         addSellerBadge(tokenAddress, id, amountSold);
         $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/default.png');
         let defaultProfilePhoto = "./assets/images-icons/default.png"
-        dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, defaultProfilePhoto)
+        dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, defaultProfilePhoto);
       }
     }
   } catch(err){
@@ -1148,9 +1158,9 @@ function dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, profilePhoto){
     $('#ownerPhoto' + tokenAddress + id).css('display', 'inline');
     $('#ownerRank' + tokenAddress + id).css('display', 'block');
     $('#cardOwnerPhotoSpinner' + tokenAddress + id).css('display', 'none');
-    console.log('profilePhoto succesfully loaded!')
   };
   img.onerror = function(){
+    $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/unknown.png');
     console.log('No network connection or profilephoto is not available.')
   };
 };
@@ -1189,7 +1199,6 @@ async function getProfileDetails(){
         let twitter = userDetails[i].twitter;
         let instagram = userDetails[i].instagram;
         let amountSold = userDetails[i].amountSold;
-        console.log(amountSold);
         displayProfilePhotoAndBadge(profilePhoto, amountSold);//TypeError if variable and function name are the same
         displayUsername(username);
         displayEthAddress(ethAddress);
@@ -1210,6 +1219,18 @@ function fileIcon(tokenAddress, id, fileType){
     $('#fileIcon' + tokenAddress + id).attr('src', 'assets/images-icons/videoIcon.png');
   } else if (fileType == "audio/mp3" || fileType == "audio/webm" || fileType == "audio/mpeg"){
     $('#fileIcon' + tokenAddress  + id).attr('src', 'assets/images-icons/audioIcon.png');
+  }
+};
+
+async function ifOwnerNotInDatabase(tokenAddress, id, owner){
+  const params = { ethAddress: owner };
+  let isAddressIn = await Moralis.Cloud.run('isAddressInDatabase', params);
+  if(!isAddressIn){
+    let amountSold = undefined;
+    addSellerBadge(tokenAddress, id, amountSold);
+    $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/unknown.png');
+    let unknownProfilePhoto = "./assets/images-icons/unknown.png"
+    dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, unknownProfilePhoto);
   }
 };
 
@@ -1552,7 +1573,6 @@ function transferToken(tokenAddress, id){
       $('#owner' + tokenAddress + id).attr('href', "http://localhost:8000/profile.html?address=" + toAddress);
       $('#cardOwnerPhotoSpinner' + tokenAddress + id).css('display', 'block');
       newOwnerPhotoQuery(tokenAddress, id, toAddress);
-
       $('#toAddressInput').prop('disabled', true);
 
       $('#quickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" href="#">Share</a>`);
@@ -1593,6 +1613,7 @@ function toAddressInput(tokenAddress, id){
 async function newOwnerPhotoQuery(tokenAddress, id, toAddress){
   $('#ownerPhoto' + tokenAddress + id).css('display', 'none');
   $('#ownerRank' + tokenAddress + id).css('display', 'none');
+  ifOwnerNotInDatabase(tokenAddress, id, toAddress);
   try{
     let users = await Moralis.Cloud.run('getAllUsers');
     for (i = 0; i < users.length; i++) {
@@ -1617,7 +1638,7 @@ async function newOwnerPhotoQuery(tokenAddress, id, toAddress){
 };
 
 function cardDiv(tokenAddress, id, owner){
-  let nftCard = `<div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+  let nftCard = `<div id="nftCard`+tokenAddress+id+`" class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
                     <div id="card`+tokenAddress+id+`" class="card shadow-sm">
                       <div class="top-row">
                         <div class="creator-photo">
@@ -1626,7 +1647,7 @@ function cardDiv(tokenAddress, id, owner){
                               <span class="sr-only">Loading...</span>
                             </span>
                             <div class="rank-badge">
-                              <img id="ownerRank`+tokenAddress+id+`" src="" width="15" alt="badge based on how many sales from account">
+                              <img id="ownerRank`+tokenAddress+id+`" src="" width="15" alt="rank">
                             </div>
                           </a>
                         </div>

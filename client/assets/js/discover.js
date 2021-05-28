@@ -183,6 +183,7 @@ function dismissLoadingPulseOnSoldCover(tokenAddress, id, cover){
 async function getSoldCardOwnerPhoto(tokenAddress, id, owner){
   $('#soldCardOwnerPhoto' + tokenAddress + id).css('display', 'none');
   $('#soldCardOwnerRank' + tokenAddress + id).css('display', 'none');
+  ifSoldCardOwnerNotInDatabase(tokenAddress, id, owner);
   try{
     let users = await Moralis.Cloud.run('getAllUsers');
     for (i = 0; i < users.length; i++) {
@@ -308,6 +309,18 @@ function soldCardFileIcon(tokenAddress, id, fileType){
   }
 };
 
+async function ifSoldCardOwnerNotInDatabase(tokenAddress, id, owner){
+  const params = { ethAddress: owner };
+  let isAddressIn = await Moralis.Cloud.run('isAddressInDatabase', params);
+  if(!isAddressIn){
+    let amountSold = undefined;
+    addSoldCardSellerBadge(tokenAddress, id, amountSold);
+    $('#soldCardOwnerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/unknown.png');
+    let unknownProfilePhoto = "./assets/images-icons/unknown.png"
+    dismissLoadingPulseOnSoldCardOwnerPhoto(tokenAddress, id, unknownProfilePhoto);
+  }
+};
+
 function recentlySoldQuickAction(tokenAddress, id, owner){
   $('#soldCardQuickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" href="#">Share</a>`);
 };
@@ -383,7 +396,6 @@ async function recentlyMintedAndNotOnSale(){
         let creator = inactiveArtwork[i].creator;
         let unlockableContent = inactiveArtwork[i].unlockableContent;
         let encouragements = inactiveArtwork[i].encouragements;
-
         $('#loader').css('display', 'none');
         cardDiv(tokenAddress, id, owner);
         getOwnerPhoto(tokenAddress, id, owner);
@@ -473,6 +485,7 @@ function dismissLoadingPulseOnCover(tokenAddress, id, cover){
 async function getOwnerPhoto(tokenAddress, id, owner){
   $('#ownerPhoto' + tokenAddress + id).css('display', 'none');
   $('#ownerRank' + tokenAddress + id).css('display', 'none');
+  ifOwnerNotInDatabase(tokenAddress, id, owner);
   try{
     let users = await Moralis.Cloud.run('getAllUsers');
     for (i = 0; i < users.length; i++) {
@@ -545,6 +558,18 @@ async function showHeartsFilled(tokenAddress, id){
       $('#like' + tokenAddress + id).removeClass('fas');
       $('#like' + tokenAddress + id).addClass('far');
     }
+  }
+};
+
+async function ifOwnerNotInDatabase(tokenAddress, id, owner){
+  const params = { ethAddress: owner };
+  let isAddressIn = await Moralis.Cloud.run('isAddressInDatabase', params);
+  if(!isAddressIn){
+    let amountSold = undefined;
+    addSellerBadge(tokenAddress, id, amountSold);
+    $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/unknown.png');
+    let unknownProfilePhoto = "./assets/images-icons/unknown.png"
+    dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, unknownProfilePhoto);
   }
 };
 
@@ -933,12 +958,10 @@ function transferToken(tokenAddress, id){
       $('#transferTokenBtn' + tokenAddress + id).removeClass('btn-primary');
       $('#transferTokenBtn' + tokenAddress + id).addClass('btn-success');
 
-
       $('#owner' + tokenAddress + id).attr('href', "http://localhost:8000/profile.html?address=" + toAddress);
       $('#cardSpinner' + tokenAddress + id).css('display', 'block');
 
       newOwnerPhotoQuery(tokenAddress, id, toAddress);
-
       $('#toAddressInput').prop('disabled', true);
 
       $('#quickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" href="#">Share</a>`);
@@ -979,6 +1002,7 @@ function toAddressInput(tokenAddress, id){
 async function newOwnerPhotoQuery(tokenAddress, id, toAddress){
   $('#ownerPhoto' + tokenAddress + id).css('display', 'none');
   $('#ownerRank' + tokenAddress + id).css('display', 'none');
+  ifOwnerNotInDatabase(tokenAddress, id, toAddress);
   try{
     let users = await Moralis.Cloud.run('getAllUsers');
     for (i = 0; i < users.length; i++) {
@@ -1004,7 +1028,7 @@ async function newOwnerPhotoQuery(tokenAddress, id, toAddress){
 
 //recently Sold
 function soldCardDiv(tokenAddress, id, owner){
-  let nftSoldCard = `<div class="grid-helper col-10 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+  let nftSoldCard = `<div id="nftSoldCard`+tokenAddress+id+`" class="grid-helper col-10 col-sm-6 col-md-4 col-lg-3 col-xl-2">
                       <div id="soldCard`+tokenAddress+id+`" class="card sold-item shadow-sm">
                         <div class="top-row">
                           <div class="creator-photo">
@@ -1056,7 +1080,7 @@ function soldCardDiv(tokenAddress, id, owner){
 
 //recently Minted
 function cardDiv(tokenAddress, id, owner){
-  let nftCard = `<div class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+  let nftCard = `<div id="nftCard`+tokenAddress+id+`" class="grid-helper col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
                     <div id="card`+tokenAddress+id+`" class="card minted-item shadow-sm">
                       <div class="top-row">
                         <div class="creator-photo">

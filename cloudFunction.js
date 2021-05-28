@@ -406,3 +406,12 @@ Moralis.Cloud.define("getUser", async (request) => {
     }
   }
 });
+
+Moralis.Cloud.define("isAddressInDatabase", async (request) => {
+  const query = new Moralis.Query(Moralis.User);
+  query.equalTo("ethAddress", request.params.ethAddress);
+  const queryResults = await query.first({useMasterKey: true});
+  if(queryResults){
+    return true;
+  }
+});

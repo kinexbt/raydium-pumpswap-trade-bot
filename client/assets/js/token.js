@@ -24,7 +24,6 @@ $(document).ready(async function(){
   ifWalletNotConnected();
 });
 
-
 async function getEthPrice(){
   let ethPrice = BASE_URL + ETH_USD_PRICE_URL;
   const response = await fetch(ethPrice);
@@ -314,6 +313,7 @@ function dismissLoadingPulse(tokenAddress, id, path){
 async function getOwnerPhoto(tokenAddress, id, owner){
   $('#ownerPhoto' + tokenAddress + id).css('display', 'none');
   $('#ownerRank' + tokenAddress + id).css('display', 'none');
+  ifOwnerNotInDatabase(tokenAddress, id, owner);
   try{
     let users = await Moralis.Cloud.run('getAllUsers');
     for (i = 0; i < users.length; i++) {
@@ -1068,9 +1068,23 @@ function toAddressInput(tokenAddress, id){
   });
 };
 
+async function ifOwnerNotInDatabase(tokenAddress, id, owner){
+  const params = { ethAddress: owner };
+  let isAddressIn = await Moralis.Cloud.run('isAddressInDatabase', params);
+  if(!isAddressIn){
+    let amountSold = undefined;
+    addSellerBadgeForOwner(tokenAddress, id, amountSold);
+    $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/unknown.png');
+    let unknownProfilePhoto = "./assets/images-icons/unknown.png"
+    $('#ownerName' + tokenAddress + id).html("Wallet Not Yet Connected");
+    dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, unknownProfilePhoto);
+  }
+};
+
 async function newOwnerPhotoAndNameQuery(tokenAddress, id, toAddress){
   $('#ownerPhoto' + tokenAddress + id).css('display', 'none');
   $('#ownerRank' + tokenAddress + id).css('display', 'none');
+  ifOwnerNotInDatabase(tokenAddress, id, toAddress);
   try{
     let users = await Moralis.Cloud.run('getAllUsers');
     for (i = 0; i < users.length; i++) {
