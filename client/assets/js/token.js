@@ -21,7 +21,6 @@ $(document).ready(async function(){
   ethPrice = await getEthPrice();
   getActiveArtworkInfo();
   getInactiveArtworkInfo();
-  ifWalletNotConnected();
 });
 
 async function getEthPrice(){
@@ -30,12 +29,6 @@ async function getEthPrice(){
   const data = await response.json();
   let usdEthPrice = data.ethereum.usd;
   return usdEthPrice;
-};
-
-async function ifWalletNotConnected(){
-  if(user == null){
-    $('#ifWalletNotConnectedModal').modal('show');
-  }
 };
 
 //button in connect modal
@@ -58,10 +51,6 @@ $('#connectWalletModalBtn').click(async () =>{
     $('#connectWalletModalBtn').html('Connect Wallet');
     $('#connectWalletBtn').html('Connect Wallet');
   }
-});
-
-$('#goBackBtn').click(()=>{
-  window.history.back();
 });
 
 function removeDuplicates(data, key){
@@ -147,18 +136,6 @@ async function getActiveArtworkInfo(){
             $('.button-div').css('display', 'none');
           }
 
-          if(user.attributes.ethAddress.toLowerCase() == owner.toLowerCase()){
-            $('.if-owned').css('display', 'block');
-            $(".not-onsale").css('display', 'none');
-            $(".if-onsale").css('display', 'none');
-            $('#additionalInfo' + tokenAddress + id).html('View/Edit Additional Info');
-          } else{
-            $('.if-owned').css('display', 'none');
-            $(".if-onsale").css('display', 'block');
-            $(".not-onsale").css('display', 'none');
-            buy(tokenAddress, id, price, royalty, creator);
-          }
-
           let priceInEth = web3.utils.fromWei(price, 'ether');
           let priceInUsd = (priceInEth * ethPrice).toFixed(2);
           $('#forSale' + tokenAddress + id).html(`${priceInEth} ETH <span class="sub-text">($${priceInUsd})</span>`);
@@ -191,6 +168,18 @@ async function getActiveArtworkInfo(){
             $('.unlockable-div').css('display', 'block');
             $('#unlockableContentBtn' + tokenAddress + id).removeClass('unlockable-content-shadow');
             $('#unlockableContentBtn' + tokenAddress + id).html('Unlockable');
+          }
+
+          if(user.attributes.ethAddress.toLowerCase() == owner.toLowerCase()){
+            $('.if-owned').css('display', 'block');
+            $(".not-onsale").css('display', 'none');
+            $(".if-onsale").css('display', 'none');
+            $('#additionalInfo' + tokenAddress + id).html('View/Edit Additional Info');
+          } else{
+            $('.if-owned').css('display', 'none');
+            $(".if-onsale").css('display', 'block');
+            $(".not-onsale").css('display', 'none');
+            buy(tokenAddress, id, price, royalty, creator);
           }
         }
       };
@@ -237,17 +226,6 @@ async function getInactiveArtworkInfo(){
             $('.button-div').css('display', 'none');
           }
 
-          if(user.attributes.ethAddress.toLowerCase() == owner.toLowerCase()){
-            $('.if-owned').css('display', 'block');
-            $(".not-onsale").css('display', 'none');
-            $(".if-onsale").css('display', 'none');
-            $('#additionalInfo' + tokenAddress + id).html('View/Edit Additional Info');
-          } else{
-            $('.if-owned').css('display', 'none');
-            $(".if-onsale").css('display', 'none');
-            $(".not-onsale").css('display', 'block');
-          }
-
           $('.on-sale-text').css('display', 'none');
           $('#notForSale' + tokenAddress + id).html(`<i id="encourageBell`+tokenAddress+id+`" class="fas fa-concierge-bell"></i><span id="encourageCounter`+tokenAddress+id+`"></span>`);
           if(encouragements < 1 || encouragements == undefined){
@@ -286,6 +264,17 @@ async function getInactiveArtworkInfo(){
             $('.unlockable-div').css('display', 'block');
             $('#unlockableContentBtn' + tokenAddress + id).removeClass('unlockable-content-shadow');
             $('#unlockableContentBtn' + tokenAddress + id).html('Unlockable');
+          }
+
+          if(user.attributes.ethAddress.toLowerCase() == owner.toLowerCase()){
+            $('.if-owned').css('display', 'block');
+            $(".not-onsale").css('display', 'none');
+            $(".if-onsale").css('display', 'none');
+            $('#additionalInfo' + tokenAddress + id).html('View/Edit Additional Info');
+          } else{
+            $('.if-owned').css('display', 'none');
+            $(".if-onsale").css('display', 'none');
+            $(".not-onsale").css('display', 'block');
           }
         }
       };
@@ -513,6 +502,8 @@ function encourageButton(tokenAddress, id){
         $('#encourageBell' + tokenAddress + id).css('color', '#aaa');
         $('#encourageToSellText' + tokenAddress + id).html('Item is not on sale, but you can encourage them to put on sale')
       }
+    } else{
+      $('#ifWalletNotConnectedModal').modal('show');
     }
   });
 };
@@ -545,6 +536,8 @@ function encourageToSellButton(tokenAddress, id){
         $('#encourageBell' + tokenAddress + id).css('color', '#aaa');
         $('#encourageToSellText' + tokenAddress + id).html('Item is not on sale, but you can encourage them to put on sale')
       }
+    } else{
+      $('#ifWalletNotConnectedModal').modal('show');
     }
   });
 };
@@ -592,6 +585,8 @@ function likeButton(tokenAddress, id, likes){
         $('#like' + tokenAddress + id).removeClass('fas');
         $('#like' + tokenAddress + id).addClass('far');
       }
+    } else{
+      $('#ifWalletNotConnectedModal').modal('show');
     }
   });
 };
@@ -1153,47 +1148,51 @@ async function newOwnerPhotoAndNameQuery(tokenAddress, id, toAddress){
 
 async function buy(tokenAddress, id, price, royalty, creator){
   $('#buy' + tokenAddress + id).click(async function(){
-    $('#buy' + tokenAddress + id).prop('disabled', true);
-    $('#buy' + tokenAddress + id).html(`Buy Now <div class="spinner-border spinner-border-sm text-light" role="status">
-                                          <span class="sr-only">Loading...</span>
-                                        </div>`);
-    $('#unlockableContentBtn' + tokenAddress + id).addClass('unlock-shake-before-buy');
-    await openMintMarketplaceInstance.methods.buyArt(id, tokenAddress).send({from: ethereum.selectedAddress, value: price}, (err, txHash) => {
-      if(err){
-        alert(err.message);
-        $('#buy' + tokenAddress + id).prop('disabled', false);
-        $('#buy' + tokenAddress + id).html("Buy Now");
-        $('#unlockableContentBtn' + tokenAddress + id).html('Unlockable');
-        $('#unlockableContentBtn' + tokenAddress + id).removeClass('unlock-shake-before-buy');
-        $('#unlockableContentBtn' + tokenAddress + id).removeClass('unlockable-content-shadow');
-        $('#unlockableContentBtn' + tokenAddress + id).removeClass('magnify');
-      }else{
-        console.log(txHash, "Artwork successfully bought");
-        $('#buy' + tokenAddress + id).html('Successfully Purchased');
-        $('#buy' + tokenAddress + id).removeClass('btn-primary');
-        $('#buy' + tokenAddress + id).addClass('disabled btn-success');
-        $('#buy' + tokenAddress + id).prop('disabled', true);
-        $('#unlockableContentBtn' + tokenAddress + id).removeClass('unlock-shake-before-buy');
-        $('#unlockableContentBtn' + tokenAddress + id).addClass('unlockable-content-shadow');
-        $('#unlockableContentBtn' + tokenAddress + id).html('Unlocked');
-        $('#unlockableContentBtn' + tokenAddress + id).addClass('magnify');
-        let toAddress = user.attributes.ethAddress;
-        $('#ownerNameAnchor' + tokenAddress + id).attr('href', "http://localhost:8000/profile.html?address=" + toAddress);
-        $('#owner' + tokenAddress + id).attr('href', "http://localhost:8000/profile.html?address=" + toAddress);
-        $('#ownerSpinner' + tokenAddress + id).css('display', 'block');
-        newOwnerPhotoAndNameQuery(tokenAddress, id, toAddress);
-        customConfetti();
-        getUnlockableContentFrontEnd(tokenAddress, id, toAddress);
-        $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="putForSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#putForSaleModal`+tokenAddress+id+`">Put for sale</a>
-                                                      <a class="dropdown-item quick-action" id="transferTokenQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#transferTokenModal`+tokenAddress+id+`">Transfer token</a>
-                                                      <a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`
-                                                    );
-        putForSaleQuickActionButton(tokenAddress, id, royalty, creator);
-        transferTokenQuickActionButton(tokenAddress, id, royalty, creator);
-        shareQuickActionButton(tokenAddress, id);
-        darkmodeForDynamicContent();
-      }
-    });
+    if(user){
+      $('#buy' + tokenAddress + id).prop('disabled', true);
+      $('#buy' + tokenAddress + id).html(`Buy Now <div class="spinner-border spinner-border-sm text-light" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                          </div>`);
+      $('#unlockableContentBtn' + tokenAddress + id).addClass('unlock-shake-before-buy');
+      await openMintMarketplaceInstance.methods.buyArt(id, tokenAddress).send({from: ethereum.selectedAddress, value: price}, (err, txHash) => {
+        if(err){
+          alert(err.message);
+          $('#buy' + tokenAddress + id).prop('disabled', false);
+          $('#buy' + tokenAddress + id).html("Buy Now");
+          $('#unlockableContentBtn' + tokenAddress + id).html('Unlockable');
+          $('#unlockableContentBtn' + tokenAddress + id).removeClass('unlock-shake-before-buy');
+          $('#unlockableContentBtn' + tokenAddress + id).removeClass('unlockable-content-shadow');
+          $('#unlockableContentBtn' + tokenAddress + id).removeClass('magnify');
+        }else{
+          console.log(txHash, "Artwork successfully bought");
+          $('#buy' + tokenAddress + id).html('Successfully Purchased');
+          $('#buy' + tokenAddress + id).removeClass('btn-primary');
+          $('#buy' + tokenAddress + id).addClass('disabled btn-success');
+          $('#buy' + tokenAddress + id).prop('disabled', true);
+          $('#unlockableContentBtn' + tokenAddress + id).removeClass('unlock-shake-before-buy');
+          $('#unlockableContentBtn' + tokenAddress + id).addClass('unlockable-content-shadow');
+          $('#unlockableContentBtn' + tokenAddress + id).html('Unlocked');
+          $('#unlockableContentBtn' + tokenAddress + id).addClass('magnify');
+          let toAddress = user.attributes.ethAddress;
+          $('#ownerNameAnchor' + tokenAddress + id).attr('href', "http://localhost:8000/profile.html?address=" + toAddress);
+          $('#owner' + tokenAddress + id).attr('href', "http://localhost:8000/profile.html?address=" + toAddress);
+          $('#ownerSpinner' + tokenAddress + id).css('display', 'block');
+          newOwnerPhotoAndNameQuery(tokenAddress, id, toAddress);
+          customConfetti();
+          getUnlockableContentFrontEnd(tokenAddress, id, toAddress);
+          $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="putForSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#putForSaleModal`+tokenAddress+id+`">Put for sale</a>
+                                                        <a class="dropdown-item quick-action" id="transferTokenQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#transferTokenModal`+tokenAddress+id+`">Transfer token</a>
+                                                        <a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`
+                                                      );
+          putForSaleQuickActionButton(tokenAddress, id, royalty, creator);
+          transferTokenQuickActionButton(tokenAddress, id, royalty, creator);
+          shareQuickActionButton(tokenAddress, id);
+          darkmodeForDynamicContent();
+        }
+      });
+    } else{
+      $("#ifWalletNotConnectedModal").modal('show');
+    }
   });
 };
 
