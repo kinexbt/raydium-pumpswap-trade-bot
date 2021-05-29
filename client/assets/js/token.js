@@ -1,10 +1,10 @@
-Moralis.initialize("qOV9jlYrjJoJhal3rT8lCtuM7q6BYpYiFMfsHZCg"); // Application id from moralis.io
-Moralis.serverURL = 'https://c6huu2smmyck.moralis.io:2053/server'; //Server url from moralis.io
+Moralis.initialize(""); // Application id from moralis.io
+Moralis.serverURL = ''; //Server url from moralis.io
 
 const BASE_URL = "https://api.coingecko.com/api/v3";
 const ETH_USD_PRICE_URL = "/simple/price?ids=ethereum&vs_currencies=usd";
-const openMintTokenAddress = "0xBbf047B922d4f2cC73bdBa64F26eD713863FA1be";
-const openMintMarketplaceAddress = "0x01D068d6241d0e230a9CB0Fd14c9E40A7e6648cD";
+const openMintTokenAddress = "";
+const openMintMarketplaceAddress = "";
 let openMintTokenInstance;
 let openMintMarketplaceInstance;
 let web3;
