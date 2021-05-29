@@ -322,7 +322,41 @@ async function ifSoldCardOwnerNotInDatabase(tokenAddress, id, owner){
 };
 
 function recentlySoldQuickAction(tokenAddress, id, owner){
-  $('#soldCardQuickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" href="#">Share</a>`);
+  $('#soldCardQuickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" id="soldCardShareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#soldCardShareModal`+tokenAddress+id+`">Share</a>`);
+  soldCardShareQuickActionButton(tokenAddress, id);
+};
+
+function soldCardShareQuickActionButton(tokenAddress, id){
+  $("#soldCardShareQuickAction" + tokenAddress + id).click(()=>{
+    soldCardShareModalHTML(tokenAddress, id);
+    soldCardShareOptions(tokenAddress, id);
+
+    onModalClose(tokenAddress, id);
+    darkmodeForDynamicContent();
+  });
+};
+
+function soldCardShareOptions(tokenAddress, id){
+  //obviously changing localhost to real url when hosted
+  let left = screen.width / 3;
+  let top = screen.height / 3;
+  let width = screen.width / 3;
+  let height = screen.height / 3;
+  let tokenPage = `http://localhost:8000/token.html?token=${tokenAddress+id}`;
+  let tweet = `https://twitter.com/intent/tweet?text=Check%20out%20this%20NFT%20on%20OpenMint!&hashtags=openmint%2Cbsc%2Cnonfungible%2Cdigitalasset%2Cnft&via=openmint&url=${tokenPage}`;
+  let post = `https://www.facebook.com/sharer/sharer.php?u=${tokenPage}%3F&quote=Check%20out%20this%20NFT%20on%20OpenMint`;
+
+  $('#soldCardTwitterBtnInModal' + tokenAddress + id).click(()=>{
+    window.open(tweet, 'popup', `width=${width},height=${height},top=${top},left=${left}`);
+  });
+
+  $('#soldCardFacebookBtnInModal' + tokenAddress + id).click(()=>{
+    window.open(post, 'popup', `width=${width},height=${height},top=${top},left=${left}`);
+  });
+
+  $('#soldCardEmailBtnInModal' + tokenAddress + id).click(()=>{
+    window.location.href = `mailto:user@example.com?subject=Check%20out%20this%20NFT%20on%20OpenMint&body=Never%20seen%20anything%20quite%20like%20this,%20${tokenPage}`;
+  });
 };
 
 async function recentlyPutForSale(){
@@ -624,23 +658,34 @@ function fileIcon(tokenAddress, id, fileType){
 
 function quickActions(tokenAddress, id, owner, active, royalty, creator){
   if(user == null || user.attributes.ethAddress.toLowerCase() !== owner.toLowerCase()){
-    $('#quickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" href="#">Share</a>`);
+    $('#quickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`);
   } else if(user.attributes.ethAddress.toLowerCase() == owner.toLowerCase() && active == true){
     $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="changePriceQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#changePriceModal`+tokenAddress+id+`">Change price</a>
                                                   <a class="dropdown-item quick-action" id="removeFromSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#removeFromSaleModal`+tokenAddress+id+`">Remove from sale</a>
-                                                  <a class="dropdown-item quick-action" href="#">Share</a>`
+                                                  <a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`
                                                 );
   } else if(user.attributes.ethAddress.toLowerCase() == owner.toLowerCase() && active == false){
     $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="putForSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#putForSaleModal`+tokenAddress+id+`">Put for sale</a>
                                                   <a class="dropdown-item quick-action" id="transferTokenQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#transferTokenModal`+tokenAddress+id+`">Transfer token</a>
-                                                  <a class="dropdown-item quick-action" href="#">Share</a>`
+                                                  <a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`
                                                 );
   }
+  shareQuickActionButton(tokenAddress, id);
   putForSaleQuickActionButton(tokenAddress, id, royalty, creator);
   transferTokenQuickActionButton(tokenAddress, id);
   removeFromSaleQuickActionButton(tokenAddress, id, royalty, creator);
   changePriceQuickActionButton(tokenAddress, id, royalty, creator);
   darkmodeForDynamicContent();
+};
+
+function shareQuickActionButton(tokenAddress, id){
+  $("#shareQuickAction" + tokenAddress + id).click(()=>{
+    shareModalHTML(tokenAddress, id);
+    shareOptions(tokenAddress, id);
+
+    onModalClose(tokenAddress, id);
+    darkmodeForDynamicContent();
+  });
 };
 
 function putForSaleQuickActionButton(tokenAddress, id, royalty, creator){
@@ -704,10 +749,33 @@ function transferTokenQuickActionButton(tokenAddress, id){
   });
 };
 
+function shareOptions(tokenAddress, id){
+  //obviously changing localhost to real url when hosted
+  let left = screen.width / 3;
+  let top = screen.height / 3;
+  let width = screen.width / 3;
+  let height = screen.height / 3;
+  let tokenPage = `http://localhost:8000/token.html?token=${tokenAddress+id}`;
+  let tweet = `https://twitter.com/intent/tweet?text=Check%20out%20this%20NFT%20on%20OpenMint!&hashtags=openmint%2Cbsc%2Cnonfungible%2Cdigitalasset%2Cnft&via=openmint&url=${tokenPage}`;
+  let post = `https://www.facebook.com/sharer/sharer.php?u=${tokenPage}%3F&quote=Check%20out%20this%20NFT%20on%20OpenMint`;
+
+  $('#twitterBtnInModal' + tokenAddress + id).click(()=>{
+    window.open(tweet, 'popup', `width=${width},height=${height},top=${top},left=${left}`);
+  });
+
+  $('#facebookBtnInModal' + tokenAddress + id).click(()=>{
+    window.open(post, 'popup', `width=${width},height=${height},top=${top},left=${left}`);
+  });
+
+  $('#emailBtnInModal' + tokenAddress + id).click(()=>{
+    window.location.href = `mailto:user@example.com?subject=Check%20out%20this%20NFT%20on%20OpenMint&body=Never%20seen%20anything%20quite%20like%20this,%20${tokenPage}`;
+  });
+};
+
 function onModalClose(tokenAddress, id){
   $('.modal').on('hidden.bs.modal', function (e) {
     $('.modals').empty();
-    console.log('closed');
+
     $('#changePriceInput' + tokenAddress + id).val('');
     $('#changePriceBtn' + tokenAddress + id).prop('disabled', true);
     $('#changePriceSaleProfit' + tokenAddress + id).html('0 ETH');
@@ -798,10 +866,11 @@ function putOnSale(tokenAddress, id, royalty, creator){
 
       $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="changePriceQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#changePriceModal`+tokenAddress+id+`">Change price</a>
                                                     <a class="dropdown-item quick-action" id="removeFromSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#removeFromSaleModal`+tokenAddress+id+`">Remove from sale</a>
-                                                    <a class="dropdown-item quick-action" href="#">Share</a>`
+                                                    <a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`
                                                   );
       removeFromSaleQuickActionButton(tokenAddress, id, royalty, creator);
       changePriceQuickActionButton(tokenAddress, id, royalty, creator);
+      shareQuickActionButton(tokenAddress, id);
     } catch(err){
       alert(err.message);
       $('#putOnSaleBtn' + tokenAddress + id).prop('disabled', false);
@@ -862,10 +931,11 @@ function removeFromSale(tokenAddress, id, royalty, creator){
 
       $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="putForSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#putForSaleModal`+tokenAddress+id+`">Put for sale</a>
                                                     <a class="dropdown-item quick-action" id="transferTokenQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#transferTokenModal`+tokenAddress+id+`">Transfer token</a>
-                                                    <a class="dropdown-item quick-action" href="#">Share</a>`
+                                                    <a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`
                                                   );
       putForSaleQuickActionButton(tokenAddress, id, royalty, creator);
       transferTokenQuickActionButton(tokenAddress, id);
+      shareQuickActionButton(tokenAddress, id);
       encourageButton(tokenAddress, id);
     } catch(err){
       alert(err.message);
@@ -903,10 +973,11 @@ function changePriceFrontEnd(tokenAddress, id, royalty, creator){
 
       $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="changePriceQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#changePriceModal`+tokenAddress+id+`">Change price</a>
                                                     <a class="dropdown-item quick-action" id="removeFromSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#removeFromSaleModal`+tokenAddress+id+`">Remove from sale</a>
-                                                    <a class="dropdown-item quick-action" href="#">Share</a>`
+                                                    <a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`
                                                   );
       removeFromSaleQuickActionButton(tokenAddress, id, royalty, creator);
       changePriceQuickActionButton(tokenAddress, id, royalty, creator);
+      shareQuickActionButton(tokenAddress, id);
     } catch(err){
       alert(err.message);
       $('#changePriceBtn' + tokenAddress + id).prop('disabled', false);
@@ -964,7 +1035,8 @@ function transferToken(tokenAddress, id){
       newOwnerPhotoQuery(tokenAddress, id, toAddress);
       $('#toAddressInput').prop('disabled', true);
 
-      $('#quickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" href="#">Share</a>`);
+      $('#quickActions' + tokenAddress + id).html(`<a class="dropdown-item quick-action" id="shareQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#shareModal`+tokenAddress+id+`">Share</a>`);
+      shareQuickActionButton(tokenAddress, id);
     } catch(err){
       alert(err.message);
       $('#transferTokenBtn' + tokenAddress + id).prop('disabled', false);
@@ -1261,6 +1333,42 @@ function transferTokenModalHTML(tokenAddress, id){
                               </div>
                             </div>`
   $('.modals').append(transferTokenModal);
+};
+
+function shareModalHTML(tokenAddress, id){
+  let shareModal = `<div class="modal fade" id="shareModal`+tokenAddress+id+`" tabindex="-1" role="dialog" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header center-content">
+                                    <h5 class="modal-title">Share This NFT</h5>
+                                  </div>
+                                  <div class="modal-body center-content">
+                                  <button id='twitterBtnInModal`+tokenAddress+id+`' target="popup" type="button" class="btn btn-primary m-2 button-styling">Twitter</button>
+                                  <button id='facebookBtnInModal`+tokenAddress+id+`' target="popup" type="button" class="btn btn-primary m-2 button-styling">Facebook</button>
+                                  <button id='emailBtnInModal`+tokenAddress+id+`' type="button" class="btn btn-primary m-2 button-styling">Email</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>`
+  $('.modals').append(shareModal);
+};
+
+function soldCardShareModalHTML(tokenAddress, id){
+  let soldCardShareModal = `<div class="modal fade" id="soldCardShareModal`+tokenAddress+id+`" tabindex="-1" role="dialog" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header center-content">
+                                    <h5 class="modal-title">Share This NFT</h5>
+                                  </div>
+                                  <div class="modal-body center-content">
+                                  <button id='soldCardTwitterBtnInModal`+tokenAddress+id+`' target="popup" type="button" class="btn btn-primary m-2 button-styling">Twitter</button>
+                                  <button id='soldCardFacebookBtnInModal`+tokenAddress+id+`' target="popup" type="button" class="btn btn-primary m-2 button-styling">Facebook</button>
+                                  <button id='soldCardEmailBtnInModal`+tokenAddress+id+`' type="button" class="btn btn-primary m-2 button-styling">Email</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>`
+  $('.modals').append(soldCardShareModal);
 };
 
 function darkmodeForDynamicContent(){
