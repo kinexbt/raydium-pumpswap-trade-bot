@@ -108,7 +108,7 @@ a.anchor{
 
 .description{
   font-weight: 500;
-  white-space: pre-wrap;
+  white-space: pre-line;
   overflow-wrap: break-word;
   max-height: 200px;
   overflow-y: scroll;
