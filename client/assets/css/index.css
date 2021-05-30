@@ -48,6 +48,12 @@
   cursor: pointer;
 }
 
+.count-text{
+  font-size: .8rem;
+  position: relative;
+  bottom: 5px;
+}
+
 .recently-minted{
   margin-top: 50px;
 }
