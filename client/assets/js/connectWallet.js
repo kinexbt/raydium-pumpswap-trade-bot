@@ -29,7 +29,7 @@ async function login(){
 
 async function initUser(){
   if (user){
-    console.log(user.attributes.authData.moralisEth.data)
+    console.log(user.attributes.authData.moralisEth.data);
     $('#connectWalletTag').css('display', 'none');
     $('#profileTag').css('display', 'block');
     displayEthAddressInNav();
@@ -73,7 +73,10 @@ function displayProfilePhotoInNav(){
       };
 
       img.onerror = function(){
-          console.log('No network connection or profile photo is not available.')
+        $('#spinnerBorderInNav').css('display', 'none');
+        $('#profilePhotoInNav').css('display', 'inline');
+        $('#profilePhotoInNav').attr('src', './assets/images-icons/cantFindProfilePhoto.png');
+        console.log('No network connection or profile photo is not available.')
       };
 
   } else{
