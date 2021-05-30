@@ -64,6 +64,10 @@ $('#connectWalletModalBtn').click(async () =>{
   }
 });
 
+$('#goBackBtn').click(()=>{
+  window.history.back();
+});
+
 async function getEthPrice(){
   let ethPrice = BASE_URL + ETH_USD_PRICE_URL;
   const response = await fetch(ethPrice);
@@ -75,7 +79,6 @@ async function getEthPrice(){
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
-
 
 async function readURL(input) {
   if (input.files && input.files[0]) {
