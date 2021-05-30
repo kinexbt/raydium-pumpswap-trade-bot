@@ -18,7 +18,39 @@ $(document).ready(async function(){
   ethPrice = await getEthPrice();
   recentlySold();
   viewAll();
+  allCount();
+  forSaleCount();
+  notForSaleCount();
 });
+
+function removeDuplicates(data, key){
+  return [
+    ...new Map(
+        data.map(x => [key(x), x])
+    ).values()
+  ]
+};
+
+async function allCount(){
+  let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+  let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
+  let activeCount = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
+  let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
+  let allCount = inactiveCount + activeCount;
+  $('#allCount').html(allCount);
+};
+
+async function forSaleCount(){
+  let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+  let activeCount = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
+  $('#forSaleCount').html(activeCount);
+};
+
+async function notForSaleCount(){
+  let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
+  let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
+  $('#notForSaleCount').html(inactiveCount);
+};
 
 //button in connect modal
 $('#connectWalletModalBtn').click(async () =>{
@@ -58,59 +90,45 @@ function loader(){
                       </div>`);
 };
 
-$('#forSale').click(()=>{
-  $('#forSale').addClass('disabled');
-  $('#forSale').addClass('active');
-
-  $('#notForSale').removeClass('disabled');
-  $('#viewAll').removeClass('disabled');
-  $('#notForSale').removeClass('active');
-  $('#viewAll').removeClass('active');
-
+$('#forSale').click(async ()=>{
   $('.cardDivs').empty();
   loader();
+  let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+  let activeCount = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
+  if(activeCount < 1){
+    $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork for sale on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
+  }
   recentlyPutForSale();
 });
 
-$('#notForSale').click(()=>{
-  $('#notForSale').addClass('disabled');
-  $('#notForSale').addClass('active');
-
-  $('#forSale').removeClass('disabled');
-  $('#viewAll').removeClass('disabled');
-  $('#forSale').removeClass('active');
-  $('#viewAll').removeClass('active');
-
+$('#notForSale').click(async ()=>{
   $('.cardDivs').empty();
   loader();
+  let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
+  let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
+  if(inactiveCount < 1){
+    $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork not for sale on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
+  }
   recentlyMintedAndNotOnSale();
 });
 
 $('#viewAll').click(()=>{
-  $('#viewAll').addClass('disabled');
-  $('#viewAll').addClass('active');
-
-  $('#notForSale').removeClass('disabled');
-  $('#forSale').removeClass('disabled');
-  $('#notForSale').removeClass('active');
-  $('#forSale').removeClass('active');
-
   $('.cardDivs').empty();
   loader();
   viewAll();
 });
 
-function viewAll(){
+async function viewAll(){
+  let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+  let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
+  let activeCount = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
+  let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
+  console.log(activeCount + inactiveCount);
+  if(activeCount < 1 && inactiveCount < 1){
+    $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
+  }
   recentlyMintedAndNotOnSale();
   recentlyPutForSale();
-};
-
-function removeDuplicates(data, key){
-  return [
-    ...new Map(
-        data.map(x => [key(x), x])
-    ).values()
-  ]
 };
 
 async function recentlySold(){
@@ -161,7 +179,7 @@ async function recentlySold(){
 
       $('#soldCardNotForSale' + tokenAddress + id).html(`Sold For: <br><span class="for-sale-text">${priceInEth} ETH</span>`);
       $('#soldCardButton' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-light view-btn">View</button></a>`);
-
+      darkmodeForDynamicContent();
     }
   } catch (err) {
     console.log(err);
@@ -176,7 +194,10 @@ function dismissLoadingPulseOnSoldCover(tokenAddress, id, cover){
     $('#soldCardSpinnerGrow' + tokenAddress + id).css('display', 'none');
   };
   img.onerror = function(){
-    alert('No network connection or NFT is not available.')
+    $('#nftsoldCardSpinnerGrowSpinner' + tokenAddress + id).css('display', 'none');
+    $('#soldCardCover' + tokenAddress + id).css('display', 'block');
+    $('#soldCardCover' + tokenAddress + id).attr('src', './assets/images-icons/cantFindNFT.png');
+    console.log('No network connection or NFT is not available.');
   };
 };
 
@@ -239,6 +260,10 @@ function dismissLoadingPulseOnSoldCardOwnerPhoto(tokenAddress, id, profilePhoto)
     $('#soldcardSpinner' + tokenAddress + id).css('display', 'none');
   };
   img.onerror = function(){
+    $('#soldcardSpinner' + tokenAddress + id).css('display', 'none');
+    $('#soldCardOwnerPhoto' + tokenAddress + id).css('display', 'inline');
+    $('#soldCardOwnerRank' + tokenAddress + id).css('display', 'block');
+    $('#soldCardOwnerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/cantFindProfilePhoto.png');
     console.log('No network connection or profilephoto is not available.')
   };
 };
@@ -364,10 +389,6 @@ async function recentlyPutForSale(){
     let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
     let ifOfferDetailsLength = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
     let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, art => art.tokenId);
-    if(ifOfferDetailsLength == 0){
-      $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork for sale, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
-      //change the tag so when called it doesn't disrupt the rest of the cards
-    }
 
     for (i = 0; i < ifOfferDetailsLength; i++) {
       if(ifOfferDetailsDuplicatesRemoved[i].active == true && ifOfferDetailsDuplicatesRemoved[i].isSold == false){
@@ -406,6 +427,7 @@ async function recentlyPutForSale(){
         $('#forSale' + tokenAddress + id).html(`<span class="for-sale-text">${priceInEth} ETH</span>`);
         $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-primary buy-btn">Buy</button></a>`);
       }
+      darkmodeForDynamicContent();
     }
   } catch (error){
     console.log(error)
@@ -415,7 +437,6 @@ async function recentlyPutForSale(){
 async function recentlyMintedAndNotOnSale(){
   try{
     let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
-
     for (i = 0; i < inactiveArtwork.length; i++) {
       if(inactiveArtwork[i].active == false){
         let cover = inactiveArtwork[i].cover._url;
@@ -456,6 +477,7 @@ async function recentlyMintedAndNotOnSale(){
         } else{
           $('#encourageCounter' + tokenAddress + id).html(` ${encouragements}`);
         }
+        darkmodeForDynamicContent();
       }
     }
   } catch (error){
@@ -512,7 +534,10 @@ function dismissLoadingPulseOnCover(tokenAddress, id, cover){
     $('#spinnerGrow' + tokenAddress + id).css('display', 'none');
   };
   img.onerror = function(){
-    alert('No network connection or NFT is not available.')
+    $('#cover' + tokenAddress + id).css('display', 'block');
+    $('#spinnerGrow' + tokenAddress + id).css('display', 'none');
+    $('#cover' + tokenAddress + id).attr('src', './assets/images-icons/cantFindNFT.png');
+    console.log('No network connection or NFT is not available.');
   };
 };
 
@@ -574,6 +599,10 @@ function dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, profilePhoto){
     $('#cardSpinner' + tokenAddress + id).css('display', 'none');
   };
   img.onerror = function(){
+    $('#ownerPhoto' + tokenAddress + id).css('display', 'inline');
+    $('#ownerRank' + tokenAddress + id).css('display', 'block');
+    $('#cardSpinner' + tokenAddress + id).css('display', 'none');
+    $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/cantFindProfilePhoto.png');
     console.log('No network connection or profilephoto is not available.')
   };
 };
@@ -1199,7 +1228,6 @@ function cardDiv(tokenAddress, id, owner){
                     </div>
                   </div>`
   $('.cardDivs').prepend(nftCard);
-  darkmodeForDynamicContent(); //is this the best place?
 };
 
 function changePriceModalHTML(tokenAddress, id){
