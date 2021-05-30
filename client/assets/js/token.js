@@ -133,7 +133,10 @@ async function getActiveArtworkInfo(){
           quickActions(tokenAddress, id, owner, active, royalty, creator);
           getUnlockableContentFrontEnd(tokenAddress, id, owner);
           if(user == null){
-            $('.button-div').css('display', 'none');
+            $('.if-owned').css('display', 'none');
+            $(".if-onsale").css('display', 'block');
+            $(".not-onsale").css('display', 'none');
+            buy(tokenAddress, id, price, royalty, creator);
           }
 
           let priceInEth = web3.utils.fromWei(price, 'ether');
@@ -223,7 +226,9 @@ async function getInactiveArtworkInfo(){
           quickActions(tokenAddress, id, owner, active, royalty, creator);
           getUnlockableContentFrontEnd(tokenAddress, id, owner);
           if(user == null){
-            $('.button-div').css('display', 'none');
+            $('.if-owned').css('display', 'none');
+            $(".if-onsale").css('display', 'none');
+            $(".not-onsale").css('display', 'block');
           }
 
           $('.on-sale-text').css('display', 'none');
@@ -289,13 +294,14 @@ function dismissLoadingPulse(tokenAddress, id, path){
 
   nft.src = path;
   nft.onload = function(){
-    console.log('loided');
     $('#nftSpinner' + tokenAddress + id).css('display', 'none');
     $('#nft' + tokenAddress + id).css('display', 'block');
-    console.log('nft succesfully loaded!')
   };
   nft.onerror = function(){
-    alert('No network connection or NFT is not available.')
+    $('#nftSpinner' + tokenAddress + id).css('display', 'none');
+    $('#nft' + tokenAddress + id).css('display', 'block');
+    $('#nft' + tokenAddress + id).attr('src', './assets/images-icons/cantFindNFT.png');
+    console.log('No network connection or NFT is not available.')
   };
 };
 
@@ -342,6 +348,10 @@ function dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, profilePhoto){
     console.log('owners profilePhoto succesfully loaded!')
   };
   img.onerror = function(){
+    $('#ownerSpinner' + tokenAddress + id).css('display', 'none');
+    $('#ownerPhoto' + tokenAddress + id).css('display', 'inline');
+    $('#ownerRank' + tokenAddress + id).css('display', 'block');
+    $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/cantFindProfilePhoto.png');
     console.log('No network connection or profilephoto is not available.')
   };
 };
@@ -411,6 +421,10 @@ function dismissLoadingPulseOnCreatorPhoto(tokenAddress, id, profilePhoto){
     console.log('creator profilePhoto succesfully loaded!')
   };
   img.onerror = function(){
+    $('#creatorSpinner' + tokenAddress + id).css('display', 'none');
+    $('#creatorPhoto' + tokenAddress + id).css('display', 'inline');
+    $('#creatorRank' + tokenAddress + id).css('display', 'block');
+    $('#creatorPhoto' + tokenAddress + id).attr('src', './assets/images-icons/cantFindProfilePhoto.png')
     console.log('No network connection or profilephoto is not available.')
   };
 };
@@ -837,7 +851,7 @@ async function checkForApprovalBeforePuttingOnSale(tokenAddress, id){
 function setApprovalIfNeeded(tokenAddress, id){
   $('#setApprovalBtn' + tokenAddress + id).click(async() =>{
     $('#setApprovalBtn' + tokenAddress + id).prop('disabled', true);
-    $('#setApprovalBtn' + tokenAddress + id).html(`Setting Approval<div class="spinner-border spinner-border-sm text-light" role="status">
+    $('#setApprovalBtn' + tokenAddress + id).html(`Setting Approval <div class="spinner-border spinner-border-sm text-light" role="status">
                                                     <span class="sr-only">Loading...</span>
                                                   </div>`);
     await openMintTokenInstance.methods.setApprovalForAll(openMintMarketplaceAddress, true).send({from: user.attributes.ethAddress}, (err, txHash) => {
