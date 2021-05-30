@@ -58,6 +58,10 @@
   font-weight: 500;
 }
 
+.dropdown-toggle::after{
+  margin-left: -0.745rem;
+}
+
  @media (max-width: 992px) { /*keeps gradient behind text on collapse*/
   #create{
     width: 75px;
