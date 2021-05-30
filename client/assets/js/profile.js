@@ -167,6 +167,10 @@ function dismissLoadingPulseOnProfilePhoto(profilePhoto){
     console.log('profilePhoto succesfully loaded!')
   };
   img.onerror = function(){
+    $('#profilePhoto').css('display', 'inline');
+    $('#sellerRank').css('display', 'inline');
+    $('#spinnerGrowProfilePhoto').css('display', 'none');
+    $('#profilePhoto').attr('src', './assets/images-icons/cantFindProfilePhoto.png');
     console.log('No network connection or profilephoto is not available.')
   };
 };
@@ -577,10 +581,11 @@ async function getFollowers(){
       addSellerBadgeUserCard(amountSold, ethAddress);
       dismissLoadingPulseUserCard(ethAddress, userProfilePhoto);
       $('#username' + ethAddress).html(username);
-      $('#amountOfFollowers' + ethAddress).html(amountOfFollowers);
+      $('#amountOfFollowers' + ethAddress).html(`${amountOfFollowers } followers`);
       dynamicFollowButton(ethAddress);
       doesUserFollowInCard(ethAddress);
       followButtonInCard(ethAddress);
+      darkmodeForDynamicContent();
     };
   }
 };
@@ -617,10 +622,11 @@ async function getFollowing(){
       addSellerBadgeUserCard(amountSold, ethAddress);
       dismissLoadingPulseUserCard(ethAddress, userProfilePhoto);
       $('#username' + ethAddress).html(username);
-      $('#amountOfFollowers' + ethAddress).html(amountOfFollowers);
+      $('#amountOfFollowers' + ethAddress).html(`${amountOfFollowers } followers`);
       dynamicFollowButton(ethAddress);
       doesUserFollowInCard(ethAddress);
       followButtonInCard(ethAddress);
+      darkmodeForDynamicContent();
     };
   }
 };
@@ -663,7 +669,11 @@ function dismissLoadingPulseUserCard(ethAddress, userProfilePhoto){
     $('#userSpinner' + ethAddress).css('display', 'none');
   };
   img.onerror = function(){
-    alert('No network connection or pp is not available.')
+    $('#userPhoto' + ethAddress).css('display', 'inline');
+    $('#userRank' + ethAddress).css('display', 'block');
+    $('#userSpinner' + ethAddress).css('display', 'none');
+    $('#userPhoto' + ethAddress).attr('src', './assets/images-icons/cantFindProfilePhoto.png');
+    console.log('No network connection or pp is not available.')
   };
 };
 
@@ -740,6 +750,7 @@ async function getActiveOwnedArt(){
         $('#forSale' + tokenAddress + id).html(`<span class="for-sale-text">${priceInEth} ETH</span>`);
         $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-primary buy-btn">Buy</button></a>`);
       }
+      darkmodeForDynamicContent();
     }
   } catch (error){
     console.log(error)
@@ -790,6 +801,7 @@ async function getInactiveOwnedArt(){
         } else{
           $('#encourageCounter' + tokenAddress + id).html(` ${encouragements}`);
         }
+        darkmodeForDynamicContent();
       }
     }
   } catch (error){
@@ -842,6 +854,7 @@ async function getInactiveMintedArt(){
         } else{
           $('#encourageCounter' + tokenAddress + id).html(` ${encouragements}`);
         }
+        darkmodeForDynamicContent();
       }
     }
   } catch (error){
@@ -892,7 +905,7 @@ async function getActiveMintedArt(){
         $('#forSale' + tokenAddress + id).html(`<span class="for-sale-text">${priceInEth} ETH</span>`);
         $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-primary buy-btn">Buy</button></a>`);
       }
-
+      darkmodeForDynamicContent();
     }
   } catch (error){
     console.log(error)
@@ -942,7 +955,7 @@ async function getActiveLikedArt(){
         $('#forSale' + tokenAddress + id).html(`<span class="for-sale-text">${priceInEth} ETH</span>`);
         $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-primary buy-btn">Buy</button></a>`);
       }
-
+      darkmodeForDynamicContent();
     }
   } catch (error){
     console.log(error)
@@ -994,6 +1007,7 @@ async function getInactiveLikedArt(){
         } else{
           $('#encourageCounter' + tokenAddress + id).html(` ${encouragements}`);
         }
+        darkmodeForDynamicContent();
       }
     }
   } catch (error){
@@ -1046,6 +1060,7 @@ async function getEncouragedArt(){
         } else{
           $('#encourageCounter' + tokenAddress + id).html(` ${encouragements}`);
         }
+        darkmodeForDynamicContent();
       }
     }
   } catch (error){
@@ -1152,7 +1167,10 @@ function dismissLoadingPulseOnCover(tokenAddress, id, cover){
     console.log('cover succesfully loaded!')
   };
   img.onerror = function(){
-    alert('No network connection or NFT is not available.')
+    $('#cover' + tokenAddress + id).css('display', 'block');
+    $('#coverSpinner' + tokenAddress + id).css('display', 'none');
+    $('#cover' + tokenAddress + id).attr('src', './assets/images-icons/cantFindNFT.png');
+    console.log('No network connection or NFT is not available.')
   };
 };
 
@@ -1193,7 +1211,9 @@ function dismissLoadingPulseOnOwnerPhoto(tokenAddress, id, profilePhoto){
     $('#cardOwnerPhotoSpinner' + tokenAddress + id).css('display', 'none');
   };
   img.onerror = function(){
-    $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/unknown.png');
+    $('#ownerPhoto' + tokenAddress + id).css('display', 'inline');
+    $('#ownerRank' + tokenAddress + id).css('display', 'block');
+    $('#ownerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/cantFindProfilePhoto.png');
     console.log('No network connection or profilephoto is not available.')
   };
 };
@@ -1740,7 +1760,7 @@ function cardDiv(tokenAddress, id, owner){
                             <span class="sr-only">Loading...</span>
                           </span>
                           <img id='cover`+tokenAddress+id+`' loading="lazy" src="" class="card-img embed-responsive-item" alt="...">
-                          <span class="file-indicator"><img id="fileIcon`+tokenAddress+':'+id+`" src="" width="20"></span>
+                          <span class="file-indicator"><img id="fileIcon`+tokenAddress+id+`" src="" width="20"></span>
                         </a>
                       </div>
                       <div class="card-body">
@@ -1758,7 +1778,6 @@ function cardDiv(tokenAddress, id, owner){
                     </div>
                   </div>`
   $('.cardDivs').prepend(nftCard);
-  darkmodeForDynamicContent();
 };
 
 function userCard(ethAddress){
@@ -1783,7 +1802,6 @@ function userCard(ethAddress){
                     <div class="follow-btn-card" id="followUser`+ethAddress+`"></div>
                   </li>`
 $('.list-group').append(userCard);
-darkmodeForDynamicContent();
 }
 
 function changePriceModalHTML(tokenAddress, id){
