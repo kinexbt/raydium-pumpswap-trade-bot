@@ -32,9 +32,10 @@ function removeDuplicates(data, key){
 };
 
 async function allCount(){
-  let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
   let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
-  let activeCount = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
+  let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+  let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
+  let activeCount = ifOfferDetailsDuplicatesRemoved.filter(item => !item.isSold && item.active).length;
   let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
   let allCount = inactiveCount + activeCount;
   $('#allCount').html(allCount);
@@ -42,7 +43,8 @@ async function allCount(){
 
 async function forSaleCount(){
   let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
-  let activeCount = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
+  let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
+  let activeCount = ifOfferDetailsDuplicatesRemoved.filter(item => !item.isSold && item.active).length;
   $('#forSaleCount').html(activeCount);
 };
 
