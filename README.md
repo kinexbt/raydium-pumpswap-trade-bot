@@ -12,7 +12,7 @@ Unlockable content is any information that can be described in text format you w
 ### Tipping
 Users can send tips in form of crypto-currency to each other using a `Send Tip` button found on their profile page.
 ### Buying
-In two clicks a user can own an ERC-721 token, and while not visually shown in their wallet, can be seen in their profile which shows all the artwork they currently own and have minted among other things.
+In two clicks a user can own an ERC-721 token, and while not visually shown in their wallet, can be seen in their profile which shows all the ERC-721 tokens they currently own and have minted among other things.
 
 ### Selling
 After setting approval to the OpenMint marketplace contract, which is done with a single click, users can sell their ERC-721 tokens to any other OpenMint users.
@@ -24,7 +24,7 @@ If the ERC-721 token is not on sale a user can transfer their token to any addre
 A royalty is a certain percentage of the sale price that is automatically held in an escrow contract and sits securely until withdrawn by the original creator when the sale is successful. It is set during the creation process and cannot be changed due to the nature of a blockchain. At OpenMint we have a minimum of 1% and maximum of 50% able to be set.
 
 ### Likes & Shares
-Just like (haha) any other social media platform, OpenMint allows authenticated users to like a certain ERC-721 token. These tokens and user profiles can be shared via a Tweet, a Facebook post, or an email.
+Just like other social media platforms, OpenMint allows authenticated users to like a certain ERC-721 token. These tokens and user profiles can be shared via a Tweet, a Facebook post, or an email.
 
 ### Encouragements
 If a token is not on sale, but a user would like it to be, a bell button can be clicked and count is incremented which alerts the owner that a certain number of people would like that artwork put for sale.  Once put on sale this encouragement count is reset.
@@ -56,9 +56,9 @@ The first address in Ganache will be the publisher wallet and receive the 2% sal
 Follow the steps in [this video](https://www.youtube.com/watch?v=nUEBAS5r4Og) to connect your MetaMask wallet to your local Ganache blockchain.
 
 Once connected, go to [Moralis](https://moralis.io/) and create an account. Spin up a server that will run on a local eth chain.
-When completed, click view details and copy the application ID and server URL and in every js file in the client folder paste the ID and URL in the correct variable found at the top of each file.
+When completed, click view details on the server and copy the application ID and server URL. Paste them in every js file in the client folder that has a empty slot ready for them found at the top of each file.
 
-In Moralis, click view deatils again and go to the Devchain Proxy Server tab and follow the steps based on your OS.
+In Moralis, click view details again and go to the Devchain Proxy Server tab and follow the steps based on your OS.
 
 Copy the whole `cloudFunctions.js` file and paste it into the cloud function option on your server in Moralis. Then install the proper "Sync and Watch Contract Events" plugins under plugins for the four events listed in `OpenMintMarketplace.sol` using the table names "ArtworkForSale", "ArtworkSold", "ArtworkPriceChanged", and "ArtworkRemoved". For help with adding plugins refer to [this video](https://www.youtube.com/watch?v=zn7_AYf_28E&t=819s) starting at 11:00 min.
 
