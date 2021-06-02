@@ -52,10 +52,15 @@
 
 .dropdown-menu{
   cursor: pointer;
+  border-radius: 15px;
 }
 
 .dropdown-item{
   font-weight: 500;
+}
+
+.dropdown-item:hover{
+  border-radius: 15px;
 }
 
 .dropdown-toggle::after{
@@ -91,4 +96,8 @@
 
 hr{
   background: #ddd;
+}
+
+.modal-content{
+  border-radius: 15px;
 }
