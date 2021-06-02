@@ -96,7 +96,8 @@ $('#forSale').click(async ()=>{
   $('.cardDivs').empty();
   loader();
   let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
-  let activeCount = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
+  let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
+  let activeCount = ifOfferDetailsDuplicatesRemoved.filter(item => !item.isSold && item.active).length;
   if(activeCount < 1){
     $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork for sale on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
   }
@@ -122,8 +123,9 @@ $('#viewAll').click(()=>{
 
 async function viewAll(){
   let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
+  let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
+  let activeCount = ifOfferDetailsDuplicatesRemoved.filter(item => !item.isSold && item.active).length;
   let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
-  let activeCount = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
   let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
   console.log(activeCount + inactiveCount);
   if(activeCount < 1 && inactiveCount < 1){
