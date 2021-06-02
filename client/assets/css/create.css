@@ -19,36 +19,13 @@ header{
  text-align: center;
  border: 1px solid #ddd;
  padding: 15px;
- border-radius: 5px;
+ border-radius: 15px;
 }
 
 #singleButton{
   display: inline-block;
   margin-right: 25px;
-}
-
-#multipleButton{
-  display: inline-block;
-  margin-left: 25px;
-  position: relative;
-}
-
-@media (max-width: 440px) {
-  #singleButton{
-    margin: 0;
-  }
-  #multipleButton{
-    margin: 0;
-  }
-}
-
-@media (max-width: 390px) {
-  #singleButton{
-    margin-top: 10px;
-  }
-  #multipleButton{
-    margin-top: 10px;
-  }
+  border-radius: 15px;
 }
 
 button{
@@ -68,28 +45,4 @@ img{
 .type{
   padding-top: 15px;
   font-weight: 600;
-}
-
-#comingSoon{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #eee;
-  background: -webkit-linear-gradient(260deg, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
-  padding: 5px;
-  border-radius: 10px;
-  border: 1px solid #eee;
-}
-
-.center-content{
-  display: flex;
-  justify-content: center;
-}
-
-.modal-body{
-  padding-left: 15%;
-  padding-right: 15%;
 }
