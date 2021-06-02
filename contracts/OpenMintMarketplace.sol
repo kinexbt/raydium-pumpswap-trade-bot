@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./OpenMint.sol";
 import "./node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./node_modules/@openzeppelin/contracts/utils/escrow/PaymentGateway.sol";
+import "./PaymentGateway.sol";
 
 contract OpenMintMarketplace is Ownable {
   using SafeMath for uint256;
