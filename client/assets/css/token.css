@@ -84,7 +84,6 @@ a.anchor{
 
 .counter{
   padding-top: 20px;
-  padding-right: 10px;
 }
 
 .title{
@@ -104,6 +103,10 @@ a.anchor{
 
 .not-on-sale-text{
   color: #888;
+}
+
+.fa-concierge-bell{
+  font-size: 1.2rem;
 }
 
 .description{
