@@ -20,6 +20,7 @@ header{
  border-radius: 5px;
  margin-top: 10px;
  margin-bottom: 10px;
+ border-radius: 15px;
 }
 
 label{
@@ -39,13 +40,10 @@ label{
 #uploadImage{
   margin-top: 10px;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 5px;
   border: 1px solid #ddd;
   background: #ddd;
   color: black;
   transition: ease-in-out .15s;
-  font-weight: 700;
 }
 
 #uploadImage:hover{
