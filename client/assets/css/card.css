@@ -119,9 +119,36 @@ a.anchor{
   font-size: .9rem;
 }
 
+.like-encourage-text{
+  font-family: 'Rubik';
+  font-weight: 900;
+  color: #888!important;
+}
+
+.like-encourage-button{
+  padding: 0;
+  background: transparent;
+  border: none;
+  margin-right: 5px;
+  border-radius: 10px;
+}
+
+.like-encourage-button:hover{
+  background: transparent!important;
+  border: none!important;
+}
+
+.like-encourage-button:active{
+  background: transparent!important;
+  border: none!important;
+}
+
+.like-encourage-button:focus{
+  box-shadow: none!important;
+}
+
 .fa-concierge-bell{
   cursor: pointer;
-  font-size: 1.3rem;
   color: #aaa;
   transition: ease-in-out .2s
 }
