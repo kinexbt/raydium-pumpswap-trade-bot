@@ -232,7 +232,7 @@ async function getInactiveArtworkInfo(){
           }
 
           $('.on-sale-text').css('display', 'none');
-          $('#notForSale' + tokenAddress + id).html(`<i id="encourageBell`+tokenAddress+id+`" class="fas fa-concierge-bell"></i><span id="encourageCounter`+tokenAddress+id+`"></span>`);
+          $('#notForSale' + tokenAddress + id).html(`<button id="encourageBell`+tokenAddress+id+`" class="btn like-encourage-button fas fa-concierge-bell"><span class="like-encourage-text" id="encourageCounter`+tokenAddress+id+`"></span></button>`);
           if(encouragements < 1 || encouragements == undefined){
             $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
           } else{
@@ -476,7 +476,7 @@ async function showBellsFilled(tokenAddress, id){
     if(likeQuery){
       $('#encourageToSellBtn' + tokenAddress + id).removeClass('btn-secondary');
       $('#encourageToSellBtn' + tokenAddress + id).addClass('btn-warning');
-      $('#encourageToSellBtn' + tokenAddress + id).html('Encouraged To Sell <i class="fas fa-check"></i>');
+      $('#encourageToSellBtn' + tokenAddress + id).html('Encouraged To Sell ✅');
       $('#encourageToSellText' + tokenAddress + id).html('Item has been encouraged to be put on sale')
       $('#encourageBell' + tokenAddress + id).css('color', '#fac418');
     } else{
@@ -491,16 +491,22 @@ async function showBellsFilled(tokenAddress, id){
 function encourageButton(tokenAddress, id){
   $('#encourageBell' + tokenAddress + id).click(async ()=>{
     if(user){
+      $('#encourageBell' + tokenAddress + id).prop('disabled', true);
+      $('#encourageToSellBtn' + tokenAddress + id).prop('disabled', true);
+
       const params = {
         tokenAddress: tokenAddress,
         tokenId: id
         };
       let encourage = await Moralis.Cloud.run('encourage', params);
-      console.log(encourage);
       if(encourage == 0 || encourage == undefined){
         $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
+        $('#encourageBell' + tokenAddress + id).prop('disabled', false);
+        $('#encourageToSellBtn' + tokenAddress + id).prop('disabled', false);
       }else{
         $('#encourageCounter' + tokenAddress + id).html(` ${encourage}`);
+        $('#encourageBell' + tokenAddress + id).prop('disabled', false);
+        $('#encourageToSellBtn' + tokenAddress + id).prop('disabled', false);
       }
       let encourageQuery = await Moralis.Cloud.run('userEncouragedThisArtwork', params);
       if(encourageQuery){
@@ -508,13 +514,13 @@ function encourageButton(tokenAddress, id){
         $('#encourageToSellBtn' + tokenAddress + id).addClass('btn-warning');
         $('#encourageToSellBtn' + tokenAddress + id).html('Encouraged To Sell <i class="fas fa-check"></i>');
         $('#encourageBell' + tokenAddress + id).css('color', '#fac418');
-        $('#encourageToSellText' + tokenAddress + id).html('Item has been encouraged to be put on sale')
+        $('#encourageToSellText' + tokenAddress + id).html('Item has been encouraged to be put on sale');
       } else{
         $('#encourageToSellBtn' + tokenAddress + id).removeClass('btn-warning');
         $('#encourageToSellBtn' + tokenAddress + id).addClass('btn-secondary');
         $('#encourageToSellBtn' + tokenAddress + id).html('Encourage To Sell');
         $('#encourageBell' + tokenAddress + id).css('color', '#aaa');
-        $('#encourageToSellText' + tokenAddress + id).html('Item is not on sale, but you can encourage them to put on sale')
+        $('#encourageToSellText' + tokenAddress + id).html('Item is not on sale, but you can encourage them to put on sale');
       }
     } else{
       $('#ifWalletNotConnectedModal').modal('show');
@@ -525,16 +531,21 @@ function encourageButton(tokenAddress, id){
 function encourageToSellButton(tokenAddress, id){
   $('#encourageToSellBtn' + tokenAddress + id).click(async ()=>{
     if(user){
+      $('#encourageBell' + tokenAddress + id).prop('disabled', true);
+      $('#encourageToSellBtn' + tokenAddress + id).prop('disabled', true);
       const params = {
         tokenAddress: tokenAddress,
         tokenId: id
         };
       let encourage = await Moralis.Cloud.run('encourage', params);
-      console.log(encourage);
       if(encourage == 0 || encourage == undefined){
         $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
+        $('#encourageBell' + tokenAddress + id).prop('disabled', false);
+        $('#encourageToSellBtn' + tokenAddress + id).prop('disabled', false);
       }else{
         $('#encourageCounter' + tokenAddress + id).html(` ${encourage}`);
+        $('#encourageBell' + tokenAddress + id).prop('disabled', false);
+        $('#encourageToSellBtn' + tokenAddress + id).prop('disabled', false);
       }
       let encourageQuery = await Moralis.Cloud.run('userEncouragedThisArtwork', params);
       if(encourageQuery){
@@ -542,7 +553,7 @@ function encourageToSellButton(tokenAddress, id){
         $('#encourageToSellText' + tokenAddress + id).html('Item has been encouraged to be put on sale');
         $('#encourageToSellBtn' + tokenAddress + id).removeClass('btn-secondary');
         $('#encourageToSellBtn' + tokenAddress + id).addClass('btn-warning');
-        $('#encourageToSellBtn' + tokenAddress + id).html('Encouraged To Sell <i class="fas fa-check"></i>');
+        $('#encourageToSellBtn' + tokenAddress + id).html('Encouraged To Sell ✅');
       } else{
         $('#encourageToSellBtn' + tokenAddress + id).removeClass('btn-warning');
         $('#encourageToSellBtn' + tokenAddress + id).addClass('btn-secondary');
@@ -579,17 +590,15 @@ function likeButton(tokenAddress, id, likes){
   }
   $('#like' + tokenAddress + id).click(async ()=>{
     if(user){
+      $('#like' + tokenAddress + id).prop('disabled', true);
       const params = {
         tokenAddress: tokenAddress,
         tokenId: id
         };
       let like = await Moralis.Cloud.run('like', params);
-      console.log(like);
-      if(like == 0){
-        $('#likeCounter' + tokenAddress + id).css('display', 'none');
-      }else{
-        $('#likeCounter' + tokenAddress + id).css('display', 'inline');
+      if(like || !like){
         $('#likeCounter' + tokenAddress + id).html(like);
+        $('#like' + tokenAddress + id).prop('disabled', false);
       }
       let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
       if(likeQuery){
@@ -963,7 +972,7 @@ function removeFromSale(tokenAddress, id, royalty, creator){
       $('#forSale' + tokenAddress + id).css('display', 'none');
 
       $('#notForSale' + tokenAddress + id).css('display', 'block');
-      $('#notForSale' + tokenAddress + id).html(`<i id="encourageBell`+tokenAddress+id+`" class="fas fa-concierge-bell"></i><span id="encourageCounter`+tokenAddress+id+`"> Encourage To Sell</span>`);
+      $('#notForSale' + tokenAddress + id).html(`<button id="encourageBell`+tokenAddress+id+`" class="btn like-encourage-button fas fa-concierge-bell"><span class="like-encourage-text" id="encourageCounter`+tokenAddress+id+`"></span></button>`);
 
       $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="putForSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#putForSaleModal`+tokenAddress+id+`">Put for sale</a>
                                                     <a class="dropdown-item quick-action" id="transferTokenQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#transferTokenModal`+tokenAddress+id+`">Transfer token</a>
@@ -974,6 +983,7 @@ function removeFromSale(tokenAddress, id, royalty, creator){
       shareQuickActionButton(tokenAddress, id);
       encourageButton(tokenAddress, id);
       encourageToSellButton(tokenAddress, id);
+      $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
     } catch(err){
       alert(err.message);
       $('#removeFromSaleBtn' + tokenAddress + id).prop('disabled', false);
@@ -1317,8 +1327,9 @@ function cardDiv(tokenAddress, id, owner, creator, path){
                         </div>
                       </div>
                       <div class="like-quick-actions">
-                        <i class="like-button far fa-heart heart" id="like`+tokenAddress+id+`"></i>
-                        <span class="like-counter counter" id="likeCounter`+tokenAddress+id+`"></span>
+                        <button class="btn btn-light like-encourage-button far fa-heart heart" id="like`+tokenAddress+id+`">
+                          <span class="like-encourage-text like-counter counter" id="likeCounter`+tokenAddress+id+`"> </span>
+                        </button>
                         <div class="dropleft">
                           <button class="btn btn-light dropdown-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             ...
