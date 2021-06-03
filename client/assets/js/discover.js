@@ -268,7 +268,6 @@ function dismissLoadingPulseOnSoldCardOwnerPhoto(tokenAddress, id, profilePhoto)
     $('#soldCardOwnerPhoto' + tokenAddress + id).css('display', 'inline');
     $('#soldCardOwnerRank' + tokenAddress + id).css('display', 'block');
     $('#soldCardOwnerPhoto' + tokenAddress + id).attr('src', './assets/images-icons/cantFindProfilePhoto.png');
-    console.log('No network connection or profilephoto is not available.')
   };
 };
 
@@ -295,21 +294,20 @@ function soldCardLikeButton(tokenAddress, id, likes){
   }
   $('#soldCardLike' + tokenAddress + id).click(async ()=>{
     if(user){
+      $('#like' + tokenAddress + id).prop('disabled', true);
+      $('#soldCardLike' + tokenAddress + id).prop('disabled', true);
       const params = {
         tokenAddress: tokenAddress,
         tokenId: id
         };
       let like = await Moralis.Cloud.run('like', params);
-      console.log(like);
-      if(like == 0){
-        $('#likeCounter' + tokenAddress + id).css('display', 'none');
-        $('#soldCardLikeCounter' + tokenAddress + id).css('display', 'none');
-      }else{
-        $('#likeCounter' + tokenAddress + id).css('display', 'inline');
+      if(like || !like){
         $('#likeCounter' + tokenAddress + id).html(like);
-        $('#soldCardLikeCounter' + tokenAddress + id).css('display', 'inline');
         $('#soldCardLikeCounter' + tokenAddress + id).html(like);
+        $('#like' + tokenAddress + id).prop('disabled', false);
+        $('#soldCardLike' + tokenAddress + id).prop('disabled', false);
       }
+
       let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
       if(likeQuery){
         $('#like' + tokenAddress + id).removeClass('far');
@@ -472,7 +470,7 @@ async function recentlyMintedAndNotOnSale(){
         dismissLoadingPulseOnCover(tokenAddress, id, cover);
 
         $('#name' + tokenAddress + id).html(name);
-        $('#notForSale' + tokenAddress + id).html(`<i id="encourageBell`+tokenAddress+id+`" class="fas fa-concierge-bell"></i><span id="encourageCounter`+tokenAddress+id+`"></span>`);
+        $('#notForSale' + tokenAddress + id).html(`<button id="encourageBell`+tokenAddress+id+`" class="btn like-encourage-button fas fa-concierge-bell"><span class="like-encourage-text" id="encourageCounter`+tokenAddress+id+`"></span></button>`);
         $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-light view-btn">View</button></a>`);
         encourageButton(tokenAddress, id);
         showBellsFilled(tokenAddress, id);
@@ -507,16 +505,18 @@ async function showBellsFilled(tokenAddress, id){
 function encourageButton(tokenAddress, id){
   $('#encourageBell' + tokenAddress + id).click(async ()=>{
     if(user){
+      $('#encourageBell' + tokenAddress + id).prop('disabled', true);
       const params = {
         tokenAddress: tokenAddress,
         tokenId: id
         };
       let encourage = await Moralis.Cloud.run('encourage', params);
-      console.log(encourage);
       if(encourage == 0){
         $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
+        $('#encourageBell' + tokenAddress + id).prop('disabled', false);
       }else{
         $('#encourageCounter' + tokenAddress + id).html(` ${encourage}`);
+        $('#encourageBell' + tokenAddress + id).prop('disabled', false);
       }
       let encourageQuery = await Moralis.Cloud.run('userEncouragedThisArtwork', params);
       if(encourageQuery){
@@ -646,21 +646,21 @@ function likeButton(tokenAddress, id, likes){
   }
   $('#like' + tokenAddress + id).click(async ()=>{
     if(user){
+      $('#like' + tokenAddress + id).prop('disabled', true);
+      $('#soldCardLike' + tokenAddress + id).prop('disabled', true);
       const params = {
         tokenAddress: tokenAddress,
         tokenId: id
         };
       let like = await Moralis.Cloud.run('like', params);
       console.log(like);
-      if(like == 0){
-        $('#likeCounter' + tokenAddress + id).css('display', 'none');
-        $('#soldCardLikeCounter' + tokenAddress + id).css('display', 'none');
-      }else{
-        $('#likeCounter' + tokenAddress + id).css('display', 'inline');
+      if(like || !like){
         $('#likeCounter' + tokenAddress + id).html(like);
-        $('#soldCardLikeCounter' + tokenAddress + id).css('display', 'inline');
         $('#soldCardLikeCounter' + tokenAddress + id).html(like);
+        $('#like' + tokenAddress + id).prop('disabled', false);
+        $('#soldCardLike' + tokenAddress + id).prop('disabled', false);
       }
+
       let likeQuery = await Moralis.Cloud.run('userLikesThisArtwork', params);
       if(likeQuery){
         $('#like' + tokenAddress + id).removeClass('far');
@@ -959,7 +959,7 @@ function removeFromSale(tokenAddress, id, royalty, creator){
       $('#forSale' + tokenAddress + id).css('display', 'none');
 
       $('#notForSale' + tokenAddress + id).css('display', 'block');
-      $('#notForSale' + tokenAddress + id).html(`<i id="encourageBell`+tokenAddress+id+`" class="fas fa-concierge-bell"></i><span id="encourageCounter`+tokenAddress+id+`"> Encourage To Sell</span>`);
+      $('#notForSale' + tokenAddress + id).html(`<button id="encourageBell`+tokenAddress+id+`" class="btn like-encourage-button fas fa-concierge-bell"><span class="like-encourage-text" id="encourageCounter`+tokenAddress+id+`"></span></button>`);
       $('#button' + tokenAddress + id).html(`<a href="http://localhost:8000/token.html?token=`+tokenAddress+id+`"><button class="btn btn-light view-btn">View</button></a>`);
 
       $('#quickActions' + tokenAddress + id).html(` <a class="dropdown-item quick-action" id="putForSaleQuickAction`+tokenAddress+id+`" data-toggle="modal" data-target="#putForSaleModal`+tokenAddress+id+`">Put for sale</a>
@@ -970,6 +970,7 @@ function removeFromSale(tokenAddress, id, royalty, creator){
       transferTokenQuickActionButton(tokenAddress, id);
       shareQuickActionButton(tokenAddress, id);
       encourageButton(tokenAddress, id);
+      $('#encourageCounter' + tokenAddress + id).html(' Encourage To Sell');
     } catch(err){
       alert(err.message);
       $('#removeFromSaleBtn' + tokenAddress + id).prop('disabled', false);
@@ -1170,8 +1171,9 @@ function soldCardDiv(tokenAddress, id, owner){
                           </a>
                           <p class="card-text sold-card-text" id="soldCardNotForSale`+tokenAddress+id+`"></p>
                           <div class="button-row">
-                            <i class="like-button far fa-heart heart" id="soldCardLike`+tokenAddress+id+`"></i>
-                            <span class="like-counter" id="soldCardLikeCounter`+tokenAddress+id+`"></span>
+                            <button class="btn btn-light like-encourage-button far fa-heart heart" id="soldCardLike`+tokenAddress+id+`">
+                              <span class="like-encourage-text like-counter" id="soldCardLikeCounter`+tokenAddress+id+`"> </span>
+                            </button>
                             <span id="soldCardButton`+tokenAddress+id+`"></span>
                           </div>
                         </div>
@@ -1224,8 +1226,9 @@ function cardDiv(tokenAddress, id, owner){
                         <p class="card-text" id="forSale`+tokenAddress+id+`"></p>
                         <p class="card-text not-for-sale-text" id="notForSale`+tokenAddress+id+`"></p>
                         <div class="button-row">
-                          <i class="like-button far fa-heart heart" id="like`+tokenAddress+id+`"></i>
-                          <span class="like-counter" id="likeCounter`+tokenAddress+id+`"></span>
+                          <button class="btn btn-light like-encourage-button far fa-heart heart" id="like`+tokenAddress+id+`">
+                            <span class="like-encourage-text like-counter" id="likeCounter`+tokenAddress+id+`"> </span>
+                          </button>
                           <span id="button`+tokenAddress+id+`"></span>
                         </div>
                       </div>
