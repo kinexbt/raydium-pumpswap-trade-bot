@@ -163,12 +163,6 @@ a.anchor{
 
 .view-btn, .buy-btn{
   float: right;
-}
-
-.view-btn{
-  font-weight: 700;
-}
-
-.buy-btn{
+  border-radius: 25px;
   font-weight: 700;
 }
