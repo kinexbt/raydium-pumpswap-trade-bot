@@ -53,6 +53,7 @@
 .dropdown-menu{
   cursor: pointer;
   border-radius: 15px;
+  padding: .5rem;
 }
 
 .dropdown-item{
@@ -60,7 +61,7 @@
 }
 
 .dropdown-item:hover{
-  border-radius: 15px;
+  border-radius: 10px;
 }
 
 .dropdown-toggle::after{
