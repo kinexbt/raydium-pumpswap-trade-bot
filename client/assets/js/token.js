@@ -253,8 +253,8 @@ async function getInactiveArtworkInfo(){
 
           $('#title' + tokenAddress + id).html(name);
           if(description == ''){
-            $('#description' + tokenAddress + id).css({'color': "#888", 'font-size': ".8rem", 'font-weight': '500'});
-            $('.description' + tokenAddress + id).html('(No description given)');
+            $('#description' + tokenAddress + id).css(({'color': "#888", 'font-size': ".8rem", 'font-weight': '500'}));
+            $('#description' + tokenAddress + id).html('(No description given)');
           } else{
             $('#description' + tokenAddress + id).html(description);
           }
