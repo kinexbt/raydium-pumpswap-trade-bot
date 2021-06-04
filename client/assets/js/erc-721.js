@@ -430,7 +430,7 @@ async function uploadToDB(tokenId, nftMetadataPath, nftPath){
       confetti({
         zIndex: 9999
       });
-      $('#successfulText').html('<a href="http://localhost:8000/profile.html?address='+user.attributes.ethAddress+'">Click here to view.</a>');
+      $('#successfulText').html('<a href="http://localhost:8000/profile.html?address='+user.attributes.ethAddress+'">Click here to view.</a> <a href="erc-721.html">Or click here to make another one.</a>');
     }
 
   } catch (err) {
@@ -441,7 +441,6 @@ async function uploadToDB(tokenId, nftMetadataPath, nftPath){
   }
 };
 
-    //make another branch if unlockable content is uploaded
 function setArtForSale(tokenId){
   $('#setOffer').click(async() =>{
     let price = $('#salePriceInput').val();
