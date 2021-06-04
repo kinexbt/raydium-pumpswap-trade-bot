@@ -1,0 +1,17 @@
+.header{
+  margin-top: 50px;
+}
+
+.not-connected-text{
+  margin-top: 200px;
+  margin-bottom: 450px;
+  padding: 20px;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.sub-title{
+  margin-bottom: 10px;
+  position: relative;
+  top: -5px;
+}
