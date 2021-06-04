@@ -29,7 +29,6 @@
 .header{
   font-size: 2rem;
   font-weight: 700;
-  padding-left: 5px;
 }
 
 @media (max-width: 396px) { /*for sm mobile */
