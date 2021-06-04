@@ -138,7 +138,7 @@
                 <img id="nftCoverEx" src="" width="200px">
                 <input id="nftCoverFile" hidden accept="image/png,image/jpeg,image/gif,image/webp" type="file" class="form-control-file">
                 <div class="cover-upload-button-div">
-                  <label id="uploadCover" for="nftCoverFile">Choose File</label>
+                  <label id="uploadCover" class="button-styling" for="nftCoverFile">Choose File</label>
                 </div>
                 <span id='fileSizeExceededText' class="text-danger"></span>
               </div>
@@ -197,7 +197,7 @@
                 <div class="helper">
                   <div class="input-group" id="namingInputGroup">
                     <span class="input-title">Title</span>
-                    <input required id="title" type="text" class="form-control input-styling naming-styling" placeholder='e.g. "The Finisher Car"' aria-label="title of NFT">
+                    <input required id="title" maxlength="88" type="text" class="form-control input-styling naming-styling" placeholder='e.g. "The Finisher Car"' aria-label="title of NFT">
                   </div>
                   <span class='sub-text'>This information will be put on-chain and CANNOT be changed</span>
                 </div>
