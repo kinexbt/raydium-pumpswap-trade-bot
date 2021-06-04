@@ -317,14 +317,16 @@ async function doesUserFollow(){
 };
 
 $("#followButton").click(async() =>{
+  $('#followButton').prop('disabled', true);
   const params = {
     followThisAddress: address
     };
   let follow = await Moralis.Cloud.run('follow', params);
+  if(follow || !follow){
+    $('#followButton').prop('disabled', false);
+  }
   let followers = await Moralis.Cloud.run('followers', params);
   doesUserFollow();
-  console.log(follow);
-  console.log(followers);
 });
 
 function sendTip(){
@@ -645,10 +647,14 @@ async function doesUserFollowInCard(ethAddress){
 
 function followButtonInCard(ethAddress){
   $("#followButton" + ethAddress).click(async() =>{
+    $("#followButton" + ethAddress).prop('disabled', true);
     const params = {
       followThisAddress: ethAddress
       };
     let follow = await Moralis.Cloud.run('follow', params);
+    if(follow || !follow){
+      $("#followButton" + ethAddress).prop('disabled', false);
+    }
     let followers = await Moralis.Cloud.run('followers', params);
     doesUserFollowInCard(ethAddress);
   });
