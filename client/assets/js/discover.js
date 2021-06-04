@@ -82,7 +82,6 @@ async function getEthPrice(){
   const response = await fetch(ethPrice);
   const data = await response.json();
   let usdEthPrice = data.ethereum.usd;
-  console.log(usdEthPrice)
   return Number(usdEthPrice);
 };
 
@@ -127,12 +126,11 @@ async function viewAll(){
   let activeCount = ifOfferDetailsDuplicatesRemoved.filter(item => !item.isSold && item.active).length;
   let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
   let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
-  console.log(activeCount + inactiveCount);
   if(activeCount < 1 && inactiveCount < 1){
     $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
   }
-  recentlyMintedAndNotOnSale();
   recentlyPutForSale();
+  recentlyMintedAndNotOnSale();
 };
 
 async function recentlySold(){
