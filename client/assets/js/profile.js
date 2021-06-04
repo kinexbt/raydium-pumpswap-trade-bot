@@ -43,7 +43,7 @@ async function ifAddressNotInDatabase(address){
   const params = { ethAddress: address };
   let isAddressIn = await Moralis.Cloud.run('isAddressInDatabase', params);
   if(!isAddressIn){
-    $('.profileGenerated').html(`<p id="notYetConnectedText">This address has not yet connected their wallet to Open<span class="gradient-text">Mint<span></>`);
+    $('.profileGenerated').html(`<p id="notYetConnectedText">This address has not yet connected their wallet to Open<span class="gradient-text">Mint<span></p>`);
   }
 };
 
