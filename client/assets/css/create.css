@@ -23,8 +23,6 @@ header{
 }
 
 #singleButton{
-  display: inline-block;
-  margin-right: 25px;
   border-radius: 15px;
 }
 
