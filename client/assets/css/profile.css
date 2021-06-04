@@ -65,6 +65,8 @@
   line-height: 25px;
   white-space: pre-wrap;
   overflow-wrap: break-word;
+  max-height: 300px;
+  overflow-y: scroll;
 }
 
 .social-media-tags{
