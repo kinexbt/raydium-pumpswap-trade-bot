@@ -58,7 +58,6 @@ label{
 #clearFile{
   width: 30px;
   height: 30px;
-  border: 1px solid #ddd;
   border-radius: 15px;
   display: none;
 }
@@ -94,13 +93,9 @@ audio{
 #uploadCover{
   margin-top: 10px;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
   background: #ddd;
   color: black;
   transition: ease-in-out .15s;
-  font-weight: 700;
 }
 
 #uploadCover:hover{
