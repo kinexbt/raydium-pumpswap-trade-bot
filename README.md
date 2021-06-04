@@ -45,11 +45,11 @@ npm install -g truffle
 
 Download [Ganache](https://www.trufflesuite.com/ganache) to run a local blockchain.
 
-Once the truffle-config.js file is added to Ganache and the chain is ready to run, get into the OpenMint root directory file in your command line and run:
+Once the truffle-config.js file is added to Ganache and the chain is ready to run, get into the OpenMint root directory in your command line and run:
 ```
 truffle migrate
 ```
-Place the correct contract address in the proper empty variable spot in `discover.js`, `token.js`, `erc-721.js`, and `profile.js` found in the first few lines.
+After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines. `discover.js`, `token.js`, `erc-721.js`, `profile.js`
 
 The first address in Ganache will be the publisher wallet and receive the 2% sale fee on every sale.
 
@@ -65,4 +65,4 @@ Copy the whole `cloudFunctions.js` file and paste it into the cloud function opt
 Once successfully added you can now simulate users interacting with OpenMint locally!
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/Ty-Sir/OpenMint/blob/main/LICENSE)
