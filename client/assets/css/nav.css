@@ -41,6 +41,14 @@
   background: transparent;
 }
 
+.search-input:focus{
+  background: transparent;
+}
+
+.search-input:active{
+  background: transparent;
+}
+
 .search-button{
   border: 1px solid #eee;
   border-radius: 25px;
