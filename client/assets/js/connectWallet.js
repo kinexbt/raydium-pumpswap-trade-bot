@@ -8,7 +8,7 @@ $(document).ready(()=>{
 //button in nav
 $('#connectWalletBtn').click(()=>{
   $('#connectWalletBtn').prop('disabled', true);
-  $('#connectWalletBtn').html(`Connecting Wallet <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  $('#connectWalletBtn').html(`Connecting... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                 <span class="sr-only">Loading...</span>`);
   login();
 });
@@ -23,7 +23,7 @@ async function login(){
   } catch (error) {
     alert(error.message);
     $('#connectWalletBtn').prop('disabled', false);
-    $('#connectWalletBtn').html('Connect Wallet');
+    $('#connectWalletBtn').html('Connect');
   }
 };
 
