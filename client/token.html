@@ -27,6 +27,13 @@
         <img src="assets/images-icons/openMintLogo.png" width="30" height="30" class="d-inline-block align-top" alt="OpenMint logo">
         <span id="open" class="ml-1">Open<span id="mint">Mint</span></span>
       </a>
+      <span class="input-group searchbar">
+        <span id="exitSearchBtn">
+          <span class="exit-search">⬅️</span>
+        </span>
+        <input id="searchInput" type="search" class="form-control search-input" placeholder="Search by creator, artwork title, or wallet address" aria-label="Search by creator, artwork title, or wallet address">
+      </span>
+      <button class="btn search-button" id="searchBtn">🔍</button>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -45,7 +52,7 @@
             <a class="nav-link" id="create" href="create.html">CREATE</a>
           </li>
           <li class="nav-item mr-1" id="connectWalletTag">
-            <button type="button" class="btn btn-primary button-styling shadow-sm" id="connectWalletBtn">Connect Wallet</button>
+            <button type="button" class="btn btn-primary button-styling shadow-sm" id="connectWalletBtn">Connect</button>
           </li>
           <li class="nav-item dropdown mr-2" id="profileTag" style="display: none;">
             <a class="nav-link dropdown-toggle shadow-sm" href="#" id="profile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -146,6 +153,7 @@
 
   </body>
   <script src="assets/js/theme.js"></script>
+  <script src="assets/js/nav.js"></script>
   <script src="assets/js/js.cookie.js"></script>
   <script src="assets/js/connectWallet.js"></script>
   <script src="assets/js/token.js"></script>
