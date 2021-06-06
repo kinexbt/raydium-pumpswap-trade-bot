@@ -34,11 +34,11 @@ async function getEthPrice(){
 //button in connect modal
 $('#connectWalletModalBtn').click(async () =>{
   $('#connectWalletModalBtn').prop('disabled', true);
-  $('#connectWalletModalBtn').html(`Connecting Wallet <div class="spinner-border spinner-border-sm text-light" role="status">
+  $('#connectWalletModalBtn').html(`Connecting... <div class="spinner-border spinner-border-sm text-light" role="status">
                                                         <span class="sr-only">Loading...</span>
                                                       </div>`);
   //this is the one in the nav
-  $('#connectWalletBtn').html(`Connecting Wallet <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  $('#connectWalletBtn').html(`Connecting... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                   <span class="sr-only">Loading...</span>`);
   try{
     let currentUser = await Moralis.Web3.authenticate();
@@ -49,7 +49,7 @@ $('#connectWalletModalBtn').click(async () =>{
     alert(error.message);
     $('#connectWalletModalBtn').prop('disabled', false);
     $('#connectWalletModalBtn').html('Connect Wallet');
-    $('#connectWalletBtn').html('Connect Wallet');
+    $('#connectWalletBtn').html('Connect');
   }
 });
 
@@ -512,7 +512,7 @@ function encourageButton(tokenAddress, id){
       if(encourageQuery){
         $('#encourageToSellBtn' + tokenAddress + id).removeClass('btn-secondary');
         $('#encourageToSellBtn' + tokenAddress + id).addClass('btn-warning');
-        $('#encourageToSellBtn' + tokenAddress + id).html('Encouraged To Sell <i class="fas fa-check"></i>');
+        $('#encourageToSellBtn' + tokenAddress + id).html('Encouraged To Sell ✅');
         $('#encourageBell' + tokenAddress + id).css('color', '#fac418');
         $('#encourageToSellText' + tokenAddress + id).html('Item has been encouraged to be put on sale');
       } else{
