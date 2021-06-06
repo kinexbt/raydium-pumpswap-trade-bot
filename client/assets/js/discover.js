@@ -57,11 +57,11 @@ async function notForSaleCount(){
 //button in connect modal
 $('#connectWalletModalBtn').click(async () =>{
   $('#connectWalletModalBtn').prop('disabled', true);
-  $('#connectWalletModalBtn').html(`Connecting Wallet <div class="spinner-border spinner-border-sm text-light" role="status">
+  $('#connectWalletModalBtn').html(`Connecting... <div class="spinner-border spinner-border-sm text-light" role="status">
                                                         <span class="sr-only">Loading...</span>
                                                       </div>`);
   //this is the one in the nav
-  $('#connectWalletBtn').html(`Connecting Wallet <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  $('#connectWalletBtn').html(`Connecting... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                   <span class="sr-only">Loading...</span>`);
   try{
     let currentUser = await Moralis.Web3.authenticate();
@@ -73,7 +73,7 @@ $('#connectWalletModalBtn').click(async () =>{
     console.log(error);
     $('#connectWalletModalBtn').prop('disabled', false);
     $('#connectWalletModalBtn').html('Connect Wallet');
-    $('#connectWalletBtn').html('Connect Wallet');
+    $('#connectWalletBtn').html('Connect');
   }
 });
 
@@ -982,7 +982,7 @@ function removeFromSale(tokenAddress, id, royalty, creator){
 function changePriceFrontEnd(tokenAddress, id, royalty, creator){
   $('#changePriceBtn' + tokenAddress + id).click(async()=>{
     let price = $('#changePriceInput' + tokenAddress + id).val();
-    price = price.replace(/^0+/, '').replace(/\.?0+$/, ''); //figure out how to combine these
+    price = price.replace(/^0+/, '').replace(/\.?0+$/, '');
     const amountInWei = web3.utils.toWei(price, 'ether');
 
     $('#changePriceBtn' + tokenAddress + id).prop('disabled', true);
@@ -1180,8 +1180,6 @@ function soldCardDiv(tokenAddress, id, owner){
   $('.recentlySold').prepend(nftSoldCard);
   darkmodeForDynamicContent(); //is this the best place?
 };
-
-
 
 //recently Minted
 function cardDiv(tokenAddress, id, owner){
