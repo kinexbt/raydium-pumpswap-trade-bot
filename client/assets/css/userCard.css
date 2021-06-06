@@ -1,0 +1,31 @@
+.userCard{
+  padding: 15px;
+  text-align: center;
+  border-radius: 30px;
+}
+
+.userCard-profile-photo{
+  border-radius: 75px;
+  position: relative;
+  top: 15px;
+  display: none;
+  width: 150px;
+  height: 150px;
+  object-fit: scale-down; /* Do not scale the image */
+  object-position: center; /* Center the image within the element */
+}
+
+.userCard-seller-badge{
+  position: relative;
+  bottom: 13px;
+  left: 42px;
+}
+
+.userCard-username{
+  font-size: 1.2rem;
+}
+
+.userCard-eth-address{
+  font-size: .8rem;
+  color: #888;
+}
