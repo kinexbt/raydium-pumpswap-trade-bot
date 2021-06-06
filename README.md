@@ -1,6 +1,7 @@
 # OpenMint
 
-OpenMint is a [dapp](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/) that combines aspects of social media platforms and a marketplace where any (open) user can create (mint), buy, sell, and transfer ERC-721 tokens using any png, jpeg, gif, webp, mp4, video/webm, mp3, audio/webm, or mpeg file 64MB or less. It is important to clarify that ownership of the ERC-721 proves ownership   OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database from user input, emitted events in smart contracts, and balances in the user's [MetaMask](https://metamask.io/) wallet.
+OpenMint is a [dapp](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/) that combines aspects of social media platforms (liking, sharing, user profiles, and following) and a marketplace where any (open) user can create (mint), buy, sell, and transfer ERC-721 tokens using any png, jpeg, gif, webp, mp4, video/webm, mp3, audio/webm, or mpeg file 64MB or less. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similiar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.  
+OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database from user input, emitted events in smart contracts, and balances in the user's [MetaMask](https://metamask.io/) wallet.
 
 ## Features
 
@@ -23,7 +24,7 @@ If the ERC-721 token is not on sale a user can transfer their token to any addre
 Transferring is also how a user can make sure their token can never be owned again. This is done by transferring the token to the equivalent of a zero address, if desired we recommend this one: `0x000000000000000000000000000000000000dead`. By transferring to this address or one similar, others can still view the artwork on OpenMint, but a new owner is not possible since the new owner is the address transferred to which no one has the private keys to.
 
 ### Royalties
-A royalty is a certain percentage of the sale price that is automatically held in an escrow contract when a sale is successful and sits securely until withdrawn by the original creator. It is set during the creation process and cannot be changed due to the nature of a blockchain. At OpenMint we have a minimum of 1% and maximum of 50% able to be set.
+A royalty is a certain percentage of the sale price that is automatically held in an escrow contract when a sale is successful, and sits securely until withdrawn by the original creator. It is set during the creation process and cannot be changed due to the nature of a blockchain. At OpenMint we have a minimum of 1% and maximum of 50% able to be set.
 
 ### Likes & Shares
 Just like other social media platforms, OpenMint allows users who connect their wallet to like a certain ERC-721 token. These ERC-721 tokens along with user profiles can be shared via a Tweet, a Facebook post, or an email.
