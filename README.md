@@ -20,7 +20,7 @@ In two clicks a user can own an ERC-721 token, and while not visually shown in t
 After setting approval to the OpenMint marketplace contract, which is done with a single click, users can sell their ERC-721 tokens to any other OpenMint users.
 
 ### Transferring
-If the ERC-721 token is not on sale a user can transfer their token to any address they desire. Once the new owner signs the `Moralis Authentication` (when initially connecting to OpenMint) in their [MetaMask](https://metamask.io/) wallet they can view the token on OpenMint.  
+If the ERC-721 token is not on sale a user can transfer their token to any address they desire. Once the new owner connects their [MetaMask](https://metamask.io/) wallet to OpenMint they can view the token(s) on their profile page.  
 
 Transferring is also how a user can make sure their token can never be owned again. This is done by transferring the token to the equivalent of a zero address, if desired we recommend this one: `0x000000000000000000000000000000000000dead`. By transferring to this address or one similar, others can still view the artwork on OpenMint, but a new owner is not possible since the new owner is the address transferred to which no one has the private keys to.
 
@@ -36,7 +36,7 @@ If a token is not on sale, but a user would like it to be, a bell button can be 
 ## Security
 ### Withdrawal Payment Pattern
 
-OpenMint integrates [OpenZeppelin](https://openzeppelin.com/contracts/) contracts to minimize any unnecessary bugs or attackers that try to exploit any `transfer` calls.  OpenMint uses a payment gateway contract alongside an escrow contract to keep individual earned funds secure until the user is ready to withdraw to their [MetaMask](https://metamask.io/) wallet.
+OpenMint integrates [OpenZeppelin](https://openzeppelin.com/contracts/) contracts which are thoroughly tested to minimize any unnecessary bugs, attackers, or exploits.  OpenMint uses a payment gateway contract alongside an escrow contract to keep an users earned funds from selling ERC-721 tokens secure until they are ready to withdraw to their [MetaMask](https://metamask.io/) wallet. The button to with withdraw can be found on your profile page under your bio when your wallet is connected.  If the gree button just says "Withdraw" and is unable to be clicked, their is nothing to withdraw. If the button says "Withdraw" followed by a number amount of ETH (Withraw 1.1234 ETH), then a user can click the button, confirm in the popup modal, and then confirm the transaction in [MetaMask](https://metamask.io/).
 
 ## Installation
 Here are the steps to run this dapp locally:
