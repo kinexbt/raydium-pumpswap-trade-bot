@@ -10,7 +10,9 @@ OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which ta
 OpenMint stores and pins the ERC-721 metadata on [IPFS](https://ipfs.io/) using a gateway provided by [Moralis](https://moralis.io/).
 
 ### Unlockable Content
-Unlockable content is any information that can be described in text that you want the owner of the NFT you create on OpenMint to have exclusive access to.  This can be anything from a link to a high-res download since the maximum file size you can upload to IPFS on OpenMint is 64 MB, or it could be a password to a website to unlock a physical product. Your imagination is the limit. The description of what the unlockable content contains is typically found under `Additional Info` which can be on the token's page. This information stays with the token and transfers with ownership on sale and transfer. This information can only be set when creating the NFT and cannot be changed later.
+Unlockable content is any information that can be described in text that you want the owner of the NFT you create on OpenMint to have exclusive access to.  This can be anything from a link to a high-res download since the maximum file size you can upload to IPFS on OpenMint is 64 MB, or it could be a password to a website to unlock a physical product. Your imagination is the limit. 
+
+The description of what the unlockable content contains is typically found under `Additional Info` which can be found by clicking on an artwork which takes you to on the token's page. This information stays with the token and transfers with ownership on sale and transfer. This information can only be set when creating the NFT and cannot be changed later.
 ### Tipping
 Users can send tips in form of crypto-currency to each other using a `Send Tip` button found on their profile page.
 ### Buying
