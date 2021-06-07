@@ -41,7 +41,7 @@ For example, if an artwork is resold for 1 ETH, the royalty is 10%, and the sale
 Just like other social media platforms, OpenMint allows users who connect their wallet to like a certain ERC-721 token. These ERC-721 tokens along with user profiles can be shared via a Tweet, a Facebook post, or an email.
 
 ### Encouragements
-If a token is not on sale, but a user would like it to be, a bell button can be clicked and count is incremented which alerts the owner that a certain number of people would like that artwork put for sale.  Once put on sale this encouragement count is reset.
+If a token is not on sale, but a user would like it to be, a bell button can be clicked and a count is incremented which signafies to the owner that a certain number of people would like that artwork put for sale.  Once the owner puts the artwork for sale this encouragement count is reset.
 
 ## Security
 ### Withdrawal Payment Pattern
