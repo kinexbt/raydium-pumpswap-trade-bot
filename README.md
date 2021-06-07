@@ -27,6 +27,12 @@ Transferring is also how a user can make sure their token can never be owned aga
 ### Royalties
 A royalty is a certain percentage of the sale price that is automatically held in an escrow contract when a sale is successful, and sits securely until withdrawn by the original creator. It is set during the creation process and cannot be changed due to the nature of a blockchain. At OpenMint we have a minimum of 1% and maximum of 50% able to be set.
 
+### 2% Sales Fee
+Before deployment of the smart contracts, a wallet address can be set to receive a 2% fee of the price the artwork sells for on every sale. 
+
+Here's an example to clarify how both the royalty and sales fee will effect the profits of the seller.
+ -If
+
 ### Likes & Shares
 Just like other social media platforms, OpenMint allows users who connect their wallet to like a certain ERC-721 token. These ERC-721 tokens along with user profiles can be shared via a Tweet, a Facebook post, or an email.
 
@@ -53,7 +59,7 @@ Once the truffle-config.js file is added to Ganache and the chain is ready to ru
 ```
 truffle migrate
 ```
-After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines. `discover.js`, `token.js`, `erc-721.js`, `profile.js`
+After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines of these file: `discover.js`, `token.js`, `erc-721.js`, and `profile.js`.
 
 The first address in Ganache will be the publisher wallet and receive the 2% sale fee on every sale.
 
