@@ -2,7 +2,7 @@
 
 OpenMint is a [dapp](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/) that combines aspects of social media platforms (liking, sharing, user profiles, and following) and a marketplace where any (open) user can create (mint), buy, sell, and transfer ERC-721 tokens using any png, jpeg, gif, webp, mp4, video/webm, mp3, audio/webm, or mpeg file 64MB or less. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similiar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.  
 
-OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database from user input, emitted events in smart contracts, and balances in the user's [MetaMask](https://metamask.io/) wallet.
+OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database using user input, emitted events in smart contracts, and balances in the user's [MetaMask](https://metamask.io/) wallet.
 
 ## Features
 
