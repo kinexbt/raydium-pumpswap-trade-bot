@@ -29,8 +29,14 @@ function isUserIn(){
   }
 };
 
-function checkIfUserIsFollowingPeople(){
-  let followingArray = user.attributes.following;
+async function getFollowingAddresses(){
+  const params = {ethAddress: user.attributes.ethAddress};
+  let following = await Moralis.Cloud.run('getFollowing', params);
+  return following;
+};
+
+async function checkIfUserIsFollowingPeople(){
+  let followingArray = await getFollowingAddresses();
   if(followingArray == undefined || !followingArray.length){
     $('.following').html("<div class='center-content'><span class='not-connected-text'>Follow an artist to see the NFTs they create here.<br><span class='price-info'>The follow button is located on the user's profile page</span></span><div>");
   } else{
@@ -88,7 +94,7 @@ function removeDuplicates(data, key){
 };
 
 async function allCount(){
-  let followingArray = user.attributes.following;
+  let followingArray = await getFollowingAddresses();
   let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
   let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
   let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
@@ -99,7 +105,7 @@ async function allCount(){
 };
 
 async function forSaleCount(){
-  let followingArray = user.attributes.following;
+  let followingArray = await getFollowingAddresses();
   let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
   let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
   let activeCount = ifOfferDetailsDuplicatesRemoved.filter(item => !item.isSold && item.active && followingArray.includes(item.creator)).length;
@@ -107,14 +113,14 @@ async function forSaleCount(){
 };
 
 async function notForSaleCount(){
-  let followingArray = user.attributes.following;
+  let followingArray = await getFollowingAddresses();
   let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
   let inactiveCount = inactiveArtwork.filter(item => !item.active && followingArray.includes(item.creator)).length;
   $('#notForSaleCount').html(inactiveCount);
 };
 
 $('#forSale').click(async ()=>{
-  let followingArray = user.attributes.following;
+  let followingArray = await getFollowingAddresses();
   $('.cardDivs').empty();
   loader();
   let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
@@ -127,7 +133,7 @@ $('#forSale').click(async ()=>{
 });
 
 $('#notForSale').click(async ()=>{
-  let followingArray = user.attributes.following;
+  let followingArray = await getFollowingAddresses();
   $('.cardDivs').empty();
   loader();
   let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
@@ -145,7 +151,7 @@ $('#viewAll').click(()=>{
 });
 
 async function viewAll(){
-  let followingArray = user.attributes.following;
+  let followingArray = await getFollowingAddresses();
   let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
   let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
   let activeCount = ifOfferDetailsDuplicatesRemoved.filter(item => !item.isSold && item.active && followingArray.includes(item.creator)).length;
@@ -162,7 +168,7 @@ async function viewAll(){
 };
 
 async function recentlyPutForSale(){
-  let followingArray = user.attributes.following;
+  let followingArray = await getFollowingAddresses();
   try{
     let ifOfferDetails = await Moralis.Cloud.run("getOfferDetails");
     let ifOfferDetailsLength = removeDuplicates(ifOfferDetails, art => art.tokenId).length;
@@ -213,7 +219,7 @@ async function recentlyPutForSale(){
 };
 
 async function recentlyMintedAndNotOnSale(){
-  let followingArray = user.attributes.following;
+  let followingArray = await getFollowingAddresses();
   try{
     let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
     for (i = 0; i < inactiveArtwork.length; i++) {
