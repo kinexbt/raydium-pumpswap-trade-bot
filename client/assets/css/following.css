@@ -4,6 +4,14 @@
 
 #amountFollowing{
   font-size: 1rem;
+  position: relative;
+  bottom: 12px;
+}
+
+@media (max-width: 396px) { /*for sm mobile */
+  #amountFollowing{
+    font-size: .8rem;
+  }
 }
 
 .not-connected-text{
