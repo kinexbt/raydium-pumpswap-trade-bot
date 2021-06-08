@@ -2,6 +2,10 @@
   margin-top: 50px;
 }
 
+#amountFollowing{
+  font-size: 1rem;
+}
+
 .not-connected-text{
   margin-top: 200px;
   margin-bottom: 450px;
