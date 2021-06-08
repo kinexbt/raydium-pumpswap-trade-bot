@@ -34,7 +34,7 @@ function checkIfUserIsFollowingPeople(){
   if(followingArray == undefined || !followingArray.length){
     $('.following').html("<div class='center-content'><span class='not-connected-text'>Follow an artist to see the NFTs they create here.<br><span class='price-info'>The follow button is located on the user's profile page</span></span><div>");
   } else{
-    $('#amountFollowing').html(`(${followingArray.length})`);
+    $('#amountFollowing').html(`${followingArray.length}`);
     viewAll();
     allCount();
     forSaleCount();
