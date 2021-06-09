@@ -4,11 +4,9 @@ pragma solidity ^0.8.0;
 
 import "./node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./OpenMint.sol";
-import "./node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./PaymentGateway.sol";
 
 contract OpenMintMarketplace is Ownable {
-  using SafeMath for uint256;
 
   OpenMint private _OpenMint;
   PaymentGateway private _PaymentGateway;
@@ -39,20 +37,19 @@ contract OpenMintMarketplace is Ownable {
     publisherWallet = _publisherWallet;
   }
 
-  function _setPaymentGatewayContract(address _PaymentGatewayAddress) internal onlyOwner{
+  function _setPaymentGatewayContract(address _PaymentGatewayAddress) private onlyOwner{
     _PaymentGateway = PaymentGateway(_PaymentGatewayAddress);
   }
 
-  function _setOpenMintContract(address _OpenMintContractAddress) internal onlyOwner{
+  function _setOpenMintContract(address _OpenMintContractAddress) private onlyOwner{
     _OpenMint = OpenMint(_OpenMintContractAddress);
   }
 
   function setOffer(uint256 price, uint256 tokenId, address tokenAddress) public{
     require(_OpenMint.ownerOf(tokenId) == msg.sender, "Only the owner of the artwork is allowed to do this");
     require(_OpenMint.isApprovedForAll(msg.sender, address(this)) == true, "Not approved to sell");
-    require(price > 0, "No free art here buddy");
+    require(price >= 1000, "Price must be greater than or equal to 1000 wei");
     require(tokenIdToOffer[tokenId].active == false, "Item is already on sale");
-    require(tokenIdToOffer[tokenId].isSold == false, "Item already sold");
 
     uint256 offerId = offers.length;
 
@@ -67,7 +64,7 @@ contract OpenMintMarketplace is Ownable {
 
   function changePrice(uint256 newPrice, uint256 tokenId, address tokenAddress) public{
     require(offers[tokenIdToOffer[tokenId].offerId].seller == msg.sender, "Must be seller");
-    require(newPrice > 0, "No free art here buddy");
+    require(newPrice >= 1000, "Price must be greater than or equal to 1000 wei");
     require(offers[tokenIdToOffer[tokenId].offerId].active == true, "Offer must be active");
     require(offers[tokenIdToOffer[tokenId].offerId].isSold == false, "Item already sold");
 
@@ -116,7 +113,7 @@ contract OpenMintMarketplace is Ownable {
     uint8 creatorRoyalty = _OpenMint.getRoyalty(tokenId);
     uint256 creatorFee = _computeCreatorFee(price, creatorRoyalty);
     uint256 publisherFee = _computePublisherFee(price);
-    uint256 payment = uint256(price.sub(creatorFee).sub(publisherFee));
+    uint256 payment = price - creatorFee - publisherFee;
 
     address payable creator = _OpenMint.getCreator(tokenId);
 
