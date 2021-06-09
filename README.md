@@ -1,6 +1,6 @@
 # OpenMint
 
-OpenMint is a [dapp](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/) that combines aspects of social media platforms (liking, sharing, user profiles, and following) and a marketplace where any (open) user can create (mint), buy, sell, and transfer ERC-721 tokens using any png, jpeg, gif, webp, mp4, video/webm, mp3, audio/webm, or mpeg file 64MB or less. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similiar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.  
+OpenMint, designed to be ran on Ethereum, is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms (liking, sharing, user profiles, and following) and a marketplace where any (open) user can create (mint), buy, sell, and transfer ERC-721 tokens using any png, jpeg, gif, webp, mp4, video/webm, mp3, audio/webm, or mpeg file 64MB or less. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similiar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want. 
 
 OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database using user input, emitted events in smart contracts, and balances in the user's [MetaMask](https://metamask.io/) wallet.
 
@@ -10,13 +10,18 @@ OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which ta
 OpenMint stores and pins the ERC-721 metadata on [IPFS](https://ipfs.io/) using a gateway provided by [Moralis](https://moralis.io/).
 
 ### Unlockable Content
-Unlockable content is any information that can be described in text that you want the owner of the NFT you create on OpenMint to have exclusive access to.  This can be anything from a link to a high-res download since the maximum file size you can upload to IPFS on OpenMint is 64 MB, or it could be a password to a website to unlock a physical product. Your imagination is the limit. 
+Unlockable content is any information that can be described in text that you want the owner of the NFT you create on OpenMint to have exclusive access to.  This can be anything such as a link to a high-res download since the maximum file size you can upload to IPFS on OpenMint is 64 MB, or it could be a password to a website to unlock a physical product. Your imagination is the limit. 
 
-The description of what the unlockable content contains is typically found under `Additional Info` which can be found by clicking on an artwork which takes you to the token's page. When on the token's page, all the information about the artwork is on the right handside of the artwork (or below the artwork if on a smaller screen). This information stays with the token and transfers with ownership on sale and transfer. This information can only be set when creating the NFT and cannot be changed later.
+The description of what the unlockable content contains is typically found under `Additional Info` which can be found by clicking on an artwork which takes you to the token's page. When on the token's page, all the information about the artwork is on the right handside of the artwork (or below the artwork if on a smaller screen). This information stays with the token and transfers with ownership on sale or when transfered. This information can only be set when creating the NFT and cannot be changed later.
+
+### Search Bar
+At the top of every page in the navigation bar, there is a search bar which can be used to find any NFT or user on OpenMint based either their username, the title they have given to the NFT, or their wallet address. If searching for an NFT the username and wallet address are checked against the creator or current owner, and the title is checked against the title.  If searching for a specific user the username is checked against the current username, and wallet address is checked against the wallet address used when they connected to OpenMint initially.
+
 ### Tipping
 Users can send tips in form of crypto-currency to each other using a `Send Tip` button found on their profile page.
+
 ### Buying
-In two clicks a user can own an ERC-721 token, and while not visually shown in their wallet, can be seen in their profile which shows all the ERC-721 tokens they currently own and have minted among other things such as tokens they have for sale, liked, and encouraged to sell.
+In two clicks a user can own an ERC-721 token, and while not visually shown in their wallet, can be seen in their profile which shows all the ERC-721 tokens they currently own and have created among other categories such as tokens they have for sale, liked, and encouraged to sell.
 
 ### Selling
 After setting approval to the OpenMint marketplace contract, which is done with a single click, users can sell their ERC-721 tokens to any other OpenMint users.
@@ -38,7 +43,10 @@ For example, if an artwork is resold for 1 ETH, the royalty is 10%, and the sale
  - The publisher wallet will receive 0.02 ETH.
 
 ### Likes & Shares
-Just like other social media platforms, OpenMint allows users who connect their wallet to like a certain ERC-721 token. These ERC-721 tokens along with user profiles can be shared via a Tweet, a Facebook post, or an email.
+Just like other social media platforms, OpenMint allows users who connect their wallet to like a certain ERC-721 token. These ERC-721 tokens along with user profiles can be shared via a Tweet, a Facebook post, or an email. Facebook posts will only work when hosted locally.
+
+### Following
+A user can follow another via the "Follow" button on their profile page. A list of who each user follows and is followed by is on their profile page under "Following" and "Followers" respectively. When a users wallet is connected, if a user follows another, and if the one they are following has created NFTs on OpenMint, their created work, regardless of who the current owner is, will show up under the Following tab found in the navigation bar at the top of each page.
 
 ### Encouragements
 If a token is not on sale, but a user would like it to be, a bell button can be clicked and a count is incremented which signafies to the owner that a certain number of people would like that artwork put for sale.  Once the owner puts the artwork for sale this encouragement count is reset.
@@ -46,7 +54,7 @@ If a token is not on sale, but a user would like it to be, a bell button can be 
 ## Security
 ### Withdrawal Payment Pattern
 
-OpenMint integrates [OpenZeppelin](https://openzeppelin.com/contracts/) contracts which are thoroughly tested to minimize any unnecessary bugs, attackers, or exploits.  OpenMint uses a payment gateway contract alongside an escrow contract to keep an users earned funds from selling ERC-721 tokens secure until they are ready to withdraw to their [MetaMask](https://metamask.io/) wallet. The button to with withdraw can be found on your profile page under your bio when your wallet is connected.  If the gree button just says "Withdraw" and is unable to be clicked, their is nothing to withdraw. If the button says "Withdraw" followed by a number amount of ETH (Withraw 1.1234 ETH), then a user can click the button, confirm in the popup modal, and then confirm the transaction in [MetaMask](https://metamask.io/).
+OpenMint integrates [OpenZeppelin](https://openzeppelin.com/contracts/) contracts which are thoroughly tested to minimize any unnecessary bugs, attackers, or exploits.  OpenMint uses a payment gateway contract alongside an escrow contract to keep an users earned funds from selling ERC-721 tokens secure until they are ready to withdraw to their [MetaMask](https://metamask.io/) wallet. The button to with withdraw can be found on the profile page under the bio when a wallet is connected.  If the green button just says "Withdraw" and is unable to be clicked, their is nothing to withdraw. If the button says "Withdraw" followed by a number amount of ETH (Withraw 1.1234 ETH), then a user can click the button, confirm in the popup modal, and then confirm the transaction in [MetaMask](https://metamask.io/).
 
 ## Installation
 Here are the steps to run this dapp locally:
