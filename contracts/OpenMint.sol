@@ -39,13 +39,13 @@ contract OpenMint is ERC721 {
   }
 
   function getRoyalty(uint256 tokenId) external virtual view returns(uint8 royalty){
-    require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+    require(_exists(tokenId), "ERC721Metadata: Royalty query for nonexistent token");
 
     return Artworks[tokenId].royalty;
   }
 
   function getCreator(uint256 tokenId) external virtual view returns(address payable creator){
-    require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+    require(_exists(tokenId), "ERC721Metadata: Creator query for nonexistent token");
 
     return payable(Artworks[tokenId].creator);
   }
