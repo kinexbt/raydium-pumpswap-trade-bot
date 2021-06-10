@@ -59,12 +59,10 @@
 
 .no-art-for-sale{
   padding: 50px;
-  border-radius: 30px;
-  border: 1px solid #666;
   margin-top: 40px;
   margin-left: auto;
   margin-right: auto;
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 .gradient-text{
