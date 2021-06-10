@@ -1,5 +1,5 @@
 # OpenMint
-OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms and a marketplace where any user can create, buy, sell, and transfer ERC-721 tokens. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similiar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.
+OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms and a marketplace where any user can create, buy, sell, and transfer ERC-721 tokens representing images, audio, or video. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similiar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.
 
 OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database using user input, emitted events in smart contracts, and balances in the user's [MetaMask](https://metamask.io/) wallet.
 
