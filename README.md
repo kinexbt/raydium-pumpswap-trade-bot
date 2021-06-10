@@ -16,13 +16,13 @@ OpenMint stores and pins the ERC-721 metadata on [IPFS](https://ipfs.io/) using 
 ### Unlockable Content
 Unlockable content is any information that can be described in text format that you want the owner of the NFT you create on OpenMint to have exclusive access to.  This can be anything such as a link to a high-res download since the maximum file size you can upload to IPFS on OpenMint is 64 MB, or it could be a password to a website to unlock a physical product. Your imagination is the limit! 
 
-The description of what the unlockable content contains is typically found under Additional Info which can be found by clicking on an artwork which takes you to the token's page. When on the token's page, all the information about the artwork is on the right handside of the artwork (or below the artwork if on a smaller screen). This information stays with the token and transfers with ownership on sale or when transfered. This information can only be set when creating the NFT and cannot be changed later.
+The description of what the unlockable content contains is typically found under Additional Info which can be found by clicking on an artwork which takes you to the token's page. This information stays with the token and transfers with ownership on sale or when transferred. This information can only be set when creating the NFT and cannot be changed later.
 
 ### Search Bar
-At the top of every page in the navigation bar, there is a search bar which can be used to find any NFT or user on OpenMint based either their username, the title they have given to the NFT, or their wallet address. If searching for an NFT the username and wallet address are checked against the creator or current owner, and the title is checked against the title.  If searching for a specific user the username is checked against the current username, and wallet address is checked against the wallet address used when they connected to OpenMint initially.
+At the top of every page in the navigation bar, there is a search bar which can be used to find any NFT or user on OpenMint based on either their username, the title they have given to the NFT, or their wallet address. If searching for an NFT the username and wallet address are checked against the creator or current owner, and the title is checked against the title.  If searching for a specific user the username is checked against the current username, and the wallet address is checked against the wallet address used when they connected to OpenMint initially.
 
 ### Tipping
-Users can send tips in the form of crypto-currency to each other using a `Send Tip` button found on their profile page.
+Users can send tips in the form of crypto-currency to each other using a Send Tip button found on their profile page.
 
 ### Buying
 In two clicks a user can own an ERC-721 token, and while not visually shown in their wallet, can be seen in their profile which shows all the ERC-721 tokens they currently own and have created among other categories such as tokens they have for sale, liked, and encouraged to sell.
@@ -50,7 +50,7 @@ For example, if an artwork is resold for 1 ETH, the royalty is 10%, and the sale
 Just like other social media platforms, OpenMint allows users who connect their wallet to like a certain ERC-721 token. These ERC-721 tokens along with user profiles can be shared via a Tweet, a Facebook post, or an email. Facebook posts will not work when hosted locally.
 
 ### Following
-A user can follow another via the "Follow" button on their profile page. A list of who each user follows and is followed by is on their profile page under "Following" and "Followers" respectively. When a users wallet is connected, if a user follows another, and if the one they are following has created NFTs on OpenMint, their created work, regardless of who the current owner is, will show up under the Following tab found in the navigation bar at the top of each page.
+A user can follow another via the "Follow" button on their profile page. A list of who each user follows and is followed by is on their profile page under "Following" and "Followers" respectively. When a user's wallet is connected, if a user follows another, and if the one they are following has created NFTs on OpenMint, their created work, regardless of who the current owner is, will show up under the Following tab found in the navigation bar at the top of each page.
 
 ### Encouragements
 If a token is not on sale, but a user would like it to be, a bell button can be clicked and a count is incremented which signifies to the owner that a certain number of people would like that artwork put for sale.  Once the owner puts the artwork for sale this encouragement count is reset.
@@ -75,7 +75,7 @@ Once the truffle-config.js file is added to Ganache and the chain is ready to ru
 ```
 truffle migrate
 ```
-After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines of these file: `discover.js`, `token.js`, `erc-721.js`, and `profile.js`.
+After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines of these files: `discover.js`, `token.js`, `erc-721.js`, and `profile.js`.
 
 The first address in Ganache will be the publisher wallet, which receives the 2% sale fee on every sale.
 
