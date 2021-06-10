@@ -1,9 +1,9 @@
 # OpenMint
-OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms and a marketplace allowing any user can create, buy, sell, and transfer ERC-721 tokens representing an image, audio, or video file. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similiar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.
+OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms and a marketplace allowing any user can create, buy, sell, and transfer ERC-721 tokens representing an image, audio, or video file. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate, but the one who owns the deed owns the house and can sell if they want.
 
 OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database using user input, emitted events in smart contracts, and balances in the user's [MetaMask](https://metamask.io/) wallet.
 
-This version of OpenMint was designed to be run on Ethereum, but can be configured to be run on most other EVM (Ethereum Virtual Machine) compatible chains such as Binance Smart Chain or Polygon (previously Matic Network).
+This version of OpenMint was designed to be run on Ethereum but can be configured to be run on most other EVM (Ethereum Virtual Machine) compatible chains such as Binance Smart Chain or Polygon (previously Matic Network).
 
 ## Features
 
@@ -16,10 +16,10 @@ OpenMint stores and pins the ERC-721 metadata on [IPFS](https://ipfs.io/) using 
 ### Unlockable Content
 Unlockable content is any information that can be described in text format that you want the owner of the NFT you create on OpenMint to have exclusive access to.  This can be anything such as a link to a high-res download since the maximum file size you can upload to IPFS on OpenMint is 64 MB, or it could be a password to a website to unlock a physical product. Your imagination is the limit! 
 
-The description of what the unlockable content contains is typically found under Additional Info which can be found by clicking on an artwork which takes you to the token's page. This information stays with the token and transfers with ownership on sale or when transferred. This information can only be set when creating the NFT and cannot be changed later.
+The description of what the unlockable content contains is typically found under Additional Info which can be found by clicking on an artwork that takes you to the token's page. This information stays with the token and transfers with ownership on sale or when transferred. This information can only be set when creating the NFT and cannot be changed later.
 
 ### Search Bar
-At the top of every page in the navigation bar, there is a search bar which can be used to find any NFT or user on OpenMint based on either their username, the title they have given to the NFT, or their wallet address. If searching for an NFT the username and wallet address are checked against the creator or current owner, and the title is checked against the title.  If searching for a specific user the username is checked against the current username, and the wallet address is checked against the wallet address used when they connected to OpenMint initially.
+At the top of every page in the navigation bar, there is a search bar that can be used to find any NFT or user on OpenMint based on either their username, the title they have given to the NFT, or their wallet address. If searching for an NFT the username and wallet address is checked against the creator or current owner, and the title is checked against the title.  If searching for a specific user the username is checked against the current username, and the wallet address is checked against the wallet address used when they connected to OpenMint initially.
 
 ### Tipping
 Users can send tips in the form of crypto-currency to each other using a Send Tip button found on their profile page.
@@ -33,10 +33,10 @@ After setting approval for the OpenMint marketplace contract, which is done with
 ### Transferring
 If the ERC-721 token is not on sale a user can transfer their token to any address they desire. Once the new owner connects their [MetaMask](https://metamask.io/) wallet to OpenMint they can view the token(s) on their profile page.  
 
-Transferring is also how a user can make sure their token can never be owned again. This is done by transferring the token to the equivalent of a zero address. If desired we recommend this one: `0x000000000000000000000000000000000000dead`. By transferring to this address or one similar, others can still view the artwork on OpenMint, but new ownership is not possible since the owner is now an address which no one has the private keys to.
+Transferring is also how a user can make sure their token can never be owned again. This is done by transferring the token to the equivalent of a zero address. If desired we recommend this one: `0x000000000000000000000000000000000000dead`. By transferring to this address or one similar, others can still view the artwork on OpenMint, but new ownership is not possible since the owner is now an address to which no one has the private keys.
 
 ### Royalties
-A royalty is a certain percentage of the sale price that is automatically held in an escrow contract when a sale is successful, and sits securely until withdrawn by the original creator. It is set during the creation process and cannot be changed due to the nature of a blockchain. At OpenMint we have a minimum of 1% and maximum of 50% able to be set.
+A royalty is a certain percentage of the sale price that is automatically held in an escrow contract when a sale is successful and sits securely until withdrawn by the original creator. It is set during the creation process and cannot be changed due to the nature of a blockchain. At OpenMint we have a minimum of 1% and a maximum of 50% able to be set.
 
 ### 2% Sales Fee
 Before deployment of the smart contracts, a wallet address (known as publisher wallet in `OpenMintMarketplace.sol`) can be set to receive a hardcoded 2% fee of what the artwork sells for. 
@@ -58,7 +58,7 @@ If a token is not on sale, but a user would like it to be, a bell button can be 
 ## Security
 ### Withdrawal Payment Pattern
 
-OpenMint integrates [OpenZeppelin](https://openzeppelin.com/contracts/) contracts, and a payment gateway contract alongside an escrow contract to keep a user's earned funds secure until they are ready to withdraw to their [MetaMask](https://metamask.io/) wallet. The button to withdraw can be found on the profile page under the bio when a wallet is connected.  If the green button just says "Withdraw" and is unable to be clicked, there is nothing to withdraw. If the button says "Withdraw" followed by a number amount of ETH (Withraw 1.1234 ETH), then a user can click the button, confirm in the popup modal, and then confirm the transaction in [MetaMask](https://metamask.io/).
+OpenMint integrates [OpenZeppelin](https://openzeppelin.com/contracts/) contracts, and a payment gateway contract alongside an escrow contract to keep a user's earned funds secure until they are ready to withdraw to their [MetaMask](https://metamask.io/) wallet. The button to withdraw can be found on the profile page under the bio when a wallet is connected.  If the green button just says "Withdraw" and is unable to be clicked, there is nothing to withdraw. If the button says "Withdraw" followed by a number amount of ETH (Withdraw 1.1234 ETH), then a user can click the button, confirm in the popup modal, and then confirm the transaction in [MetaMask](https://metamask.io/).
 
 ## Installation
 Here are the steps to run this dapp locally:
