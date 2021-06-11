@@ -75,7 +75,7 @@ Once the truffle-config.js file is added to Ganache and the chain is ready to ru
 ```
 truffle migrate
 ```
-After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines of these files: `discover.js`, `token.js`, `erc-721.js`, and `profile.js`.
+After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines of these files: `discover.js`, `token.js`, `erc-721.js`, `following.js`, and `profile.js`.
 
 The first address in Ganache will be the publisher wallet, which receives the 2% sale fee on every sale.
 
