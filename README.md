@@ -1,7 +1,7 @@
 # OpenMint
-OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms and a marketplace allowing any user can create, buy, sell, and transfer ERC-721 tokens representing an image, audio, or video file. It is important to clarify that ownership of the ERC-721 token proves who owns it. It's similar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate, but the one who owns the deed owns the house and can sell if they want.
+OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms and a marketplace. It allows any (Open) user to create (Mint), buy, sell, and transfer ERC-721 tokens, which represent artworks in the form of an image, audio, or video file. It is important to clarify that ownership of the ERC-721 token proves ownership of the artwork it represents. It's similar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.
 
-OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database using user input, emitted events in smart contracts, and balances in the user's [MetaMask](https://metamask.io/) wallet.
+OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database using user input, emitted events in smart contracts, and balances in each user's [MetaMask](https://metamask.io/) wallet.
 
 This version of OpenMint was designed to be run on Ethereum but can be configured to be run on most other EVM (Ethereum Virtual Machine) compatible chains such as Binance Smart Chain or Polygon (previously Matic Network).
 
@@ -75,7 +75,7 @@ Once the truffle-config.js file is added to Ganache and the chain is ready to ru
 ```
 truffle migrate
 ```
-After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines of these files: `discover.js`, `token.js`, `erc-721.js`, and `profile.js`.
+After migration, place the correct contract address between the quotation marks of the empty strings assigned to each of the contract address variables, which can be found in the first few lines of these files: `discover.js`, `token.js`, `erc-721.js`, `following.js`, and `profile.js`.
 
 The first address in Ganache will be the publisher wallet, which receives the 2% sale fee on every sale.
 
