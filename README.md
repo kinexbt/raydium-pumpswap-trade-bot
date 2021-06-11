@@ -3,7 +3,7 @@ OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applica
 
 OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database using user input, emitted events in smart contracts, and balances in each user's [MetaMask](https://metamask.io/) wallet.
 
-This version of OpenMint was designed to be run on Ethereum but can be configured to be run on most other EVM (Ethereum Virtual Machine) compatible chains such as Binance Smart Chain or Polygon (previously Matic Network).
+This version of OpenMint was designed to run on Ethereum but can be configured to run on most other EVM (Ethereum Virtual Machine) compatible chains such as Binance Smart Chain or Polygon (previously Matic Network).
 
 ## Features
 
