@@ -97,7 +97,7 @@ In Moralis, click View Details again and go to the Devchain Proxy Server tab and
 
 Copy the entire `cloudFunctions.js` file and paste it into the Cloud Function option on your server in Moralis.
 
-Then install the "Sync and Watch Contract Events" plugins under the Plugins section on your server for the four events in `OpenMintMarketplace.sol` using the table names "ArtworkForSale", "ArtworkSold", "ArtworkPriceChanged", and "ArtworkRemoved". For help with adding plugins refer to [this video](https://www.youtube.com/watch?v=zn7_AYf_28E&t=819s) starting at 11:00 min.
+Then install the proper "Sync and Watch Contract Events" found in the Details section on your server for the four events in `OpenMintMarketplace.sol` using the table names "ArtworkForSale", "ArtworkSold", "ArtworkPriceChanged", and "ArtworkRemoved". For help with adding plugins refer to [this video](https://www.youtube.com/watch?v=zn7_AYf_28E&t=819s) starting at 11:00 min.
 
 Once successfully added you can now simulate users interacting with OpenMint locally!
 
