@@ -66,7 +66,13 @@ OpenMint integrates [OpenZeppelin](https://openzeppelin.com/contracts/) contract
 ## Installation
 Here are the steps to run this dapp locally:
 
-Use the package manager [npm](https://www.npmjs.com/) to install Truffle.
+Use the package manager [npm](https://www.npmjs.com/) 
+
+```
+npm install
+```
+
+Make sure you have Truffle installed globally.
 
 ```
 npm install -g truffle
