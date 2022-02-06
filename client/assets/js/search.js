@@ -1,10 +1,11 @@
-Moralis.initialize("wkFROxK0KYzglXkEqfxOBZS8IZuXsQummX2JZrjU"); // Application id from moralis.io
-Moralis.serverURL = 'https://zaa2xykomtg5.moralis.io:2053/server'; //Server url from moralis.io
+const appId = ""; // Application id from moralis.io
+const serverUrl = ''; //Server url from moralis.io
+Moralis.start({ serverUrl, appId });
 
 const BASE_URL = "https://api.coingecko.com/api/v3";
 const ETH_USD_PRICE_URL = "/simple/price?ids=ethereum&vs_currencies=usd";
-const openMintTokenAddress = "0xdbed1a4D2e069Db8853007AB60A22e0d8d96B081";
-const openMintMarketplaceAddress = "0x0c5121b9B3e662A14a7cA80f5B47E1B36ee77E42";
+const openMintTokenAddress = "";
+const openMintMarketplaceAddress = "";
 let openMintTokenInstance;
 let openMintMarketplaceInstance;
 let web3;
@@ -16,7 +17,7 @@ let query = url.searchParams.get('query');
 let cleanedQuery = query.toLowerCase();
 
 $(document).ready(async function(){
-  web3 = await Moralis.Web3.enable();
+  web3 = await Moralis.enableWeb3();
   openMintTokenInstance = new web3.eth.Contract(abi.OpenMintToken, openMintTokenAddress);
   openMintMarketplaceInstance = new web3.eth.Contract(abi.OpenMintMarketplace, openMintMarketplaceAddress);
   ethPrice = await getEthPrice();

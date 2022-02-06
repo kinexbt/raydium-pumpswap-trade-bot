@@ -1,5 +1,7 @@
-Moralis.initialize(""); // Application id from moralis.io
-Moralis.serverURL = ''; //Server url from moralis.io
+const appId = ""; // Application id from moralis.io
+const serverUrl = ''; //Server url from moralis.io
+Moralis.start({ serverUrl, appId });
+
 
 const BASE_URL = "https://api.coingecko.com/api/v3";
 const ETH_USD_PRICE_URL = "/simple/price?ids=ethereum&vs_currencies=usd";
@@ -16,7 +18,7 @@ let url = new URL(url_string);
 let address = url.searchParams.get('address');
 
 $(document).ready(async function(){
-  web3 = await Moralis.Web3.enable();
+  web3 = await Moralis.enableWeb3();
   openMintTokenInstance = new web3.eth.Contract(abi.OpenMintToken, openMintTokenAddress);
   openMintMarketplaceInstance = new web3.eth.Contract(abi.OpenMintMarketplace, openMintMarketplaceAddress);
   paymentGatewayInstance = new web3.eth.Contract(abi.PaymentGateway, paymentGatewayAddress);
@@ -397,6 +399,7 @@ async function sendTipToContract(toAddress, tipInWei){
                                     </div>`)
   try {
     await paymentGatewayInstance.methods.sendPayment(toAddress).send({from: ethereum.selectedAddress, value: tipInWei});
+    setTip(toAddress, tipInWei);
     $('#tipStatus').removeClass('text-danger');
     $('#tipStatus').addClass('text-success');
     $('#tipStatus').html('Succesfully sent tip');
@@ -410,6 +413,14 @@ async function sendTipToContract(toAddress, tipInWei){
     $('#tipStatus').html('Something went wrong');
     $('#confirmTipBtn').html('Send Tip');
   }
+};
+
+async function setTip(toAddress, tipInWei){
+  const params = {
+    toAddress: toAddress,
+    tipAmount: Number(tipInWei)
+  };
+  await Moralis.Cloud.run('setTotalTips', params);
 };
 
 async function getMyBalance(){

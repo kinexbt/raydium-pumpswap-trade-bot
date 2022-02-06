@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/nav.css">
     <link rel="stylesheet" href="assets/css/footer.css">
-    <link rel="stylesheet" href="assets/css/edit-profile.css">
+    <link rel="stylesheet" href="assets/css/stats.css">
     <link rel="stylesheet" href="assets/css/basics.css">
     <link rel="icon" type="image/png" href="assets/images-icons/openMintLogo.png">
     <script type="text/javascript" src="assets/js/jquery-3.4.1.js"></script>
@@ -62,9 +62,9 @@
               <img id="rankInNav" src="" width="12px" alt="seller badge">
             </a>
             <div class="dropdown-menu" aria-labelledby="profile">
-              <a class='dropdown-item' href="stats.html">My Stats</a>
+              <a class='dropdown-item' href="stats.html">My Stats<span class="sr-only">(current)</span></a>
               <a id="myProfile" class='dropdown-item'>My Profile</a>
-              <a class='dropdown-item' href="edit-profile.html">Edit Profile<span class="sr-only">(current)</span></a>
+              <a class='dropdown-item' href="edit-profile.html">Edit Profile</a>
               <hr>
               <a class="dropdown-item" id="disconnectWalletBtn">Disconnect Wallet</a>
             </div>
@@ -81,85 +81,116 @@
       </div>
     </nav>
 
-    <div class="container">
-      <div class="edit-profile">
-        <header>
-          Edit Profile
-        </header>
-        <p class="subheader">Set your custom username, bio, and other personal settings.</p>
-
-        <div class="modal fade" id="fileSizeModal" tabindex="-1" role="dialog" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">File Size Too Large</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body text-danger">
-                File size cannot exceed 3 MB.
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary button-styling" data-dismiss="modal">Close</button>
-              </div>
-            </div>
+    <div id="ifWalletNotConnectedModal" class="modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header center-content">
+            <h5 class="modal-title">Must Connect Wallet To View Stats</h5>
+          </div>
+          <div class="modal-body center-content">
+            <button type="button" class="btn btn-secondary button-styling mr-2" id="goBackBtn">Go Back</button>
+            <button type="button" class="btn btn-primary button-styling" id="connectWalletModalBtn">Connect Wallet</button>
           </div>
         </div>
-
-        <form>
-          <div class="form-group">
-            <label for="profilePhoto">Profile Photo</label>
-            <div class="photo-helper">
-              <img src="" class="center-cropped" id="profilePhoto">
-            </div>
-            <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" class="form-control-file" id="profilePhotoInput">
-            <span class="sub-text pt-1">(3 MB file limit)</span>
-          </div>
-
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" maxlength="50" class="form-control" id="username" aria-describedby="usernameHelp">
-            <span class="sub-text pt-1" id="usernameExistsCheck"></span>
-            <span class="username-char-count"><span id='usernameCharsRemaining'>50&nbsp</span>characters remaining</span>
-          </div>
-
-          <div class="form-group">
-            <label for="bio">Bio</label>
-            <textarea maxlength="280" class="form-control" id="bio" rows="3"></textarea>
-            <span class="sub-text pt-1">Line-breaks preserved
-              <span class="sub-text char-count"><span id='charsRemaining'>280 &nbsp</span> characters remaining</span>
-            </span>
-          </div>
-
-          <div class="form-group">
-            <label for="instagram">Instagram</label>
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">@</span>
-              </div>
-              <input type="text" class="form-control" maxlength="30" id="instagram" placeholder="Instagram" aria-label="Instagram Username" aria-describedby="basic-addon1">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="twitter">Twitter</label>
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">@</span>
-              </div>
-              <input type="text" class="form-control" maxlength="15" id="twitter" placeholder="Twitter" aria-label="Twitter Username" aria-describedby="basic-addon1">
-            </div>
-          </div>
-
-          <div class="saveBtn">
-            <span class="mr-3 mt-2" id="saveMessage"></span>
-            <button type="button" class="btn btn-primary button-styling" id="saveProfileInfoBtn">Save</button>
-          </div>
-
-
-        </form>
       </div>
+    </div>
+
+    <div class="container">
+
+      <div class="stats">
+        <header>
+          Your Stats
+        </header>
+        <p class="subheader">Keep track of your profit, amount sold, and more.</p>
+
+        <div class="info">
+
+          <div class="group">
+            <span class="label">Profit From Selling</span>
+            <div class="amounts profit spinner-border text-primary spinner-border-sm">
+              <span class="sub-group" id="profitsFromSelling"></span><br>
+              <span class="usd-amount" id="profitsFromSellingUSD"></span>
+            </div>
+          </div>
+
+          <div class="group">
+            <span class="label">Royalties Received</span>
+            <div class="amounts royalty spinner-border text-primary spinner-border-sm">
+              <span class="sub-group " id="royaltiesReceived"></span><br>
+              <span class="usd-amount" id="royaltiesReceivedUSD"></span>
+            </div>
+          </div>
+
+          <div class="group">
+            <span class="label">Tips Received</span>
+            <div class="amounts tips spinner-border text-primary spinner-border-sm">
+              <span class="sub-group" id="tipsReceived"></span> <br>
+              <span class="usd-amount" id="tipsReceivedUSD"></span>
+            </div>
+          </div>
+
+          <div class="group">
+            <span class="label">Total Earned on OpenMint</span>
+            <div class="amounts total spinner-border text-primary spinner-border-sm">
+              <span class="sub-group" id="total"></span><br>
+              <span class="usd-amount" id="totalUSD"></span>
+            </div>
+          </div>
+
+          <div class="group">
+            <span class="label">Sell <span class="next-badge spinner-border text-primary spinner-border-sm" id="amountTillNextBadge"></span> more to get this badge:</span>
+            <img class="badge-img spinner-border text-primary spinner-border-sm" id="nextBadge" src="" width="20px">
+          </div>
+
+          <div class="group">
+            <span class="label">Amount Sold</span>
+            <span class="sold spinner-border text-primary spinner-border-sm" id="amountSold"></span>
+          </div>
+
+          <div class="group">
+            <span class="label">Amount Bought</span>
+            <span class="bought spinner-border text-primary spinner-border-sm" id="amountBought"></span>
+          </div>
+
+          <div class="group">
+            <span class="label">Amount Minted</span>
+            <span class="minted spinner-border text-primary spinner-border-sm" id="amountMinted"></span>
+          </div>
+
+          <div class="group">
+            <span class="label">Likes Received
+              <i class="far fa-question-circle" data-toggle="tooltip" data-placement="top" title="Total likes received on artwork you have minted."></i>
+            </span>
+            <span class="likes spinner-border text-primary spinner-border-sm" id="likesReceived"></span>
+          </div>
+
+          <div class="group">
+            <span class="label">Encouragements
+              <i class="far fa-question-circle" data-toggle="tooltip" data-placement="top" title="Encouragements get reset when an artwork is put for sale."></i>
+            </span>
+            <span class="encouragements spinner-border text-primary spinner-border-sm" id="currentEncouragements"></span>
+          </div>
+
+          <div class="group">
+            <span class="label">Followers</span>
+            <span class="followers spinner-border text-primary spinner-border-sm" id="amountOfFollowers"></span>
+          </div>
+
+          <div class="group">
+            <span class="label">Following</span>
+            <span class="following spinner-border text-primary spinner-border-sm" id="amountFollowing"></span>
+          </div>
+
+          <div class="group">
+            <span class="label">Joined
+              <i class="far fa-calendar-alt" data-toggle="tooltip" data-placement="top" title="DD.MM.YYYY"></i>
+            </span>
+            <span class="date spinner-border text-primary spinner-border-sm" id="dateJoined"></span>
+          </div>
+
+        </div>
+      </div><!--end of stats-->
+
     </div>
 
     <footer>
@@ -174,12 +205,12 @@
         <div class="links">
           <a href="#">Terms</a>
           <a href="#">Privacy</a>
-          <a href="learn.html">FAQs</a>
+          <a href="learn">FAQs</a>
         </div>
 
         <div class="company-name">
           <span>Powered by<a href="https://moralis.io/" target="_blank"><img src="./assets/images-icons/Moralis-Logo-Black.png" width="100px"></a></span> <br>
-          <span>USD data from <a href="https://www.coingecko.com/" target="_blank">CoinGecko <img src="./assets/images-icons/coingeckologo.png" width="20px"> </a></span> <br>
+          <span>Price data from <a href="https://app.1inch.io/#/56/swap/WBNB/BUSD" target="_blank">1inch <img src="./assets/images-icons/1inch-1inch-logo.png" width="20px"> </a></span> <br>
           <span>© OpenMint, Inc. All rights reserved.</span>
         </div>
 
@@ -189,6 +220,6 @@
   <script src="assets/js/theme.js"></script>
   <script src="assets/js/nav.js"></script>
   <script src="assets/js/js.cookie.js"></script>
-  <script src="assets/js/editProfile.js"></script>
+  <script src="assets/js/stats.js"></script>
   <script src="assets/js/connectWallet.js"></script>
   </html>

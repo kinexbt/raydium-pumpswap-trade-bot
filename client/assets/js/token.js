@@ -1,5 +1,6 @@
-Moralis.initialize(""); // Application id from moralis.io
-Moralis.serverURL = ''; //Server url from moralis.io
+const appId = ""; // Application id from moralis.io
+const serverUrl = ''; //Server url from moralis.io
+Moralis.start({ serverUrl, appId });
 
 const BASE_URL = "https://api.coingecko.com/api/v3";
 const ETH_USD_PRICE_URL = "/simple/price?ids=ethereum&vs_currencies=usd";
@@ -15,12 +16,13 @@ let url = new URL(url_string);
 let token = url.searchParams.get('token');
 
 $(document).ready(async function(){
-  web3 = await Moralis.Web3.enable();
+  web3 = await Moralis.enableWeb3();
   openMintTokenInstance = new web3.eth.Contract(abi.OpenMintToken, openMintTokenAddress);
   openMintMarketplaceInstance = new web3.eth.Contract(abi.OpenMintMarketplace, openMintMarketplaceAddress);
   ethPrice = await getEthPrice();
   getActiveArtworkInfo();
   getInactiveArtworkInfo();
+  getTimeCreated();
 });
 
 async function getEthPrice(){
@@ -85,7 +87,6 @@ async function getOnSaleDetails(){
 async function getCurrentOwner(){
   try {
     let owner = await Moralis.Cloud.run('getCurrentOwner');
-    console.log(owner);
     for (i = 0; i < owner.length; i++) {
       let tokenAddress = owner[i].tokenAddress;
       let tokenId = owner[i].tokenId;
@@ -100,10 +101,22 @@ async function getCurrentOwner(){
   }
 };
 
+async function getTimeCreated(){
+  let tokenAddress = token.slice(0, 42);
+  let tokenId = token.slice(42, token.length);
+  const Artwork = Moralis.Object.extend("Artwork");
+  const query = new Moralis.Query(Artwork);
+  query.equalTo("tokenAddress", tokenAddress);
+  query.equalTo("nftId", tokenId);
+  const artwork = await query.first();
+  return artwork.attributes.createdAt.toDateString() + " " + artwork.attributes.createdAt.toLocaleTimeString();
+};
+
 async function getActiveArtworkInfo(){
   try {
     let price = await getOnSaleDetails();
     let owner = await getCurrentOwner();
+    let createdAt = await getTimeCreated();
 
     let activeArtwork = await Moralis.Cloud.run('getArtwork');
     console.log(activeArtwork)
@@ -160,8 +173,9 @@ async function getActiveArtworkInfo(){
           } else{
             $('#description' + tokenAddress + id).html(description);
           }
+          $('#createdAt' + tokenAddress + id).html(createdAt);
           $('#royalty' + tokenAddress + id).html(royalty);
-          getAdditionalInfo(tokenAddress, id, additionalInfo, owner);
+
 
           if(unlockableContent && user.attributes.ethAddress.toLowerCase() == owner.toLowerCase()){
             $('.unlockable-div').css('display', 'block');
@@ -173,11 +187,30 @@ async function getActiveArtworkInfo(){
             $('#unlockableContentBtn' + tokenAddress + id).html('Unlockable');
           }
 
+          getAdditionalInfo(tokenAddress, id, additionalInfo, owner);
+
           if(user.attributes.ethAddress.toLowerCase() == owner.toLowerCase()){
             $('.if-owned').css('display', 'block');
             $(".not-onsale").css('display', 'none');
             $(".if-onsale").css('display', 'none');
-            $('#additionalInfo' + tokenAddress + id).html('View/Edit Additional Info');
+
+            if(owner.toLowerCase() == user.attributes.ethAddress.toLowerCase() && !additionalInfo){
+            $('#additionalInfo' + tokenAddress + id).css('display', 'inline');
+             $('#additionalInfo' + tokenAddress + id).html('Add Additional Info');
+             $('#additionalInfoText').css('display', 'block');
+             $('#additionalInfoText').html(additionalInfo);
+             $('#additionalInfo' + tokenAddress + id).click(()=>{
+               $('#additionalInfoModal').modal('show');
+             });
+           } else if(owner.toLowerCase() == user.attributes.ethAddress.toLowerCase() && additionalInfo){
+             $('#additionalInfo' + tokenAddress + id).html('View/Edit Additional Info');
+             $('#additionalInfoText').css('display', 'block');
+             $('#additionalInfoText').html(additionalInfo);
+             $('#additionalInfo' + tokenAddress + id).click(()=>{
+               $('#additionalInfoModal').modal('show');
+             });
+           }
+
           } else{
             $('.if-owned').css('display', 'none');
             $(".if-onsale").css('display', 'block');
@@ -196,6 +229,7 @@ async function getInactiveArtworkInfo(){
   try {
     let price = await getOnSaleDetails();
     let owner = await getCurrentOwner();
+    let createdAt = await getTimeCreated();
 
     let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
 
@@ -253,13 +287,13 @@ async function getInactiveArtworkInfo(){
 
           $('#title' + tokenAddress + id).html(name);
           if(description == ''){
-            $('#description' + tokenAddress + id).css(({'color': "#888", 'font-size': ".8rem", 'font-weight': '500'}));
+            $('#description' + tokenAddress + id).css({'color': "#888", 'font-size': ".8rem", 'font-weight': '500'});
             $('#description' + tokenAddress + id).html('(No description given)');
           } else{
             $('#description' + tokenAddress + id).html(description);
           }
+          $('#createdAt' + tokenAddress + id).html(createdAt);
           $('#royalty' + tokenAddress + id).html(royalty);
-          getAdditionalInfo(tokenAddress, id, additionalInfo, owner);
 
           if(unlockableContent && user.attributes.ethAddress.toLowerCase() == owner.toLowerCase()){
             $('.unlockable-div').css('display', 'block');
@@ -271,11 +305,30 @@ async function getInactiveArtworkInfo(){
             $('#unlockableContentBtn' + tokenAddress + id).html('Unlockable');
           }
 
+          getAdditionalInfo(tokenAddress, id, additionalInfo, owner);
+
           if(user.attributes.ethAddress.toLowerCase() == owner.toLowerCase()){
             $('.if-owned').css('display', 'block');
             $(".not-onsale").css('display', 'none');
             $(".if-onsale").css('display', 'none');
-            $('#additionalInfo' + tokenAddress + id).html('View/Edit Additional Info');
+
+            if(owner.toLowerCase() == user.attributes.ethAddress.toLowerCase() && !additionalInfo){
+            $('#additionalInfo' + tokenAddress + id).css('display', 'inline');
+             $('#additionalInfo' + tokenAddress + id).html('Add Additional Info');
+             $('#additionalInfoText').css('display', 'block');
+             $('#additionalInfoText').html(additionalInfo);
+             $('#additionalInfo' + tokenAddress + id).click(()=>{
+               $('#additionalInfoModal').modal('show');
+             });
+           } else if(owner.toLowerCase() == user.attributes.ethAddress.toLowerCase() && additionalInfo){
+             $('#additionalInfo' + tokenAddress + id).html('View/Edit Additional Info');
+             $('#additionalInfoText').css('display', 'block');
+             $('#additionalInfoText').html(additionalInfo);
+             $('#additionalInfo' + tokenAddress + id).click(()=>{
+               $('#additionalInfoModal').modal('show');
+             });
+           }
+
           } else{
             $('.if-owned').css('display', 'none');
             $(".if-onsale").css('display', 'none');
@@ -615,14 +668,8 @@ function likeButton(tokenAddress, id, likes){
 };
 
 function getAdditionalInfo(tokenAddress, id, additionalInfo, owner){
-  if(additionalInfo !== ''){
-    $('#additionalInfoText').css('display', 'block');
-    $('#additionalInfoText').html(additionalInfo);
-    $('#additionalInfo' + tokenAddress + id).click(()=>{
-      $('#additionalInfoModal').modal('show');
-    });
-  } else if(owner.toLowerCase() == user.attributes.ethAddress.toLowerCase() && additionalInfo == ''){
-    $('#additionalInfo' + tokenAddress + id).html('Add Additional Info');
+  if(additionalInfo){
+    $('#additionalInfo' + tokenAddress + id).html('View Additional Info');
     $('#additionalInfoText').css('display', 'block');
     $('#additionalInfoText').html(additionalInfo);
     $('#additionalInfo' + tokenAddress + id).click(()=>{
@@ -1302,11 +1349,9 @@ function cardDiv(tokenAddress, id, owner, creator, path){
                     </span>
                   </a>
                 </div>
-
                 <!-- info -->
                 <div class="info-wrapper col-xs-12 col-sm-12 col-md-12 col-lg-4">
                   <div class="info-section">
-
                     <div class="top-row-token-page">
                       <div class="owner-div row">
                         <div class="owner-photo">
@@ -1335,35 +1380,28 @@ function cardDiv(tokenAddress, id, owner, creator, path){
                             ...
                           </button>
                           <div class="dropdown-menu" id="quickActions`+tokenAddress+id+`" aria-labelledby="dropdownMenuButton">
-
                           </div>
                         </div>
                       </div>
                     </div>
-
                     <div class="unlockable-div">
                       <span id="unlockableContentTag`+tokenAddress+id+`">
                         <button class="btn btn-light shadow-sm unlockable-button" type="button" id="unlockableContentBtn`+tokenAddress+id+`">Unlockable</button>
                       </span>
                     </div>
-
                     <div class="title">
                       <span id="title`+tokenAddress+id+`"></span>
                     </div>
-
                     <div class="sale-text">
                       <span class="on-sale-text" id="forSale`+tokenAddress+id+`"></span>
                       <span class="not-on-sale-text" id="notForSale`+tokenAddress+id+`"></span>
                     </div>
-
                     <div class="description bg-light">
                       <div id="description`+tokenAddress+id+`"></div>
                     </div>
-
                     <div class="additional-info">
-                      <a class="text-primary mb-3 additional-info-tag" id="additionalInfo`+tokenAddress+id+`">View Additional Info</a>
+                      <a class="text-primary mb-3 additional-info-tag" id="additionalInfo`+tokenAddress+id+`"></a>
                     </div>
-
                     <div class="dividing-line"></div>
 
                     <div class="creator-div row">
@@ -1385,10 +1423,13 @@ function cardDiv(tokenAddress, id, owner, creator, path){
                       </div>
                     </div>
 
+                    <div class="token-history">
+                      <span class="sub-text">Minted: <span id="createdAt`+tokenAddress+id+`"></span></span>
+                    </div>
+
                     <div class="if-royalty">
                       <span class="badge badge-pill badge-info shadow-sm"><span id="royalty`+tokenAddress+id+`"></span>% of sale will go to creator</span>
                     </div>
-
                     <div class="button-div">
                       <div class="if-onsale">
                         <button type="button" class="btn btn-primary btn-lg btn-block button-styling shadow-sm" id="buy`+tokenAddress+id+`">Buy Now</button>
@@ -1401,9 +1442,7 @@ function cardDiv(tokenAddress, id, owner, creator, path){
                         <button type="button" class="btn btn-primary btn-lg btn-block button-styling disabled shadow-sm" id="owned`+tokenAddress+id+`">You own this artwork</button>
                       </div>
                     </div>
-
                   </div>
-
                 </div>`
   $('.cardDiv').prepend(nftCard);
   darkmodeForDynamicContent();
@@ -1420,13 +1459,11 @@ function changePriceModalHTML(tokenAddress, id){
                       </button>
                     </div>
                     <div class="modal-body">
-
                       <form>
                         <div id="changePriceInputGroup`+tokenAddress+id+`" class="price-input-group">
                           <div class="input-group">
                             <input id="changePriceInput`+tokenAddress+id+`" type="text" class="form-control input-styling" placeholder="Enter price in ETH" aria-label="ether amount">
                           </div>
-
                           <div class="price-calculator price-info">
                             <span>Service Fee Upon Sale <span>2%</span></span><br>
                             <span id="ifOwnerNotCreator`+tokenAddress+id+`">Creator's Royalty <span id="royalty`+tokenAddress+id+`"></span><br></span>
@@ -1434,7 +1471,6 @@ function changePriceModalHTML(tokenAddress, id){
                           </div>
                         </div>
                       </form>
-
                     </div>
                     <div class="modal-footer change-price-footer">
                       <button type="button" class="btn btn-secondary button-styling" data-dismiss="modal">Close</button>
@@ -1459,13 +1495,11 @@ let putForSaleModal =`<div class="modal fade" id="putForSaleModal`+tokenAddress+
                             </div>
                             <div class="modal-body">
                               <button type="button" class="btn btn-primary btn-block button-styling" id="setApprovalBtn`+tokenAddress+id+`">Set Approval To Sell</button>
-
                               <form>
                                 <div id="priceInputGroup`+tokenAddress+id+`" class="price-input-group">
                                   <div class="input-group">
                                     <input id="salePriceInput`+tokenAddress+id+`" type="text" class="form-control input-styling" placeholder="Enter price in ETH" aria-label="ether amount">
                                   </div>
-
                                   <div class="price-calculator price-info">
                                     <span>Service Fee Upon Sale <span>2%</span></span><br>
                                     <span id="ifOwnerNotCreator`+tokenAddress+id+`">Creator's Royalty <span id="royalty`+tokenAddress+id+`"></span><br></span>
@@ -1473,7 +1507,6 @@ let putForSaleModal =`<div class="modal fade" id="putForSaleModal`+tokenAddress+
                                   </div>
                                 </div>
                               </form>
-
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary button-styling" data-dismiss="modal">Close</button>
@@ -1525,7 +1558,6 @@ function transferTokenModalHTML(tokenAddress, id){
                                         <div class="input-group">
                                           <input id="toAddressInput`+tokenAddress+id+`" type="text" class="form-control input-styling" placeholder="0x..." aria-label="receiver address">
                                         </div>
-
                                         <div class="price-info">
                                           <span>Enter the address where you want to send this artwork</span><br>
                                           <span id="regexMessage`+tokenAddress+id+`"></span>

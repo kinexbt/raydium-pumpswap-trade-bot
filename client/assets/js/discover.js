@@ -1,5 +1,7 @@
-Moralis.initialize(""); // Application id from moralis.io
-Moralis.serverURL = ''; //Server url from moralis.io
+const appId = ""; // Application id from moralis.io
+const serverUrl = ''; //Server url from moralis.io
+Moralis.start({ serverUrl, appId });
+
 const user = Moralis.User.current();
 console.log(user);
 const BASE_URL = "https://api.coingecko.com/api/v3";
@@ -12,7 +14,7 @@ let web3;
 let ethPrice;
 
 $(document).ready(async function(){
-  web3 = await Moralis.Web3.enable();
+  web3 = await Moralis.enableWeb3();
   openMintTokenInstance = new web3.eth.Contract(abi.OpenMintToken, openMintTokenAddress);
   openMintMarketplaceInstance = new web3.eth.Contract(abi.OpenMintMarketplace, openMintMarketplaceAddress);
   ethPrice = await getEthPrice();
@@ -98,7 +100,7 @@ $('#forSale').click(async ()=>{
   let ifOfferDetailsDuplicatesRemoved = removeDuplicates(ifOfferDetails, it => it.tokenId);
   let activeCount = ifOfferDetailsDuplicatesRemoved.filter(item => !item.isSold && item.active).length;
   if(activeCount < 1){
-    $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork for sale on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
+    $('.minted-wrapper').html(`<div class="no-art-for-sale">There is currently no artwork for sale on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
   }
   recentlyPutForSale();
 });
@@ -109,7 +111,7 @@ $('#notForSale').click(async ()=>{
   let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
   let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
   if(inactiveCount < 1){
-    $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork not for sale on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
+    $('.minted-wrapper').html(`<div class="no-art-for-sale">There is currently no artwork not for sale on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
   }
   recentlyMintedAndNotOnSale();
 });
@@ -127,7 +129,7 @@ async function viewAll(){
   let inactiveArtwork = await Moralis.Cloud.run('getArtwork');
   let inactiveCount = inactiveArtwork.filter(item => !item.active).length;
   if(activeCount < 1 && inactiveCount < 1){
-    $('.minted-wrapper').html(`<div class="no-art-for-sale shadow-sm">There is currently no artwork on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
+    $('.minted-wrapper').html(`<div class="no-art-for-sale">There is currently no artwork on OpenMint, but you can change that <a class="gradient-text" href="create.html"> here!<a> 😎<div>`);
   }
   recentlyPutForSale();
   recentlyMintedAndNotOnSale();

@@ -1,5 +1,6 @@
-Moralis.initialize(""); // Application id from moralis.io
-Moralis.serverURL = ''; //Server url from moralis.io
+const appId = ""; // Application id from moralis.io
+const serverUrl = ''; //Server url from moralis.io
+Moralis.start({ serverUrl, appId });
 
 const user = Moralis.User.current();
 const openMintTokenAddress = "";
@@ -16,7 +17,7 @@ const ETH_USD_PRICE_URL = "/simple/price?ids=ethereum&vs_currencies=usd";
 console.log(user);
 
 $(document).ready(async function(){
-  web3 = await Moralis.Web3.enable();
+  web3 = await Moralis.enableWeb3();
   openMintTokenInstance = new web3.eth.Contract(abi.OpenMintToken, openMintTokenAddress);
   openMintMarketplaceInstance = new web3.eth.Contract(abi.OpenMintMarketplace, openMintMarketplaceAddress);
   ethPrice = await getEthPrice();

@@ -102,14 +102,6 @@ Moralis.Cloud.afterSave("ArtworkSold", async (request) => {
       artwork.set('active', false);
       await artwork.save();
     }
-    const seller = sold.attributes.seller;
-    if(seller){
-      const userQuery = new Moralis.Query("User");
-      userQuery.equalTo("ethAddress", seller);
-      const thisSeller = await userQuery.first({useMasterKey: true});
-      thisSeller.increment('amountSold');
-      await thisSeller.save(null, {useMasterKey: true});
-    }
   }
 });
 
@@ -402,7 +394,11 @@ Moralis.Cloud.define("getUser", async (request) => {
       'ethAddress': queryResults.get('ethAddress'),
       'profilePhoto': queryResults.get('profilePhoto'),
       'amountOfFollowers': queryResults.get('followers').length,
-      'amountSold': queryResults.get('amountSold')
+      'amountSold': queryResults.get('amountSold'),
+      'amountBought': queryResults.get('amountBought'),
+      'totalTips': queryResults.get('totalTips'),
+      'totalProfit': queryResults.get('totalProfit'),
+      'totalRoyalties': queryResults.get('totalRoyalties')
     }
   }
 });
@@ -413,5 +409,70 @@ Moralis.Cloud.define("isAddressInDatabase", async (request) => {
   const queryResults = await query.first({useMasterKey: true});
   if(queryResults){
     return true;
+  }
+});
+
+Moralis.Cloud.define("incrementAmountBought", async (request) => {
+  const query = new Moralis.Query(Moralis.User);
+  query.equalTo("ethAddress", request.params.ethAddress);
+  const queryResults = await query.first({useMasterKey: true});
+  if(queryResults){
+    queryResults.increment('amountBought');
+    await queryResults.save(null, {useMasterKey: true});
+  }
+});
+
+Moralis.Cloud.define("incrementAmountSold", async (request) => {
+  const query = new Moralis.Query(Moralis.User);
+  query.equalTo("ethAddress", request.params.ethAddress);
+  const queryResults = await query.first({useMasterKey: true});
+  if(queryResults){
+    queryResults.increment('amountSold');
+    await queryResults.save(null, {useMasterKey: true});
+  }
+});
+
+Moralis.Cloud.define("setTotalTips", async (request) => {
+  const query = new Moralis.Query(Moralis.User);
+  query.equalTo("ethAddress", request.params.toAddress);
+  const queryResults = await query.first({useMasterKey: true});
+  if(queryResults){
+    let currentTipAmount = queryResults.attributes.totalTips;
+    if(currentTipAmount == undefined){
+      currentTipAmount = 0;
+    }
+    let newAmount = currentTipAmount + request.params.tipAmount;
+    queryResults.set('totalTips', newAmount);
+    await queryResults.save(null, {useMasterKey: true});
+  }
+});
+
+Moralis.Cloud.define("setTotalRoyalties", async (request) => {
+  const query = new Moralis.Query(Moralis.User);
+  query.equalTo("ethAddress", request.params.toAddress);
+  const queryResults = await query.first({useMasterKey: true});
+  if(queryResults){
+    let currentRoyaltyAmount = queryResults.attributes.totalRoyalties;
+    if(currentRoyaltyAmount == undefined){
+      currentRoyaltyAmount = 0;
+    }
+    let newAmount = currentRoyaltyAmount + request.params.royaltyAmount;
+    queryResults.set('totalRoyalties', newAmount);
+    await queryResults.save(null, {useMasterKey: true});
+  }
+});
+
+Moralis.Cloud.define("setTotalProfit", async (request) => {
+  const query = new Moralis.Query(Moralis.User);
+  query.equalTo("ethAddress", request.params.toAddress);
+  const queryResults = await query.first({useMasterKey: true});
+  if(queryResults){
+    let currentprofitAmount = queryResults.attributes.totalProfit;
+    if(currentprofitAmount == undefined){
+      currentprofitAmount = 0;
+    }
+    let newAmount = currentprofitAmount + request.params.profitAmount;
+    queryResults.set('totalProfit', newAmount);
+    await queryResults.save(null, {useMasterKey: true});
   }
 });

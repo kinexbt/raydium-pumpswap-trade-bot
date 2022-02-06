@@ -1,0 +1,109 @@
+@font-face {
+  font-family: "Uni Sans Heavy";
+  src: url('uni-sans.heavy-caps.otf');
+}
+
+@font-face {
+  font-family: 'Rubik', sans-serif;
+}
+
+.icon_outer{
+  width: 400px;
+  height: 400px;
+  background: -webkit-linear-gradient(260deg, rgba(0,222,249,1) 0%, rgba(63,94,251,1) 80%);
+  border-radius: 30px;
+}
+
+.icon_inner_text{
+  font-family: 'Rubik';
+  font-size: 220px;
+  font-weight: 900;
+  color: white;
+  text-align: center;
+  align-self: center;
+  line-height: 410px;
+  transform: scale(1, 1.1);
+   /* -webkit-text-stroke: 1px black; */
+}
+
+.dog-tag{
+  margin-top: 50px;
+  width: 325px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+  border-radius: 30px;
+}
+
+.dog-tag-hole{
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  left: 20px;
+  top: 550px;
+}
+
+.dog-text{
+  display: flex;
+  font-family: 'Rubik';
+  color: #eee;
+  font-size: 100px;
+  font-weight: 900;
+  transform: rotate(-45deg);
+  margin-left: 90px;
+  margin-top: 15px;
+}
+
+#of{
+  font-size: 40px;
+  margin-top: 55px;
+  padding-left: 10px;
+}
+
+.dog-tag2{
+  margin-top: 50px;
+  width: 325px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(148,187,233,1) 0%, rgba(238,174,202,1) 100%);
+  border-radius: 30px;
+}
+
+.dog-tag-hole2{
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: white;
+  position: relative;
+  left: 20px;
+  top: 90px;
+}
+
+.dog-text2{
+  display: flex;
+  font-family: 'Rubik';
+  color: #eee;
+  font-size: 80px;
+  font-weight: 900;
+  transform: rotate(-45deg);
+  margin-left: 70px;
+  position: relative;
+  top: 30px;
+  left: 5px;
+}
+
+.seller-bottom{
+  margin: 40px;
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  background: black;
+}
+
+.seller-top{
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  background: black;
+  transform: rotate(45deg);
+}

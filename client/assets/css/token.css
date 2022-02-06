@@ -17,7 +17,9 @@
 }
 
 #loader{
-  margin: 0 auto;
+  position: absolute;
+  top: 45%;
+  left: 50%;
 }
 
 .not-connected-text{
@@ -159,6 +161,12 @@ a.anchor{
 
 .creator{
   border-radius: 20px;
+}
+
+.token-history{
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
 }
 
 .if-royalty{
