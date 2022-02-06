@@ -96,7 +96,7 @@ Then install the proper "Sync and Watch Contract Events" found in the Details se
 
 Once successfully added you can now simulate users interacting with OpenMint locally.
 
-Make sure you are running on a local server, such as `python3 -m http.server` and viewing the site via `localhost:8080/client`
+Make sure you are running on a local server, by going into the root folder and running `python3 -m http.server` in the command line and then viewing the site via `localhost:8080/client`
 
 ## License
 
