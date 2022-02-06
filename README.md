@@ -1,4 +1,7 @@
 # OpenMint
+
+--The cloud functions will not work with current version of Moralis so instead of `queryResults[i].attributes.<columnName>` use `queryResults[i].get('<columnName>')`--
+
 OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms and a marketplace. It allows any (Open) user to create (Mint), buy, sell, and transfer ERC-721 tokens, which represent artworks in the form of an image, audio, or video file. It is important to clarify that ownership of the ERC-721 token proves ownership of the artwork it represents. It's similar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.
 
 OpenMint utilizes the powerful nature of [Moralis](https://moralis.io/) which takes the place of writing backend infrastructure and allows the dapp to easily populate a database using user input, emitted events in smart contracts, and balances in each user's [MetaMask](https://metamask.io/) wallet.
@@ -63,7 +66,13 @@ OpenMint integrates [OpenZeppelin](https://openzeppelin.com/contracts/) contract
 ## Installation
 Here are the steps to run this dapp locally:
 
-Use the package manager [npm](https://www.npmjs.com/) to install Truffle.
+Use the package manager [npm](https://www.npmjs.com/) 
+
+```
+npm install
+```
+
+Make sure you have Truffle installed globally.
 
 ```
 npm install -g truffle
@@ -88,7 +97,7 @@ In Moralis, click View Details again and go to the Devchain Proxy Server tab and
 
 Copy the entire `cloudFunctions.js` file and paste it into the Cloud Function option on your server in Moralis.
 
-Then install the "Sync and Watch Contract Events" plugins under the Plugins section on your server for the four events in `OpenMintMarketplace.sol` using the table names "ArtworkForSale", "ArtworkSold", "ArtworkPriceChanged", and "ArtworkRemoved". For help with adding plugins refer to [this video](https://www.youtube.com/watch?v=zn7_AYf_28E&t=819s) starting at 11:00 min.
+Then install the proper "Sync and Watch Contract Events" found in the Details section on your server for the four events in `OpenMintMarketplace.sol` using the table names "ArtworkForSale", "ArtworkSold", "ArtworkPriceChanged", and "ArtworkRemoved". For help with adding plugins refer to [this video](https://www.youtube.com/watch?v=zn7_AYf_28E&t=819s) starting at 11:00 min.
 
 Once successfully added you can now simulate users interacting with OpenMint locally!
 
