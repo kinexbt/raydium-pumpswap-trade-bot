@@ -1,8 +1,8 @@
 # OpenMint
 
-⚠️Some of the Moralis syntax is outdated since this project was built when it first began, a new OpenMint will be built using react-moralis soon⚠️
-
---The cloud functions will not work with current version of Moralis so instead of `queryResults[i].attributes.<columnName>` use `queryResults[i].get('<columnName>')`--
+⚠️Some of the Moralis syntax is outdated since this project was built when it first began, a new OpenMint will be built using react-moralis soon.
+This project was also built when Moralis used web3.js under the hood, they now use ethers.js. 
+⚠️
 
 OpenMint is a [dapp](https://www.investopedia.com/terms/d/decentralized-applications-dapps.asp) that combines aspects of social media platforms and a marketplace. It allows any (Open) user to create (Mint), buy, sell, and transfer ERC-721 tokens, which represent artworks in the form of an image, audio, or video file. It is important to clarify that ownership of the ERC-721 token proves ownership of the artwork it represents. It's similar to owning a deed to a house in that anyone can still see the house, it could appreciate or depreciate in value, but the one who owns the deed owns the house and can sell if they want.
 
