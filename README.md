@@ -207,8 +207,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 - **Twitter**: [Twitter](https://x.com/kinexbt)
-- **Discord**: [Discord](https://discord.com/kinexbt)
-- **Telegram**: [Telegram](https://telegram.com/kinexbt)
+- **Telegram**: [Telegram](https://t.me/kinexbt)
 
 ## 🙏 Acknowledgments
 
